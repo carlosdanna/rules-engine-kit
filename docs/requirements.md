@@ -6,16 +6,17 @@ A localhost-only demo of a deterministic, explainable, versioned rules engine. D
 
 | Term | Meaning |
 | --- | --- |
-| Situation | Immutable input: actors, their state, the action(s) being resolved, `intents`, time (round/turn) |
+| Situation | Immutable input: actors, their state, an ordered `timeline` of turns, `intents` (ADR-0005) |
 | Fact | Typed value the engine can read or derive, registered in the pack's fact registry |
+| Step | One turn in the timeline: `round`, `actorId`, and zero or one action. Evaluation runs the phase loop once per step |
 | Rule | `rule_key`, phase, priority, condition (JSON Logic), effects, citation, optional interpretation |
-| Effect | set value · add modifier · roll mode · roll dice · apply/remove condition · emit event · halt |
-| Phase | Fixed resolution stage, e.g. `declare → modifiers → roll → compare → damage → apply → expire` |
+| Effect | set value · add modifier · roll mode · roll transform · roll dice · apply/remove condition · emit event · halt (ADR-0008) |
+| Phase | Fixed resolution stage, run per step: `upkeep → declare → modifiers → roll → compare → damage → apply → expire` (ADR-0007) |
 | Ruleset version | Immutable, semver-tagged collection of rules (base or layer) |
 | Layer | Ruleset that adds, overrides, patches or disables rules of its base |
 | Profile | Ordered stack of ruleset versions resolved into one rule list with a hash |
-| Outcome | Final state, derived values, emitted events |
-| Trace | Ordered log of rules considered/fired/skipped, facts read, rolls, state deltas |
+| Outcome | Per-step results, final state, derived values with their contributing terms, emitted events |
+| Trace | Flat, versioned array of ordered events: rules considered/fired/skipped, facts read, rolls, stacking, expiries, state deltas (ADR-0010) |
 
 ## Scope: core subset
 
@@ -25,7 +26,7 @@ A localhost-only demo of a deterministic, explainable, versioned rules engine. D
 | Advantage/disadvantage cancelling | Prone, restrained, invisible, poisoned |
 | Modifier stacking policies | Proficiency, ability modifier, Bless, cover |
 | Damage pipeline | Damage dice, crits, resistance/vulnerability |
-| Durations | Effects expiring at start/end of a turn, Bless over rounds |
+| Durations | Effects expiring at the start/end of a turn, Bless over rounds (needs a multi-turn timeline) |
 | Versioned layers (5.1 vs 5.2.1) | Surprise, Inspiration vs Heroic Inspiration, one weapon mastery |
 | House-rule layer | Flanking grants advantage |
 
@@ -33,19 +34,20 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 
 ## Functional requirements
 
-- **FR-1** Validate situations against a versioned Zod schema.
+- **FR-1** Validate situations, including their timeline of steps, against a versioned Zod schema.
 - **FR-2** Accept an explicit profile (ordered ruleset versions).
 - **FR-3** Return outcome + trace; never mutate input.
 - **FR-5** Rules carry id/key, version, description, citation, phase, priority, tags, condition, effects.
 - **FR-6** Conditions: all/any/not, comparisons, set membership, references to registered facts.
-- **FR-7** Effects as listed in Core concepts, implemented through an effect registry.
-- **FR-9** Phases run in fixed order; within a phase, priority then `rule_key` for stable ordering.
-- **FR-11** Stacking policies per modifier type: sum, highest-only, same-`stackKey`-doesn't-stack, advantage/disadvantage cancel.
+- **FR-7** Effects as listed in Core concepts, implemented through an effect registry. Numeric modifiers, roll mode and roll transforms are three separate channels per roll target.
+- **FR-8** Fixtures supply only printed values (ability scores, proficiency bonus, base AC, HP). Ability modifiers come from the fact registry; effective AC, attack bonuses and save DCs are derived by rules and reported with their contributing terms.
+- **FR-9** Each step runs the phases in fixed order; within a phase, priority then `rule_key` for stable ordering.
+- **FR-11** Stacking policies per modifier type: sum, highest-only, same-`stackKey`-doesn't-stack. Advantage/disadvantage cancelling is resolved separately, on the roll-mode channel.
 - **FR-12** Conflicts resolved by explicit `override` or layer order; unresolved conflicts are reported.
-- **FR-13** Seeded RNG, seed recorded in outcome; dice results can be forced.
-- **FR-14** Trace per rule: status, facts read with values, state delta, citation.
-- **FR-15** "Why / why not" explanation for any rule in a run.
-- **FR-16** Evaluate one situation under two profiles and diff outcomes and traces.
+- **FR-13** Seeded RNG, seed recorded in outcome; dice results can be forced per step, including both dice of an advantage pair and each reroll.
+- **FR-14** Trace per rule: status, facts read with values, state delta, citation, and the layer that supplied it. Every rule selected for a phase is recorded, whether or not it fired.
+- **FR-15** "Why / why not" explanation for any rule in a run, derived from the stored trace rather than by re-evaluating.
+- **FR-16** Evaluate one situation under two profiles and diff outcomes and traces, aligning traces on step, phase and `rule_key`.
 - **FR-17** Lint on load: unknown facts, duplicate keys, overrides of missing keys, missing citations.
 - **FR-18** Create situations from a template, from a blank slate, or by duplicating a scenario.
 - **FR-19** Templates declare typed params; the UI generates a form from them.
@@ -53,9 +55,9 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 ## Versioning requirements
 
 - **VR-1** Published ruleset versions are immutable; changes create a new semver version.
-- **VR-2** Layers can `add`, `override`, `patch` or `disable` rules by `rule_key`.
+- **VR-2** Layers can `add`, `override`, `patch` or `disable` rules by `rule_key`. `patch` may only change `priority`, `label`, `description`, `tags`, `citation` and `interpretation`; changing `phase`, `condition` or `effects` requires `override` (ADR-0009).
 - **VR-3** Layers declare base and compatible range; incompatible stacks fail at resolve time.
-- **VR-4** Layer order is explicit, last wins; the trace shows which layer supplied each rule.
+- **VR-4** Layer order is explicit, last wins; each resolved rule carries ordered provenance, and disabled rules stay in the resolved list flagged as disabled so they can still be explained.
 - **VR-7** Evaluations store profile hash, seed, `engine_version`, `trace_schema_version`.
 - **VR-8** Situation schema is versioned; saved user scenarios can be migrated.
 - **VR-9** Diff rules between two ruleset versions.
@@ -66,7 +68,7 @@ Deferred: VR-5 (select profile by campaign/date), VR-6 (effective dates) — see
 
 - **NFR-1** Determinism: pure engine core, no I/O, clock or global randomness.
 - **NFR-3** Engine runs in Node and the browser.
-- **NFR-4** Golden tests for every template × profile; property tests for stacking and ordering.
+- **NFR-4** Golden tests for every template × profile, asserting outcomes separately from trace snapshots; property tests for stacking, roll-mode cancelling and ordering.
 - **NFR-5** Rules readable as YAML with schema validation.
 - **NFR-6** Every pack declares license and attribution; seeding fails without them.
 - **NFR-7** Trace exportable as JSON and viewable as narrative text.
