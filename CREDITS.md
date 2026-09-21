@@ -36,6 +36,7 @@ Runtime:
 | [class-variance-authority](https://cva.style) | Apache-2.0 |
 | [cn](https://github.com/shadcn-ui/cn) | MIT |
 | [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) | MIT |
+| [Zod](https://zod.dev) | MIT |
 
 Tooling:
 
