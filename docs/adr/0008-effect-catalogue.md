@@ -1,6 +1,6 @@
 # ADR-0008: Three separate roll channels; rerolls are a transform, not a mode
 
-- Status: accepted
+- Status: superseded by ADR-0011
 - Date: 2026-09-21
 
 ## Context

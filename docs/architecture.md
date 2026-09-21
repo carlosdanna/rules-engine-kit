@@ -7,7 +7,8 @@ apps/web/            Next.js + shadcn/ui (routes below)
 packages/engine/     pure TS engine
   src/schema/        Zod types: Situation, Rule, Effect, Outcome, Trace
   src/resolver/      layer merge, compatibility, canonical hash
-  src/conditions/    JSON Logic wrapper + fact registry, records facts read
+  src/conditions/    JSON Logic-subset evaluator + fact registry; records facts read
+                     with their values and the sub-expression that failed (ADR-0013)
   src/effects/       effect registry and handlers
   src/stacking/      modifier policies
   src/time/          TimePoint ordering, duration anchors, expiry resolution
@@ -25,7 +26,10 @@ docs/                requirements, architecture, authoring, ADRs
 
 Dependency direction: `apps/web → packages/db → packages/engine`. The engine never imports the others.
 
-Decisions behind this shape: ADR-0005 (timeline), ADR-0006 (derived stats), ADR-0007 (time and durations), ADR-0008 (effect channels), ADR-0009 (layer precedence), ADR-0010 (trace).
+Decisions behind this shape: ADR-0005 (timeline), ADR-0006 (derived stats), ADR-0012 (time and
+durations, superseding ADR-0007), ADR-0011 (effect channels and roll order, superseding
+ADR-0008), ADR-0009 (layer precedence), ADR-0014 (trace events, superseding ADR-0010),
+ADR-0013 (condition evaluator).
 
 ## Engine API
 
@@ -34,7 +38,7 @@ resolveProfile(layers: RulesetVersion[]): ResolvedProfile   // { rules, hash, so
 evaluate(
   situation: Situation,                                     // actors + ordered timeline of steps
   profile: ResolvedProfile,
-  opts: { seed: string; forcedRolls?: Record<string, number[]>; traceLevel?: 'full' | 'fired-only' },
+  opts: { seed: string; forcedRolls?: Record<RollId, number[]>; traceLevel?: 'full' | 'fired-only' },
 ): EvaluationResult                                         // { outcome, trace }
 renderTemplate(template: Template, params: unknown, fixtures: FixtureIndex): Situation
 explain(trace: Trace, ruleKey: string): Explanation         // lookup only; never re-evaluates
@@ -42,7 +46,18 @@ diffOutcomes(a: Outcome, b: Outcome): OutcomeDiff
 diffTraces(a: Trace, b: Trace): TraceDiff                   // aligned on (stepId, phase, ruleKey)
 ```
 
-`forcedRolls` is keyed by step id; each entry supplies dice in the order the step consumes them, including both dice of an advantage pair and one value per reroll. A `Trace` is `{ traceSchemaVersion, events }` — a flat, ordered array of discriminated-union events (ADR-0010).
+`forcedRolls` is keyed by **roll id**, not by step id (ADR-0011): a `RollId` is
+`` `${stepId}/${kind}:${actorId}` `` plus a channel suffix for dice that are not the d20 itself
+(`:reroll`, or the modifier type for a dice-valued modifier). Each entry supplies that channel's
+dice in order — both dice of an advantage pair on the base id, one value per reroll use on
+`:reroll`. Keying by step id alone would couple fixtures to the order phases happen to consume
+dice in, so adding a rule would silently shift every later forced value. The same ids key
+`situation.intents.rollChoices`, so a template can pre-declare which die a reroll touches.
+
+A `Trace` is `{ traceSchemaVersion, events }` — a flat, ordered array of discriminated-union
+events, each carrying `(seq, stepId, round, phase)` (ADR-0010, event list revised by ADR-0014).
+There is no `phaseStart` event: the phase list is fixed, so the viewer renders all eight headers
+and groups events by `(stepId, phase)`.
 
 ## Evaluation loop
 
@@ -50,8 +65,16 @@ diffTraces(a: Trace, b: Trace): TraceDiff                   // aligned on (stepI
 2. For each step in timeline order, run the phases `upkeep → declare → modifiers → roll → compare → damage → apply → expire`.
 3. Per phase: select the enabled rules for that phase, sort by priority then `rule_key`.
 4. Per rule: evaluate condition (recording facts read) → if true apply effects through the registry → record a trace event. Rules that were selected but did not fire are recorded too, with the sub-condition that failed.
-5. Stacking policies combine numeric modifiers before the `roll` phase consumes them; roll mode (advantage/disadvantage cancelling) and roll transforms (rerolls) resolve on their own channels, in the order mode → die → transforms → modifiers.
-6. `upkeep` removes effects whose resolved `expiresAt` falls on the start of this step; `expire` does the same for the end of it.
+5. Stacking policies combine numeric modifiers before the `roll` phase consumes them; roll mode
+   (advantage/disadvantage cancelling) and roll transforms (rerolls) resolve on their own
+   channels, in the order **mode → dice pool → transforms on a chosen die of the pool → keep →
+   modifiers** (ADR-0011). Transforms act on the pool, before the keep, because both SRDs let a
+   reroll replace only one die of an advantage pair and leave the choice to the player; that
+   choice comes from `intents.rollChoices`.
+6. `upkeep` removes effects whose resolved `expiresAt` falls on the start of this step; `expire`
+   does the same for the end of it. Durations resolve against the whole timeline at application
+   time and name an anchor turn and an edge, so `expiresAt` distinguishes a concrete `TimePoint`
+   from `permanent` and from `beyondTimeline` (ADR-0012).
 7. Return `{ outcome, trace }`: per-step results, final state, derived values with their terms, events, seed, profile hash, engine and trace schema versions.
 
 ## Data model (SQLite via Drizzle)

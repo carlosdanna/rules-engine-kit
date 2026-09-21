@@ -10,13 +10,13 @@ A localhost-only demo of a deterministic, explainable, versioned rules engine. D
 | Fact | Typed value the engine can read or derive, registered in the pack's fact registry |
 | Step | One turn in the timeline: `round`, `actorId`, and zero or one action. Evaluation runs the phase loop once per step |
 | Rule | `rule_key`, phase, priority, condition (JSON Logic), effects, citation, optional interpretation |
-| Effect | set value · add modifier · roll mode · roll transform · roll dice · apply/remove condition · emit event · halt (ADR-0008) |
-| Phase | Fixed resolution stage, run per step: `upkeep → declare → modifiers → roll → compare → damage → apply → expire` (ADR-0007) |
+| Effect | set value · add modifier · roll mode · roll transform · roll dice · apply/remove condition · emit event · halt (ADR-0011) |
+| Phase | Fixed resolution stage, run per step: `upkeep → declare → modifiers → roll → compare → damage → apply → expire` (ADR-0012) |
 | Ruleset version | Immutable, semver-tagged collection of rules (base or layer) |
 | Layer | Ruleset that adds, overrides, patches or disables rules of its base |
 | Profile | Ordered stack of ruleset versions resolved into one rule list with a hash |
 | Outcome | Per-step results, final state, derived values with their contributing terms, emitted events |
-| Trace | Flat, versioned array of ordered events: rules considered/fired/skipped, facts read, rolls, stacking, expiries, state deltas (ADR-0010) |
+| Trace | Flat, versioned array of ordered events: rules considered/fired/skipped, facts read, rolls, comparisons, stacking, effect application and expiry (ADR-0014) |
 
 ## Scope: core subset
 
@@ -38,13 +38,13 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 - **FR-2** Accept an explicit profile (ordered ruleset versions).
 - **FR-3** Return outcome + trace; never mutate input.
 - **FR-5** Rules carry id/key, version, description, citation, phase, priority, tags, condition, effects.
-- **FR-6** Conditions: all/any/not, comparisons, set membership, references to registered facts.
+- **FR-6** Conditions: all/any/not, comparisons, set membership, references to registered facts. JSON Logic syntax, own evaluator (ADR-0013).
 - **FR-7** Effects as listed in Core concepts, implemented through an effect registry. Numeric modifiers, roll mode and roll transforms are three separate channels per roll target.
 - **FR-8** Fixtures supply only printed values (ability scores, proficiency bonus, base AC, HP). Ability modifiers come from the fact registry; effective AC, attack bonuses and save DCs are derived by rules and reported with their contributing terms.
 - **FR-9** Each step runs the phases in fixed order; within a phase, priority then `rule_key` for stable ordering.
 - **FR-11** Stacking policies per modifier type: sum, highest-only, same-`stackKey`-doesn't-stack. Advantage/disadvantage cancelling is resolved separately, on the roll-mode channel.
 - **FR-12** Conflicts resolved by explicit `override` or layer order; unresolved conflicts are reported.
-- **FR-13** Seeded RNG, seed recorded in outcome; dice results can be forced per step, including both dice of an advantage pair and each reroll.
+- **FR-13** Seeded RNG, seed recorded in outcome; dice results can be forced per **roll id** — not per step — including both dice of an advantage pair and each reroll (ADR-0011).
 - **FR-14** Trace per rule: status, facts read with values, state delta, citation, and the layer that supplied it. Every rule selected for a phase is recorded, whether or not it fired.
 - **FR-15** "Why / why not" explanation for any rule in a run, derived from the stored trace rather than by re-evaluating.
 - **FR-16** Evaluate one situation under two profiles and diff outcomes and traces, aligning traces on step, phase and `rule_key`.

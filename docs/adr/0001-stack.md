@@ -1,6 +1,7 @@
 # ADR-0001: Stack
 
 - Status: accepted
+- Amended by ADR-0013 (`json-logic-js` dropped; conditions keep the JSON Logic syntax)
 - Date: 2026-09-21
 
 ## Context

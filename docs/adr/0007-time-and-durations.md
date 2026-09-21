@@ -1,6 +1,6 @@
 # ADR-0007: Time is (round, step); durations are resolved expiry anchors
 
-- Status: accepted
+- Status: superseded by ADR-0012
 - Date: 2026-09-21
 
 ## Context

@@ -1,6 +1,6 @@
 # ADR-0010: Flat, versioned trace events; "why not" is a lookup, not a re-run
 
-- Status: accepted
+- Status: superseded by ADR-0014
 - Date: 2026-09-21
 
 ## Context

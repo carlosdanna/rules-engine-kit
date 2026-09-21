@@ -10,7 +10,7 @@ Localhost-only demo of a **versioned rules engine**. Given a situation, the engi
 - `docs/adr/` — decisions already made. Don't contradict an accepted ADR; propose a new one instead.
 
 ## Stack
-pnpm workspace · Next.js (App Router) + shadcn/ui + Tailwind · SQLite via better-sqlite3 · Drizzle ORM + drizzle-kit · Zod · json-logic-js · Vitest · Playwright · TypeScript strict everywhere.
+pnpm workspace · Next.js (App Router) + shadcn/ui + Tailwind · SQLite via better-sqlite3 · Drizzle ORM + drizzle-kit · Zod · conditions in JSON Logic syntax on our own evaluator, no `json-logic-js` (ADR-0013) · Vitest · Playwright · TypeScript strict everywhere.
 
 ## Layout
 - `packages/engine` — pure TS. No imports from Next.js, Drizzle, `fs`, `Date.now()` or `Math.random()`.

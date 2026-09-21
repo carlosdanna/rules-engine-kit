@@ -1,6 +1,7 @@
 # ADR-0005: Unit of work is a short, pre-declared timeline of turns
 
 - Status: accepted
+- Amended by ADR-0011 (forced rolls are keyed by roll id, not by step id)
 - Date: 2026-09-21
 
 ## Context
