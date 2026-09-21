@@ -14,6 +14,7 @@ Numbers are stable; a settled question keeps its number in the ADR that closed i
 | Q10 | Blank slate: form-first or JSON-first editor | M4 |
 | Q11 | Profile selection by criteria (VR-5): in or out of the demo? | M2 |
 | Q12 | Exit criteria per milestone | All |
+| Q16 | May a layer extend another layer in the same stack, or only the base at position 0? | M2 |
 
 Settled: Q1–Q6 by ADR-0005 to ADR-0010, Q13–Q15 by ADR-0011 to ADR-0013 (2026-09-21).
 ADR-0011 supersedes ADR-0008, ADR-0012 supersedes ADR-0007, ADR-0014 supersedes ADR-0010,
