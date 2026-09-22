@@ -9,5 +9,6 @@ export * from './conditions';
 export * from './dice';
 export * from './resolver';
 export * from './schema';
+export * from './stacking';
 export * from './time';
 export { ENGINE_VERSION, TRACE_SCHEMA_VERSION } from './version';
