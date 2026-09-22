@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "actors": [
+    {
+      "id": "guard",
+      "name": "Guard",
+      "abilities": { "str": 13, "dex": 12, "con": 12, "int": 10, "wis": 11, "cha": 10 },
+      "proficiencyBonus": 2,
+      "ac": 16,
+      "hp": 11,
+      "hpCurrent": 11,
+      "conditions": ["surprised"]
+    },
+    {
+      "id": "goblin",
+      "name": "Goblin",
+      "abilities": { "str": 8, "dex": 14, "con": 10, "int": 10, "wis": 8, "cha": 8 },
+      "proficiencyBonus": 2,
+      "ac": 15,
+      "hp": 7,
+      "hpCurrent": 7,
+      "conditions": []
+    }
+  ],
+  "items": {
+    "battleaxe": {
+      "slug": "battleaxe",
+      "name": "Battleaxe",
+      "damage": { "dice": { "count": 1, "sides": 8 }, "type": "slashing" },
+      "properties": ["versatile"],
+      "mastery": "topple"
+    }
+  },
+  "timeline": [
+    {
+      "id": "r1-guard",
+      "round": 1,
+      "actorId": "guard",
+      "action": {
+        "type": "attack",
+        "mode": "melee",
+        "targetId": "goblin",
+        "weapon": "battleaxe",
+        "rangeFt": 5
+      }
+    },
+    {
+      "id": "r2-guard",
+      "round": 2,
+      "actorId": "guard",
+      "action": {
+        "type": "attack",
+        "mode": "melee",
+        "targetId": "goblin",
+        "weapon": "battleaxe",
+        "rangeFt": 5
+      }
+    }
+  ],
+  "intents": {}
+}

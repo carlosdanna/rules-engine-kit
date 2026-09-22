@@ -1,0 +1,5 @@
+{
+  "description": "SRD 5.2.1 Surprise: a surprised creature acts, but rolls Initiative with disadvantage.",
+  "profile": ["../../../../../../content/dnd5e-srd-5.2.1"],
+  "seed": "golden"
+}

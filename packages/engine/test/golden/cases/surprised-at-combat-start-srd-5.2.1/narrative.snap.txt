@@ -1,0 +1,18 @@
+round 1, r1-guard-initiative — Guard
+  [modifiers] d20.ability-modifier.dex fired (srd-5.2.1 · Playing the Game > D20 Tests > Ability Checks)
+  [modifiers] combat.surprise fired (srd-5.2.1 · Rules Glossary > Surprise)
+  [roll] check:Guard: disadvantage from combat.surprise ⇒ disadvantage
+         dice [15,6]
+         kept 6 +1 ability = 7
+  [compare] 7 vs DC 0 → success
+round 1, r1-guard — Guard
+  [modifiers] attack.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > D20 Tests > Attack Rolls > Ability Modifier)
+  [modifiers] attack.proficiency fired (srd-5.2.1 · Playing the Game > Proficiency > Proficiency Bonus)
+  [stacking] actor.ac.effective for Goblin Warrior: no contributions
+  [roll] attack:Guard: no mode inputs ⇒ normal
+         dice [12]
+         kept 12 +1 ability +2 proficiency = 15
+  [compare] 15 vs DC 15 → hit
+  [damage] damage.weapon-dice fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Guard: +4 weapon +1 ability

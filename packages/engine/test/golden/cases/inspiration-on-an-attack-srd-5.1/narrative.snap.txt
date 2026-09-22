@@ -1,0 +1,12 @@
+round 1, r1-guard — Guard
+  [modifiers] attack.ability-modifier.strength fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] inspiration.spend fired (srd-5.1 · Beyond 1st Level > Inspiration > Using Inspiration)
+  [stacking] actor.ac.effective for Goblin: no contributions
+  [roll] attack:Guard: advantage from inspiration.spend ⇒ advantage
+         dice [9,16]
+         kept 16 +1 ability +2 proficiency = 19
+  [compare] 19 vs DC 15 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Guard: +3 weapon +1 ability

@@ -1,0 +1,62 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "actorId": "guard",
+      "rolls": [
+        {
+          "rollId": "r1-guard/attack:guard",
+          "target": {
+            "kind": "attack",
+            "actorId": "guard"
+          },
+          "mode": "normal",
+          "kept": 4,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 1,
+              "fromFact": "actor.abilityMod.str"
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2,
+              "fromFact": "actor.proficiencyBonus"
+            }
+          ],
+          "total": 7,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-guard/attack:guard",
+          "total": 7,
+          "dc": 15,
+          "result": "miss"
+        }
+      ],
+      "damage": [],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "guard": {
+        "id": "guard",
+        "hpCurrent": 11,
+        "conditions": []
+      },
+      "goblin": {
+        "id": "goblin",
+        "hpCurrent": 10,
+        "conditions": []
+      }
+    },
+    "activeEffects": []
+  },
+  "events": []
+}

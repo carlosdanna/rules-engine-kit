@@ -1,0 +1,9 @@
+round 1, r1-guard — Guard
+  [modifiers] attack.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > D20 Tests > Attack Rolls > Ability Modifier)
+  [modifiers] attack.proficiency fired (srd-5.2.1 · Playing the Game > Proficiency > Proficiency Bonus)
+  [modifiers] inspiration.spend fired (srd-5.2.1 · Rules Glossary > Heroic Inspiration)
+  [stacking] actor.ac.effective for Goblin Warrior: no contributions
+  [roll] attack:Guard: no mode inputs ⇒ normal
+         dice [9] → reroll die[0] 9→4 (inspiration.spend) → [4]
+         kept 4 +1 ability +2 proficiency = 7
+  [compare] 7 vs DC 15 → miss

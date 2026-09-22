@@ -1,0 +1,5 @@
+{
+  "description": "SRD 5.1 Surprise: a surprised creature cannot act on its first turn, and acts normally on its second.",
+  "profile": ["../../../../../../content/dnd5e-srd-5.1"],
+  "seed": "golden"
+}

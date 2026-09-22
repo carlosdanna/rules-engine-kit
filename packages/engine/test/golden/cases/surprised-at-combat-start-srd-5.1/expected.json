@@ -1,0 +1,63 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "actorId": "guard",
+      "rolls": [],
+      "comparisons": [],
+      "damage": [],
+      "halted": {
+        "ruleKey": "combat.surprise",
+        "reason": "surprised: no movement or action on the first turn of combat"
+      }
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "actorId": "guard",
+      "rolls": [
+        {
+          "rollId": "r2-guard/attack:guard",
+          "target": { "kind": "attack", "actorId": "guard" },
+          "mode": "normal",
+          "kept": 14,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 1,
+              "fromFact": "actor.abilityMod.str"
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2,
+              "fromFact": "actor.proficiencyBonus"
+            }
+          ],
+          "total": 17,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r2-guard/attack:guard",
+          "total": 17,
+          "dc": 15,
+          "result": "hit"
+        }
+      ],
+      "damage": [{ "actorId": "goblin", "amount": 6, "hpAfter": 1 }],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "guard": { "id": "guard", "hpCurrent": 11, "conditions": ["surprised"] },
+      "goblin": { "id": "goblin", "hpCurrent": 1, "conditions": [] }
+    },
+    "activeEffects": []
+  },
+  "events": []
+}

@@ -1,0 +1,71 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-guard-initiative",
+      "round": 1,
+      "actorId": "guard",
+      "rolls": [
+        {
+          "rollId": "r1-guard-initiative/check:guard",
+          "target": { "kind": "check", "actorId": "guard" },
+          "mode": "disadvantage",
+          "kept": 6,
+          "modifiers": [
+            {
+              "ruleKey": "d20.ability-modifier.dex",
+              "modifierType": "ability",
+              "value": 1,
+              "fromFact": "actor.abilityMod.dex"
+            }
+          ],
+          "total": 7,
+          "forced": true
+        }
+      ],
+      "damage": [],
+      "halted": null
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "actorId": "guard",
+      "rolls": [
+        {
+          "rollId": "r1-guard/attack:guard",
+          "target": { "kind": "attack", "actorId": "guard" },
+          "mode": "normal",
+          "kept": 12,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 1,
+              "fromFact": "actor.abilityMod.str"
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2,
+              "fromFact": "actor.proficiencyBonus"
+            }
+          ],
+          "total": 15,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        { "rollId": "r1-guard/attack:guard", "total": 15, "dc": 15, "result": "hit" }
+      ],
+      "damage": [{ "actorId": "goblin", "amount": 5, "hpAfter": 5 }],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "guard": { "id": "guard", "hpCurrent": 11, "conditions": ["surprised"] },
+      "goblin": { "id": "goblin", "hpCurrent": 5, "conditions": [] }
+    },
+    "activeEffects": []
+  },
+  "events": []
+}

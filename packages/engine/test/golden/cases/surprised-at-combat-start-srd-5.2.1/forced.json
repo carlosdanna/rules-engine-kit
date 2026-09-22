@@ -1,0 +1,5 @@
+{
+  "r1-guard-initiative/check:guard": [15, 6],
+  "r1-guard/attack:guard": [12],
+  "r1-guard/damage:guard:weapon": [4]
+}

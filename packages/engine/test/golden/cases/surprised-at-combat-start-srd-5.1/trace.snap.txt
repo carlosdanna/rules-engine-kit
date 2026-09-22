@@ -1,0 +1,2190 @@
+{
+  "traceSchemaVersion": 2,
+  "events": [
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "declare",
+      "kind": "rule",
+      "ruleKey": "combat.surprise",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > The Order of Combat > Surprise"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "actor.conditions",
+          "value": [
+            "surprised"
+          ]
+        },
+        {
+          "path": "step.round",
+          "value": 1
+        }
+      ],
+      "seq": 0
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "declare",
+      "kind": "rule",
+      "ruleKey": "action.use-object",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Actions in Combat > Use an Object"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 1
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.half",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 2
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.three-quarters",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 3
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.half.dex-save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 4
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.three-quarters.dex-save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 5
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.strength",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 6
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.dexterity",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 7
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.finesse",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Melee Attacks > Weapon Properties > Finesse"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 8
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.str",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 9
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.dex",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 10
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.con",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 11
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.int",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 12
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.wis",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 13
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.cha",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 14
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.proficiency",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 15
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacked",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Prone"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 16
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacked-at-range",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Prone"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 17
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacking",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Prone"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 18
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.attacked",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Restrained"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 19
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.attacking",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Restrained"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 20
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.dex-save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Restrained"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 21
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.invisible.attacked",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Invisible"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 22
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.invisible.attacking",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Invisible"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 23
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.poisoned.attack",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Poisoned"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 24
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.poisoned.check",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Poisoned"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 25
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "spell.bless.attack",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 26
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "spell.bless.save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 27
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "inspiration.spend",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Beyond 1st Level > Inspiration > Using Inspiration"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 28
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.weapon-dice",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 29
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.strength",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 30
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.dexterity",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 31
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.finesse",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Melee Attacks > Weapon Properties > Finesse"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 32
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.critical",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Critical Hits"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 33
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "apply",
+      "kind": "rule",
+      "ruleKey": "spell.bless.cast",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "haltedEarlier",
+        "byRuleKey": "combat.surprise"
+      },
+      "conditionResult": null,
+      "factsRead": [],
+      "seq": 34
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "declare",
+      "kind": "rule",
+      "ruleKey": "combat.surprise",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > The Order of Combat > Surprise"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "actor.conditions",
+          "value": [
+            "surprised"
+          ]
+        },
+        {
+          "path": "step.round",
+          "value": 2
+        }
+      ],
+      "seq": 35
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "declare",
+      "kind": "rule",
+      "ruleKey": "action.use-object",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Actions in Combat > Use an Object"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 36
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.half",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": []
+        }
+      ],
+      "seq": 37
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.three-quarters",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": []
+        }
+      ],
+      "seq": 38
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.half.dex-save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 39
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.three-quarters.dex-save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 40
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.strength",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 41
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.dexterity",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 42
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.finesse",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Melee Attacks > Weapon Properties > Finesse"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        },
+        {
+          "path": "action.weapon.properties",
+          "value": [
+            "versatile"
+          ]
+        }
+      ],
+      "seq": 43
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.str",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 44
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.dex",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 45
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.con",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 46
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.int",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 47
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.wis",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 48
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.cha",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Using Ability Scores > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 49
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.proficiency",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 50
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacked",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Prone"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": []
+        }
+      ],
+      "seq": 51
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacked-at-range",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Prone"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": []
+        }
+      ],
+      "seq": 52
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacking",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Prone"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": [
+            "surprised"
+          ]
+        }
+      ],
+      "seq": 53
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.attacked",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Restrained"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": []
+        }
+      ],
+      "seq": 54
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.attacking",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Restrained"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": [
+            "surprised"
+          ]
+        }
+      ],
+      "seq": 55
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.dex-save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Restrained"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 56
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.invisible.attacked",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Invisible"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": []
+        }
+      ],
+      "seq": 57
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.invisible.attacking",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Invisible"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": [
+            "surprised"
+          ]
+        }
+      ],
+      "seq": 58
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.poisoned.attack",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Poisoned"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": [
+            "surprised"
+          ]
+        }
+      ],
+      "seq": 59
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.poisoned.check",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Appendix PH-A: Conditions > Poisoned"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 60
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "spell.bless.attack",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": [
+            "surprised"
+          ]
+        }
+      ],
+      "seq": 61
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "spell.bless.save",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 62
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "inspiration.spend",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Beyond 1st Level > Inspiration > Using Inspiration"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "intents.useInspiration",
+          "value": null
+        }
+      ],
+      "seq": 63
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "modifiers",
+      "kind": "stacking",
+      "target": "actor.ac.effective",
+      "actorId": "goblin",
+      "applied": [],
+      "dropped": [],
+      "seq": 64
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "roll",
+      "kind": "roll",
+      "rollId": "r2-guard/attack:guard",
+      "target": {
+        "kind": "attack",
+        "actorId": "guard"
+      },
+      "mode": "normal",
+      "modeInputs": [],
+      "dice": [
+        14
+      ],
+      "transforms": [],
+      "diceAfterTransforms": [
+        14
+      ],
+      "kept": 14,
+      "keptIndex": 0,
+      "forced": true,
+      "modifiers": [
+        {
+          "ruleKey": "attack.ability-modifier.strength",
+          "modifierType": "ability",
+          "policy": "highest",
+          "value": 1,
+          "fromFact": "actor.abilityMod.str"
+        },
+        {
+          "ruleKey": "attack.proficiency",
+          "modifierType": "proficiency",
+          "stackKey": "proficiency",
+          "policy": "unique",
+          "value": 2,
+          "fromFact": "actor.proficiencyBonus"
+        }
+      ],
+      "dropped": [],
+      "total": 17,
+      "seq": 65
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "compare",
+      "kind": "compare",
+      "rollId": "r2-guard/attack:guard",
+      "target": {
+        "kind": "attack",
+        "actorId": "guard"
+      },
+      "total": 17,
+      "dc": 15,
+      "result": "hit",
+      "seq": 66
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.weapon-dice",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        }
+      ],
+      "seq": 67
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.strength",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 68
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.dexterity",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 69
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.finesse",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Making an Attack > Melee Attacks > Weapon Properties > Finesse"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/4/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        },
+        {
+          "path": "action.weapon.properties",
+          "value": [
+            "versatile"
+          ]
+        }
+      ],
+      "seq": 70
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.critical",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Combat > Damage and Healing > Critical Hits"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        },
+        {
+          "path": "step.attack.natural",
+          "value": 14
+        }
+      ],
+      "seq": 71
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "damage",
+      "kind": "stacking",
+      "target": "damage.total",
+      "actorId": "guard",
+      "applied": [
+        {
+          "ruleKey": "damage.weapon-dice",
+          "modifierType": "weapon",
+          "policy": "sum",
+          "value": 5,
+          "rolled": {
+            "expr": "1d8",
+            "dice": [
+              5
+            ]
+          },
+          "fromFact": "action.weapon.damage.dice"
+        },
+        {
+          "ruleKey": "damage.ability-modifier.strength",
+          "modifierType": "ability",
+          "policy": "highest",
+          "value": 1,
+          "fromFact": "actor.abilityMod.str"
+        }
+      ],
+      "dropped": [],
+      "seq": 72
+    },
+    {
+      "stepId": "r2-guard",
+      "round": 2,
+      "phase": "apply",
+      "kind": "rule",
+      "ruleKey": "spell.bless.cast",
+      "citation": {
+        "source": "srd-5.1",
+        "section": "Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.1.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 73
+    }
+  ]
+}
