@@ -126,8 +126,12 @@ export function createFactSource(args: FactSourceArgs): FactSource {
 
       if (path.startsWith('action.')) {
         const action = step.action;
+        // `action.type` is total, because a step that takes no action is legal and rules
+        // guard on this fact before reading any other. Returning `null` here would make the
+        // one path every condition starts with throw on a perfectly valid step; `'none'` is
+        // a value, and "took no action" is a real answer rather than a missing one.
+        if (path === 'action.type') return action === null ? 'none' : action.type;
         if (action === null) return null;
-        if (path === 'action.type') return action.type;
         const key = path.slice('action.'.length);
         // A field the current action kind does not have reads as `null`, and a comparison
         // against `null` then throws `ConditionTypeError` rather than silently skipping the

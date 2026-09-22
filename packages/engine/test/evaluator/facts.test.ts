@@ -96,9 +96,17 @@ describe('createFactSource — step, action and intents', () => {
     expect(sourceOf({ step }).source.read('action.rangeFt')).toBeNull();
   });
 
-  it('reads null for every action path when the step takes no action', () => {
+  it("reads 'none' rather than null when the step takes no action", () => {
+    // `action.type` is the fact every condition guards on first, and a step that takes no
+    // action is legal (`Step.action` is nullable). Were this null, the guard itself would
+    // throw on a valid step; "took no action" is a value, not an absence.
     const step: Step = { id: 's', round: 1, actorId: 'fighter', action: null };
-    expect(sourceOf({ step }).source.read('action.type')).toBeNull();
+    expect(sourceOf({ step }).source.read('action.type')).toBe('none');
+  });
+
+  it('still reads null for the other action paths of a step with no action', () => {
+    const step: Step = { id: 's', round: 1, actorId: 'fighter', action: null };
+    expect(sourceOf({ step }).source.read('action.rangeFt')).toBeNull();
   });
 
   it('reads a named intent declared up front (ADR-0003)', () => {
