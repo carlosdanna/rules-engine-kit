@@ -30,7 +30,7 @@ export function applyCondition(
 ): EffectApplication {
   const application = emptyApplication();
 
-  for (const actorId of ctx.resolveActorRefs(effect.actor)) {
+  for (const actorId of ctx.resolveActorRefs(effect.actor, 'applyCondition')) {
     // Narrowed on the duration itself rather than through a boolean: only these two kinds
     // carry an anchor, and `instant`/`permanent` must pass `null` through to `src/time/`.
     const duration = effect.duration;
@@ -79,7 +79,7 @@ export function removeCondition(
 ): EffectApplication {
   const application = emptyApplication();
 
-  for (const actorId of ctx.resolveActorRefs(effect.actor)) {
+  for (const actorId of ctx.resolveActorRefs(effect.actor, 'removeCondition')) {
     const removed = ctx.store.removeEffects(
       (active) => active.actorId === actorId && active.condition === effect.condition,
     );

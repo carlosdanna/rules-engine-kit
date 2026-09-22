@@ -8,6 +8,7 @@
 export * from './conditions';
 export * from './dice';
 export * from './effects';
+export * from './evaluator';
 export * from './resolver';
 export * from './schema';
 export * from './stacking';

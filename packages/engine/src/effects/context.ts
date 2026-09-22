@@ -10,6 +10,7 @@
 import type { Roller } from '../dice';
 import type {
   ActorRef,
+  EffectType,
   EmittedEvent,
   Phase,
   RollId,
@@ -34,8 +35,11 @@ export type EffectContext = {
   readonly bus: StepBus;
   readonly roller: Roller;
   readonly timeline: TimelineIndex;
-  /** A list, not one id: `$target` on a three-target spell means all three. */
-  resolveActorRefs(ref: ActorRef): readonly string[];
+  /**
+   * A list, not one id: `$target` on a three-target spell means all three. The effect type
+   * is passed in so a failure can name the effect that could not resolve its ref.
+   */
+  resolveActorRefs(ref: ActorRef, effectType: EffectType): readonly string[];
   rollIdFor(target: RollTarget): RollId;
   derivedChannel(path: string, actorId: string): RollId;
   nextEffectId(): string;

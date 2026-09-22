@@ -5,7 +5,13 @@
  */
 
 import { withChannel } from '../../dice';
-import type { Effect, ModifierTargetRef, RollTarget, RollTargetRef } from '../../schema';
+import type {
+  Effect,
+  EffectType,
+  ModifierTargetRef,
+  RollTarget,
+  RollTargetRef,
+} from '../../schema';
 import { rollModifierValue } from '../../stacking';
 import type { EffectApplication, EffectContext } from '../context';
 import { emptyApplication } from '../context';
@@ -15,8 +21,14 @@ function isRollTargetRef(target: ModifierTargetRef): target is RollTargetRef {
   return 'kind' in target;
 }
 
-function resolvedTargets(ref: RollTargetRef, ctx: EffectContext): RollTarget[] {
-  return ctx.resolveActorRefs(ref.actor).map((actorId) => ({ kind: ref.kind, actorId }));
+function resolvedTargets(
+  ref: RollTargetRef,
+  ctx: EffectContext,
+  effectType: EffectType,
+): RollTarget[] {
+  return ctx
+    .resolveActorRefs(ref.actor, effectType)
+    .map((actorId) => ({ kind: ref.kind, actorId }));
 }
 
 export function addModifier(
@@ -26,7 +38,7 @@ export function addModifier(
   const stackKey = effect.stackKey === undefined ? {} : { stackKey: effect.stackKey };
 
   if (isRollTargetRef(effect.target)) {
-    for (const target of resolvedTargets(effect.target, ctx)) {
+    for (const target of resolvedTargets(effect.target, ctx, 'addModifier')) {
       const rollId = ctx.rollIdFor(target);
       // Dice roll now, when the effect is applied, not at stacking time: that keeps
       // `resolveStack` pure, and a modifier later dropped still shows the dice it rolled.
@@ -46,7 +58,7 @@ export function addModifier(
     return emptyApplication();
   }
 
-  for (const actorId of ctx.resolveActorRefs(effect.target.actor)) {
+  for (const actorId of ctx.resolveActorRefs(effect.target.actor, 'addModifier')) {
     const rolled = rollModifierValue({
       value: effect.value,
       roller: ctx.roller,
@@ -69,7 +81,7 @@ export function rollMode(
 ): EffectApplication {
   // No cancelling here: advantage and disadvantage cancel as a *set* over every grant, which
   // `resolveRollMode` does once the whole phase has contributed (ADR-0011 step 1).
-  for (const target of resolvedTargets(effect.target, ctx)) {
+  for (const target of resolvedTargets(effect.target, ctx, 'rollMode')) {
     ctx.bus.grantMode({ ruleKey: ctx.ruleKey, rollId: ctx.rollIdFor(target), mode: effect.mode });
   }
   return emptyApplication();
@@ -81,7 +93,7 @@ export function rollTransform(
 ): EffectApplication {
   // `uses` and `dieSelector` stay unexpanded: the selector resolves against
   // `intents.rollChoices` at roll time, when the pool exists to index into.
-  for (const target of resolvedTargets(effect.target, ctx)) {
+  for (const target of resolvedTargets(effect.target, ctx, 'rollTransform')) {
     ctx.bus.requestTransform({
       ruleKey: ctx.ruleKey,
       rollId: ctx.rollIdFor(target),
