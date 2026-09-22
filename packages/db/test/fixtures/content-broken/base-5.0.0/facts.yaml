@@ -1,0 +1,3 @@
+- path: action.type
+  type: string
+  description: the declared action kind

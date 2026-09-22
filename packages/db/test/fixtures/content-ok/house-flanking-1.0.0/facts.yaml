@@ -1,0 +1,3 @@
+- path: actor.flanking
+  type: boolean
+  description: whether the attacker is flanking its target

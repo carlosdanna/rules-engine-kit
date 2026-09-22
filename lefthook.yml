@@ -5,6 +5,18 @@ pre-commit:
       glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"
       run: pnpm exec biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
 
+    # Deliberately not {staged_files}: a duplicate rule key or an override of a key the
+    # base does not have is only visible across the whole tree, so the glob decides
+    # *whether* to run, not what to check. It fires on the loader too, so a change to the
+    # lint is checked against the content it lints. Warnings do not fail it (FR-17).
+    - name: content-lint
+      glob:
+        - "content/**"
+        - "packages/db/src/content/**"
+        - "packages/engine/src/content/**"
+        - "packages/engine/src/schema/{fixture,template,ruleset}.ts"
+      run: pnpm content:lint
+
 pre-push:
   piped: true
   jobs:

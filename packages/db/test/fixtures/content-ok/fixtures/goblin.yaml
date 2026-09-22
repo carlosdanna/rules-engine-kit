@@ -1,0 +1,10 @@
+slug: goblin
+kind: actor
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Goblin
+  ac: 15
+  hp: 7
+  proficiencyBonus: 2
+  abilities: { str: 8, dex: 14, con: 10, int: 10, wis: 8, cha: 8 }
+citation: { source: srd-5.2.1, section: "Monsters > Goblin" }

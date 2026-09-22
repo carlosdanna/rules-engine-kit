@@ -1,0 +1,3 @@
+- path: orphan.fact
+  type: boolean
+  description: unused

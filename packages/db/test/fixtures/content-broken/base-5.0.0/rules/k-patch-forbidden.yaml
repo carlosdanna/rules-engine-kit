@@ -1,0 +1,4 @@
+# `patch-forbidden-field`: changing `phase` requires `override` (ADR-0009, VR-2).
+key: a.one
+op: patch
+phase: upkeep

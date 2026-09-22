@@ -1,0 +1,7 @@
+# `override-missing`: nothing below this pack defines `h.nowhere`.
+key: h.nowhere
+op: override
+phase: modifiers
+priority: 14
+description: Overrides a rule that does not exist.
+citation: { source: srd-5.2.1, section: "Playing the Game > Attack Rolls" }

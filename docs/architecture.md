@@ -20,7 +20,9 @@ packages/engine/     pure TS engine
   src/diff/          profile, outcome and trace diffs
   src/templates/     render template + params + fixtures → situation
   test/golden/       one folder per case: situation + profile + seed → expected outcome
-packages/db/         Drizzle schema, migrations, seed, content loader
+packages/db/         Drizzle schema, migrations, seed
+  src/content/       reads content/ off a disk: YAML → the documents the lint and the
+                     seeds take. `pnpm content:lint` is its bin (FR-17, NFR-6)
 content/             rule packs, fixtures, templates (YAML)
 scenarios/           ready-made situations
 docs/                requirements, architecture, authoring, ADRs
@@ -33,6 +35,13 @@ publishes and what everything else imports, so it has no I/O, no clock and no gl
 `test/purity.test.ts` fails the build if that stops being true. `cli.ts` and `test/` sit outside it
 and read files. `src/content/` decides what an authored shorthand *means* and is pure; `cli.ts` only
 supplies the bytes, which is why `packages/db`'s seeder can reuse the same normaliser over rows.
+
+That split is where the content loader lives now. The checks `pnpm content:lint` runs are
+`packages/engine/src/content/lintContent`, which takes documents someone else has parsed;
+reading a tree off a disk and running them over it is `packages/db/src/content`. `cli.ts`
+keeps its own `loadPack`, because the golden harness uses it and `packages/engine` may not
+depend on `packages/db` (ADR-0020) — so there are two walkers over one shared core, and
+`packages/db/test/content/parity.test.ts` holds them to the same answer.
 
 Decisions behind this shape: ADR-0005 (timeline), ADR-0006 (derived stats), ADR-0012 (time and
 durations, superseding ADR-0007), ADR-0011 (effect channels and roll order, superseding

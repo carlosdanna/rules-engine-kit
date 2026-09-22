@@ -1,0 +1,6 @@
+# `duplicate-rule-key`: `a.one` is already added by a-add.yaml.
+key: a.one
+phase: modifiers
+priority: 3
+description: A second add of a key that already exists.
+citation: { source: srd-5.2.1, section: "Playing the Game > Attack Rolls" }

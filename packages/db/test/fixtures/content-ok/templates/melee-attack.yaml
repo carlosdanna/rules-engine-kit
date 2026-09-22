@@ -1,0 +1,16 @@
+id: melee-attack
+name: Melee attack
+tags: [combat, attack]
+schemaVersion: 1
+suggestedProfiles: [srd-5.2.1]
+params:
+  attacker: { type: fixture, kind: actor, default: goblin }
+  target: { type: fixture, kind: actor, default: goblin }
+  weapon: { type: fixture, kind: item, default: longsword }
+  targetConditions: { type: conditionList, default: [] }
+  rerollDie: { type: rollChoice, roll: attack, choice: rerollDieIndex, default: 0 }
+skeleton:
+  action: { type: attack, mode: melee, weapon: "{{weapon}}" }
+  actors: ["{{attacker}}", { ref: "{{target}}", conditions: "{{targetConditions}}" }]
+  intents:
+    rollChoices: { "{{$rollId(attack)}}": { rerollDieIndex: "{{rerollDie}}" } }

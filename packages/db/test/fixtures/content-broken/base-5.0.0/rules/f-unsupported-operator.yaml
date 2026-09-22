@@ -1,0 +1,7 @@
+# `unsupported-operator`: `===` is outside the closed subset (ADR-0013).
+key: f.operator
+phase: modifiers
+priority: 12
+description: Uses an operator the evaluator does not have.
+condition: { "===": [{ "var": "action.type" }, "attack"] }
+citation: { source: srd-5.2.1, section: "Playing the Game > Attack Rolls" }

@@ -1,0 +1,11 @@
+id: dnd5e-srd
+version: 5.2.1
+name: SRD 5.2.1 (loader fixture)
+kind: base
+extends: null
+license: CC-BY-4.0
+sourceUrl: https://www.dndbeyond.com/srd
+attribution: >-
+  This work includes material from the System Reference Document 5.2.1 ("SRD 5.2.1")
+  by Wizards of the Coast LLC, available under the Creative Commons Attribution 4.0
+  International License.

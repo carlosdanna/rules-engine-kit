@@ -1,0 +1,8 @@
+id: dupfacts
+version: 1.0.0
+name: A pack that registers one path twice
+kind: base
+extends: null
+license: CC-BY-4.0
+sourceUrl: https://example.invalid/not-a-real-source
+attribution: A loader fixture, not content.

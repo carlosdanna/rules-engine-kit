@@ -6,7 +6,15 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { ContentNormalizeError, normalizePack } from '../../src/content';
+import {
+  ContentNormalizeError,
+  normalizeFactsFile,
+  normalizeFixture,
+  normalizePack,
+  normalizePackManifest,
+  normalizeRuleFile,
+  normalizeTemplate,
+} from '../../src/content';
 
 const PACK = {
   id: 'dnd5e-srd',
@@ -253,5 +261,130 @@ describe('normalizePack — failures name a place in the document', () => {
 
   it('still validates against the schema after normalising', () => {
     expect(() => pack([{ ...DOC_RULE, phase: 'initiative' }])).toThrow();
+  });
+});
+
+/**
+ * The per-document entry points exist so `content:lint` can name the *file* a mistake is
+ * in. `normalizePack` assembles three documents and then parses, so its Zod errors point
+ * at `rules[3]` — an index into an object nobody can open.
+ */
+describe('per-document entry points (content:lint)', () => {
+  it('parses pack.yaml on its own', () => {
+    expect(normalizePackManifest(PACK)).toEqual(PACK);
+  });
+
+  it('defaults an omitted extends to null on a base', () => {
+    const { extends: _extends, ...withoutExtends } = PACK;
+    expect(normalizePackManifest(withoutExtends)).toMatchObject({ extends: null });
+  });
+
+  it('still refuses a layer that names no base (VR-3)', () => {
+    expect(() => normalizePackManifest({ ...PACK, kind: 'layer' })).toThrow();
+  });
+
+  it('parses facts.yaml on its own, applying the derived default', () => {
+    expect(normalizeFactsFile(FACTS)).toEqual([
+      { ...FACTS[0], derived: false },
+      { ...FACTS[1], derived: false },
+    ]);
+  });
+
+  it('parses one rule file, with the same defaults normalizePack applies', () => {
+    const { op, ...withoutOp } = DOC_RULE;
+    expect(normalizeRuleFile(withoutOp, 'rules/surprise.yaml')).toMatchObject({
+      op: 'add',
+      label: 'combat.surprise',
+      tags: [],
+      priority: 100,
+    });
+  });
+
+  it('names the file rather than an index when a rule file is wrong', () => {
+    expect(() => normalizeRuleFile({ ...DOC_RULE, key: undefined }, 'rules/surprise.yaml')).toThrow(
+      /^rules\/surprise\.yaml\.key: every rule needs a key/,
+    );
+  });
+
+  it('normalises a rule file and normalizePack to the same entry', () => {
+    expect(normalizeRuleFile(DOC_RULE, 'rules/surprise.yaml')).toEqual(pack([DOC_RULE]).rules[0]);
+  });
+});
+
+describe('normalizeFixture — the documented fixtures (content-authoring.md)', () => {
+  const GOBLIN = {
+    slug: 'goblin',
+    kind: 'actor',
+    rulesetScope: ['srd-5.1', 'srd-5.2.1'],
+    data: {
+      name: 'Goblin',
+      ac: 15,
+      hp: 7,
+      proficiencyBonus: 2,
+      abilities: { str: 8, dex: 14, con: 10, int: 10, wis: 8, cha: 8 },
+    },
+    citation: { source: 'srd-5.2.1', section: 'Monsters > Goblin' },
+  };
+
+  const LONGSWORD = {
+    slug: 'longsword',
+    kind: 'item',
+    rulesetScope: ['srd-5.1', 'srd-5.2.1'],
+    data: {
+      name: 'Longsword',
+      damage: { dice: '1d8', type: 'slashing' },
+      properties: ['versatile'],
+      mastery: 'sap',
+    },
+    citation: { source: 'srd-5.2.1', section: 'Equipment > Weapons' },
+  };
+
+  it('accepts the actor fixture as written', () => {
+    expect(normalizeFixture(GOBLIN, 'fixtures/goblin.yaml')).toEqual(GOBLIN);
+  });
+
+  it('turns an item fixture`s damage notation into a DiceExpr', () => {
+    expect(normalizeFixture(LONGSWORD, 'fixtures/longsword.yaml')).toMatchObject({
+      data: { damage: { dice: { count: 1, sides: 8 }, type: 'slashing' } },
+    });
+  });
+
+  it('defaults an item to no damage, no properties and no mastery', () => {
+    const shield = { ...LONGSWORD, slug: 'shield', data: { name: 'Shield' } };
+    expect(normalizeFixture(shield, 'fixtures/shield.yaml')).toMatchObject({
+      data: { name: 'Shield', damage: null, properties: [], mastery: null },
+    });
+  });
+
+  it('refuses damage notation carrying a flat bonus, for the reason a rule`s does (FR-11)', () => {
+    const bad = { ...LONGSWORD, data: { ...LONGSWORD.data, damage: { dice: '1d8+2', type: 'x' } } };
+    expect(() => normalizeFixture(bad, 'fixtures/longsword.yaml')).toThrow(ContentNormalizeError);
+  });
+
+  it('names the file when a fixture is not a mapping', () => {
+    expect(() => normalizeFixture('oops', 'fixtures/goblin.yaml')).toThrow(
+      /^fixtures\/goblin\.yaml: expected a mapping/,
+    );
+  });
+});
+
+describe('normalizeTemplate', () => {
+  const TEMPLATE = {
+    id: 'melee-attack',
+    name: 'Melee attack',
+    schemaVersion: 1,
+    suggestedProfiles: ['srd-5.2.1'],
+    params: { useInspiration: { type: 'boolean', default: false } },
+    skeleton: { action: { type: 'attack', mode: 'melee', weapon: '{{weapon}}' } },
+  };
+
+  it('defaults tags to empty, the one field a template rarely varies', () => {
+    expect(normalizeTemplate(TEMPLATE, 'templates/melee-attack.yaml')).toMatchObject({ tags: [] });
+  });
+
+  it('names the file when a template is not a mapping', () => {
+    expect(() => normalizeTemplate([], 'templates/melee-attack.yaml')).toThrow(
+      /^templates\/melee-attack\.yaml: expected a mapping/,
+    );
   });
 });

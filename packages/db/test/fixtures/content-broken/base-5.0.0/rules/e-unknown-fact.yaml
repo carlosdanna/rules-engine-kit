@@ -1,0 +1,7 @@
+# `unknown-fact`: `actor.surprised` is not in facts.yaml.
+key: e.unknown
+phase: modifiers
+priority: 11
+description: Reads a path the pack never registered.
+condition: { "==": [{ "var": "actor.surprised" }, true] }
+citation: { source: srd-5.2.1, section: "Rules Glossary > Surprise" }

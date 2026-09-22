@@ -17,7 +17,15 @@
  */
 
 import { parseDiceNotation } from '../dice';
-import { RulesetVersion } from '../schema';
+import type { FactDefinition, Fixture, PackManifest, RuleEntry, Template } from '../schema';
+import {
+  FactDefinition as FactDefinitionSchema,
+  Fixture as FixtureSchema,
+  PackManifest as PackManifestSchema,
+  RuleEntry as RuleEntrySchema,
+  RulesetVersion,
+  Template as TemplateSchema,
+} from '../schema';
 import { ContentNormalizeError } from './errors';
 
 type JsonObject = Record<string, unknown>;
@@ -187,6 +195,55 @@ export type AuthoredPack = {
   /** One parsed document per `rules/*.yaml`, in a deterministic order. */
   rules: readonly unknown[];
 };
+
+/**
+ * One authored document at a time.
+ *
+ * `normalizePack` below assembles three files and then parses, which is right for the
+ * loader but wrong for `content:lint` (FR-17): a Zod error then points at `rules[3]`, an
+ * index into an object nobody can open. These take the `path` the document came from —
+ * a filename, for the loader — and put it in front of every message, so a report names a
+ * place an author can go and edit.
+ */
+export function normalizePackManifest(doc: unknown, path = 'pack'): PackManifest {
+  return PackManifestSchema.parse({ extends: null, ...requireObject(doc, path) });
+}
+
+export function normalizeFactsFile(doc: unknown, path = 'facts'): FactDefinition[] {
+  const list = isObject(doc) && 'facts' in doc ? doc.facts : doc;
+  return requireArray(list, path).map((fact, index) =>
+    FactDefinitionSchema.parse(normalizeFact(fact, `${path}[${index}]`)),
+  );
+}
+
+export function normalizeRuleFile(doc: unknown, path: string): RuleEntry {
+  return RuleEntrySchema.parse(normalizeRuleEntry(doc, path));
+}
+
+/**
+ * A fixture's `damage.dice` is authored as notation for the same reason a modifier's value
+ * is, and refused for the same reason if it carries a flat bonus (FR-11). The three
+ * defaults are the fields most items simply do not have.
+ */
+export function normalizeFixture(doc: unknown, path: string): Fixture {
+  const fixture = requireObject(doc, path);
+  if (fixture.kind !== 'item') return FixtureSchema.parse(fixture);
+
+  const data = requireObject(fixture.data ?? {}, `${path}.data`);
+  const damage = isObject(data.damage)
+    ? { ...data.damage, dice: normalizeDiceExpr(data.damage.dice, `${path}.data.damage.dice`) }
+    : (data.damage ?? null);
+
+  return FixtureSchema.parse({
+    ...fixture,
+    data: { properties: [], mastery: null, ...data, damage },
+  });
+}
+
+/** `tags` is the only field a template has and rarely varies. */
+export function normalizeTemplate(doc: unknown, path: string): Template {
+  return TemplateSchema.parse({ tags: [], ...requireObject(doc, path) });
+}
 
 /**
  * Assemble the three authored documents into one `RulesetVersion` and validate it.

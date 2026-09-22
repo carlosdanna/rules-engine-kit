@@ -1,0 +1,3 @@
+# `yaml-parse`: this is not a YAML document.
+key: [unclosed
+  : : :

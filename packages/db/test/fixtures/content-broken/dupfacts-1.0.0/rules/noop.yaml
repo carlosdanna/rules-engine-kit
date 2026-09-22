@@ -1,0 +1,5 @@
+key: dupfacts.noop
+phase: upkeep
+priority: 0
+description: Never reached, because the fact registry fails first.
+citation: { source: srd-5.2.1, section: "Playing the Game" }

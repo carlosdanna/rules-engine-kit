@@ -12,6 +12,7 @@
     "dev": "pnpm --filter @rules-engine-kit/web dev",
     "engine": "tsx packages/engine/cli.ts",
     "lint": "biome check .",
+    "content:lint": "tsx packages/db/src/content/bin/content-lint.ts",
     "format": "biome format --write .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",

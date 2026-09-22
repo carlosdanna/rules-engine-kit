@@ -1,0 +1,8 @@
+id: unreadable
+version: 1.0.0
+name: A pack with a file that is not YAML
+kind: base
+extends: null
+license: CC-BY-4.0
+sourceUrl: https://example.invalid/not-a-real-source
+attribution: A loader fixture, not content.

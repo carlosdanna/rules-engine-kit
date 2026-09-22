@@ -1,0 +1,10 @@
+id: house-flanking
+version: 1.0.0
+name: House rule — flanking
+kind: layer
+extends: { id: dnd5e-srd, range: "^5.2.0" }
+license: CC-BY-4.0
+sourceUrl: https://www.dndbeyond.com/srd
+attribution: >-
+  A house rule written for this repository. It reads facts declared by the SRD 5.2.1 pack
+  it extends, which carries its own attribution.

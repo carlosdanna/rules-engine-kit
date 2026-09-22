@@ -10,11 +10,13 @@
 
 export * from './condition';
 export * from './effect';
+export * from './fixture';
 export * from './json';
 export * from './outcome';
 export * from './primitives';
 export * from './rule';
 export * from './ruleset';
 export * from './situation';
+export * from './template';
 export * from './time';
 export * from './trace';

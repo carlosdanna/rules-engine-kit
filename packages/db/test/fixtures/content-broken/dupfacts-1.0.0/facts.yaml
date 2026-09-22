@@ -1,0 +1,7 @@
+# `duplicate-fact`: the second declaration would shadow the first at evaluation time.
+- path: action.type
+  type: string
+  description: the declared action kind
+- path: action.type
+  type: number
+  description: the same path, declared again with a different meaning

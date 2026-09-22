@@ -1,0 +1,4 @@
+# `disable-missing`.
+key: j.nowhere
+op: disable
+reason: a rule that was never here

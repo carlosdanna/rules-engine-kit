@@ -1,0 +1,5 @@
+# `missing-citation`.
+key: d.uncited
+phase: modifiers
+priority: 10
+description: A rule that does not say where it came from.

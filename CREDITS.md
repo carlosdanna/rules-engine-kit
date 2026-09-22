@@ -37,6 +37,7 @@ Runtime:
 | [cn](https://github.com/shadcn-ui/cn) | MIT |
 | [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) | MIT |
 | [Zod](https://zod.dev) | MIT |
+| [yaml](https://eemeli.org/yaml) | ISC |
 
 Tooling:
 
@@ -49,4 +50,3 @@ Tooling:
 | [lefthook](https://lefthook.dev) | MIT |
 | [pnpm](https://pnpm.io) | MIT |
 | [tsx](https://tsx.is) | MIT |
-| [yaml](https://eemeli.org/yaml) | ISC |

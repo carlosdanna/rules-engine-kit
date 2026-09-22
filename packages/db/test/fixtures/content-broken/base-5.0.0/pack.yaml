@@ -1,0 +1,8 @@
+# No `license` and no `attribution`: NFR-6 says seeding fails without them, and the lint
+# names both rather than leaving an author to read a Zod error.
+id: broken-base
+version: 5.0.0
+name: A pack with things wrong with it
+kind: base
+extends: null
+sourceUrl: https://example.invalid/not-a-real-source

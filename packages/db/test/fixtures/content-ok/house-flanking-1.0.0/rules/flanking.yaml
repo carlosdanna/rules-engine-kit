@@ -1,0 +1,20 @@
+key: house.flanking
+phase: modifiers
+priority: -8
+label: "Flanking grants advantage"
+description: A creature flanking its target has advantage on melee attack rolls against it.
+tags: [house, attack]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "actor.flanking" }, true] }
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: advantage
+citation:
+  source: srd-5.2.1
+  section: "Rules Glossary > Advantage"
+interpretation: >-
+  Not an SRD rule. Flanking is a house rule this repository uses to exercise a third layer;
+  the citation names the advantage mechanic it reuses, not a section that grants it.

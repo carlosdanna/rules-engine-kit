@@ -1,0 +1,3 @@
+- path: unreadable.fact
+  type: boolean
+  description: unused

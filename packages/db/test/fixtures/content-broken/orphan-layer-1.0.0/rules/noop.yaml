@@ -1,0 +1,5 @@
+key: orphan.noop
+phase: upkeep
+priority: 0
+description: Never resolved, because the layer has no base to sit on.
+citation: { source: srd-5.2.1, section: "Playing the Game" }

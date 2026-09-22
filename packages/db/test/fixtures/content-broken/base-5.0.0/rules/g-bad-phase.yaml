@@ -1,0 +1,6 @@
+# `schema`: there is no `initiative` phase (ADR-0012).
+key: g.phase
+phase: initiative
+priority: 13
+description: Names a phase that does not exist.
+citation: { source: srd-5.2.1, section: "Playing the Game > Initiative" }

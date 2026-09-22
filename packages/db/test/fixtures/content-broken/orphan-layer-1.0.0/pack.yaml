@@ -1,0 +1,9 @@
+# `unresolvable-base`: no pack in this tree is `nonesuch`.
+id: orphan-layer
+version: 1.0.0
+name: A layer whose base is not here
+kind: layer
+extends: { id: nonesuch, range: "^1.0.0" }
+license: CC-BY-4.0
+sourceUrl: https://example.invalid/not-a-real-source
+attribution: A loader fixture, not content.

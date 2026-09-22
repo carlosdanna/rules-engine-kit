@@ -31,30 +31,45 @@ export const FactDefinition = z.strictObject({
 export type FactDefinition = z.infer<typeof FactDefinition>;
 
 /**
- * An immutable, semver-tagged collection of rules (VR-1). A base stands alone; a layer
- * adds, overrides, patches or disables rules of the base it declares.
+ * Who a pack is, without what it contains — exactly what `pack.yaml` carries.
+ *
+ * Split out from `RulesetVersion` so `content:lint` can parse one authored document at a
+ * time and name the file it came from. A `RulesetVersion` assembled from three files
+ * reports a bad `license` at `license`, which is no help when a tree holds six packs.
  *
  * `license` and `attribution` are required and non-empty: seeding fails without them
  * (NFR-6).
  */
-export const RulesetVersion = z
-  .strictObject({
-    /** Ruleset slug, stable across versions, e.g. `dnd5e-srd`. */
-    id: z.string().min(1),
-    version: Semver,
-    name: z.string().min(1),
-    kind: RulesetKind,
-    extends: BaseRef.nullable(),
-    license: z.string().min(1),
-    sourceUrl: z.url(),
-    attribution: z.string().min(1),
-    facts: z.array(FactDefinition),
-    rules: z.array(RuleEntry),
-  })
-  .refine(
-    (pack) => (pack.kind === 'layer') === (pack.extends !== null),
-    'a layer must declare the base it extends, and a base must not (VR-3)',
-  );
+const RulesetIdentity = z.strictObject({
+  /** Ruleset slug, stable across versions, e.g. `dnd5e-srd`. */
+  id: z.string().min(1),
+  version: Semver,
+  name: z.string().min(1),
+  kind: RulesetKind,
+  extends: BaseRef.nullable(),
+  license: z.string().min(1),
+  sourceUrl: z.url(),
+  attribution: z.string().min(1),
+});
+
+const LAYER_DECLARES_ITS_BASE =
+  'a layer must declare the base it extends, and a base must not (VR-3)';
+
+const isCoherentLayer = (pack: { kind: RulesetKind; extends: BaseRef | null }): boolean =>
+  (pack.kind === 'layer') === (pack.extends !== null);
+
+/** `pack.yaml` on its own, before `facts.yaml` and `rules/*.yaml` are joined to it. */
+export const PackManifest = RulesetIdentity.refine(isCoherentLayer, LAYER_DECLARES_ITS_BASE);
+export type PackManifest = z.infer<typeof PackManifest>;
+
+/**
+ * An immutable, semver-tagged collection of rules (VR-1). A base stands alone; a layer
+ * adds, overrides, patches or disables rules of the base it declares.
+ */
+export const RulesetVersion = RulesetIdentity.extend({
+  facts: z.array(FactDefinition),
+  rules: z.array(RuleEntry),
+}).refine(isCoherentLayer, LAYER_DECLARES_ITS_BASE);
 export type RulesetVersion = z.infer<typeof RulesetVersion>;
 
 export const ProfileSource = z.strictObject({

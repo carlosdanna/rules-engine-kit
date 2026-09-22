@@ -1,0 +1,6 @@
+# `priority-tie` (a warning): shares phase `modifiers` and priority 3 with the add above.
+key: c.tie
+phase: modifiers
+priority: 3
+description: Shares a phase and a priority with another enabled rule, so their order is a fallback.
+citation: { source: srd-5.2.1, section: "Playing the Game > Attack Rolls" }

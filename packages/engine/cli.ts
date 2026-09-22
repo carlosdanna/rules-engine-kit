@@ -4,8 +4,9 @@
  * This file is the engine's only concession to the outside world. `src/` may not touch
  * `fs`, a clock or global randomness (ADR-0002), and a test in `test/purity.test.ts` holds
  * it to that; the boundary is `src/`, not the package, so the loader lives here (ADR-0020).
- * `src/` therefore still runs in a browser, because `cli.ts` is outside the package
- * `exports` and nothing under `src/` imports it.
+ * `src/` therefore still runs in a browser, because nothing under `src/` imports `cli.ts`.
+ * It is published as the `./cli` subpath so `packages/db` can load it in one test and hold
+ * its own walker to the same answer; that is a second entry point, not a second `src/`.
  *
  * `loadPacks` is exported rather than kept private because the golden harness in
  * `test/golden/` loads the same packs the same way. Two loaders would be two answers to
