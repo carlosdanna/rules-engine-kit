@@ -1,0 +1,20 @@
+key: condition.poisoned.attack
+op: add
+phase: modifiers
+priority: 308
+label: "Poisoned: attack rolls"
+description: "A poisoned creature has disadvantage on attack rolls."
+tags: [condition, poisoned]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["poisoned", { "var": "actor.conditions" }] }
+
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: disadvantage
+citation:
+  source: srd-5.1
+  section: "Appendix PH-A: Conditions > Poisoned"
+interpretation: null

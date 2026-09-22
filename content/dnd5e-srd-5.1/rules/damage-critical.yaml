@@ -1,0 +1,31 @@
+key: damage.critical
+op: add
+phase: damage
+priority: 30
+label: "Critical hit: the damage dice again"
+description: "A critical hit rolls the attack’s damage dice a second time."
+tags: [damage, critical]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "!=": [{ "var": "action.weapon" }, null] }
+    - { "==": [{ "var": "step.attack.natural" }, 20] }
+
+effects:
+  - type: addModifier
+    target: { kind: damage, actor: $actor }
+    value: { fact: action.weapon.damage.dice }
+    # Its own type, so the second roll is not deduped against the first: the SRD rolls the
+    # same dice twice and adds both.
+    modifierType: critical
+    policy: sum
+citation:
+  source: srd-5.1
+  section: "Combat > Damage and Healing > Critical Hits"
+interpretation: >-
+  Both SRDs state a critical hit as rolling the attack’s damage dice twice and adding them
+  together, with modifiers added once as normal — so this rule adds the weapon’s dice a
+  second time and nothing else. The weapon’s dice are the only damage dice this subset has;
+  a feature that added its own would need its own rule. The natural 20 comes from
+  `step.attack.natural`, the kept die before modifiers (ADR-0021).

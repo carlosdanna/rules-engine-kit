@@ -1,0 +1,24 @@
+key: condition.prone.attacked-at-range
+op: add
+phase: modifiers
+priority: 301
+label: "Prone: attacked from beyond 5 feet"
+description: "An attack roll against a prone creature has disadvantage from beyond 5 feet."
+tags: [condition, prone]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["prone", { "var": "target.conditions" }] }
+    - { ">": [{ "var": "action.rangeFt" }, 5] }
+
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: disadvantage
+citation:
+  source: srd-5.1
+  section: "Appendix PH-A: Conditions > Prone"
+interpretation: >-
+  The "otherwise" half of the same sentence, written as its own rule because it has its own
+  condition: prone helps an attacker in reach and hinders one at range, and either can fire
+  without the other.

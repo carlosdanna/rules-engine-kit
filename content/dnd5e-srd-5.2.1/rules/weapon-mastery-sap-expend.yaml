@@ -1,0 +1,23 @@
+key: weapon.mastery.sap.expend
+op: add
+phase: apply
+priority: 30
+label: "Mastery — Sap: spent on that attack"
+description: "The sapped mark is spent by the attack roll it hindered."
+tags: [weapon, mastery, sap]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["sapped", { "var": "actor.conditions" }] }
+effects:
+  - type: removeCondition
+    actor: $actor
+    condition: sapped
+citation:
+  source: srd-5.2.1
+  section: "Equipment > Mastery Properties > Sap"
+interpretation: >-
+  Runs in `apply`, after the `modifiers` phase has already read the mark for this step, so
+  the disadvantage lands on exactly one attack roll — the next one — and the mark is gone
+  afterwards even though its duration would have run to the start of the sapping creature’s
+  next turn.

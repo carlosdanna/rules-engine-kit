@@ -1,0 +1,42 @@
+key: inspiration.spend
+op: add
+phase: modifiers
+priority: 500
+label: "Spend Heroic Inspiration: reroll"
+description: "Expending Heroic Inspiration rerolls the die, and the new roll is the one that counts."
+tags: [inspiration]
+condition:
+  all:
+    - { "==": [{ "var": "intents.useInspiration" }, true] }
+    - any:
+        - { "==": [{ "var": "action.type" }, "attack"] }
+        - { "==": [{ "var": "action.type" }, "check"] }
+        - { "==": [{ "var": "action.type" }, "save"] }
+effects:
+  - type: rollTransform
+    target: { kind: attack, actor: $actor }
+    transform: { kind: reroll, keep: new }
+    uses: 1
+    # Which die of an advantage pair is rerolled is the player's, declared up front.
+    dieSelector: intent
+  - type: rollTransform
+    target: { kind: check, actor: $actor }
+    transform: { kind: reroll, keep: new }
+    uses: 1
+    dieSelector: intent
+  - type: rollTransform
+    target: { kind: save, actor: $actor }
+    transform: { kind: reroll, keep: new }
+    uses: 1
+    dieSelector: intent
+citation:
+  source: srd-5.2.1
+  section: "Rules Glossary > Heroic Inspiration"
+interpretation: >-
+  Both SRDs give this to a player character, and a fixture is a stat block rather than a
+  character sheet (FR-8), so the pack spends it for whichever creature the situation
+  declares the intent for. Whether inspiration is held at all is `intents.useInspiration`,
+  declared up front because evaluation never pauses (ADR-0003). SRD 5.2.1 says the reroll
+  may be of "any die"; this pack applies it to the step's own d20, which is the only die the
+  core subset rolls for a D20 Test. "You must use the new roll" is `keep: new`, which keeps
+  the reroll even when it is worse (ADR-0011).

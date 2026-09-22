@@ -1,0 +1,29 @@
+key: damage.weapon-dice
+op: add
+phase: damage
+priority: 10
+label: "Damage: the weapon’s dice"
+description: "A weapon attack that hits deals the weapon’s damage dice."
+tags: [damage, weapon]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "!=": [{ "var": "action.weapon" }, null] }
+
+effects:
+  - type: addModifier
+    target: { kind: damage, actor: $actor }
+    # The dice the situation inlined for this weapon, read rather than restated, so one
+    # rule is right for every weapon (ADR-0021).
+    value: { fact: action.weapon.damage.dice }
+    modifierType: weapon
+    policy: sum
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > Damage and Healing > Damage Rolls"
+interpretation: >-
+  The `damage` phase runs after `compare`, so this rule reads whether the attack hit rather
+  than rolling dice that a miss would discard (ADR-0021). An attack with no weapon deals
+  nothing here: neither pack encodes unarmed strikes, which the core subset in
+  `docs/requirements.md` does not ask for.

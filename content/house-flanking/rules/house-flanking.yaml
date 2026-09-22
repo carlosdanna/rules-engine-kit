@@ -1,0 +1,28 @@
+key: house.flanking
+op: add
+phase: modifiers
+# Between the base's condition rules (300–309) and its Bless modifiers (400), so a reader
+# of the resolved list sees flanking arrive where the other roll-mode grants are.
+priority: 310
+label: "Flanking: advantage on a melee attack"
+description: A melee attack roll against a flanked creature has advantage.
+tags: [house-rule, flanking]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "action.mode" }, "melee"] }
+    - { "in": ["flanked", { "var": "target.conditions" }] }
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: advantage
+citation:
+  source: house-flanking
+  section: "House rules > Flanking"
+interpretation: >-
+  Written for this repository. It is not an SRD rule and is not the optional flanking rule
+  printed in any non-SRD book; the wording, the condition and the effect are ours. Whether
+  two attackers have a creature between them is geometry, and a situation has no grid
+  (ADR-0003), so a flanked creature simply carries the `flanked` condition. Advantage from
+  flanking and advantage from another source do not add up: the roll-mode channel resolves
+  every grant as a set, so two advantages are still one advantage (ADR-0011).

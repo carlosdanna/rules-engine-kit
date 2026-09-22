@@ -1,0 +1,35 @@
+key: d20.ability-modifier.str
+op: add
+phase: modifiers
+priority: 210
+label: "Ability check and saving throw: Strength modifier"
+description: "A Strength check or Strength saving throw adds the Strength modifier."
+tags: [check, save, ability]
+condition:
+  all:
+    # Guards `action.ability`, which only a check or a save declares.
+    - any:
+        - { "==": [{ "var": "action.type" }, "check"] }
+        - { "==": [{ "var": "action.type" }, "save"] }
+    - { "==": [{ "var": "action.ability" }, "str"] }
+effects:
+  # One rule, both roll kinds: the step declares which one it is, and the modifier on the
+  # channel the step did not roll is never consumed.
+  - type: addModifier
+    target: { kind: check, actor: $actor }
+    value: { fact: actor.abilityMod.str }
+    modifierType: ability
+    policy: highest
+  - type: addModifier
+    target: { kind: save, actor: $actor }
+    value: { fact: actor.abilityMod.str }
+    modifierType: ability
+    policy: highest
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > D20 Tests > Ability Checks"
+interpretation: >-
+  One rule covers both rolls because both SRDs state the same arithmetic for them — see also
+  "Using Ability Scores > Saving Throws" in SRD 5.1 and "Playing the Game > D20 Tests >
+  Saving Throws" in SRD 5.2.1. Proficiency is not added: a fixture carries no skill or save
+  proficiencies (FR-8), so this pack has nothing to read.

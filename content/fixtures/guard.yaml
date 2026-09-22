@@ -1,0 +1,13 @@
+# Printed values only (FR-8): no attack bonus and no effective AC, because rules derive
+# those and report the terms they came from. Both editions print the same numbers for this
+# stat block, so one fixture serves both profiles.
+slug: guard
+kind: actor
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Guard
+  ac: 16
+  hp: 11
+  proficiencyBonus: 2
+  abilities: { str: 13, dex: 12, con: 12, int: 10, wis: 11, cha: 10 }
+citation: { source: srd-5.2.1, section: "Monsters > Guard" }

@@ -1,0 +1,22 @@
+key: spell.bless.save
+op: add
+phase: modifiers
+priority: 401
+label: "Bless: saving throws"
+description: "A blessed creature adds 1d4 to its saving throws."
+tags: [spell, bless, save]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "save"] }
+    - { "in": ["blessed", { "var": "actor.conditions" }] }
+effects:
+  - type: addModifier
+    target: { kind: save, actor: $actor }
+    value: { dice: 1d4 }
+    modifierType: bless
+    stackKey: bless
+    policy: unique
+citation:
+  source: srd-5.1
+  section: "Spell Descriptions > Bless"
+interpretation: null

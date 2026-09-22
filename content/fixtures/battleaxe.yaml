@@ -1,0 +1,11 @@
+# Carries a mastery this demo does not encode, which is the honest state of the core
+# subset: `docs/requirements.md` asks for one weapon mastery, and SRD 5.2.1's Sap is it.
+slug: battleaxe
+kind: item
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Battleaxe
+  damage: { dice: 1d8, type: slashing }
+  properties: [versatile]
+  mastery: topple
+citation: { source: srd-5.2.1, section: "Equipment > Weapons > Martial Melee Weapons" }

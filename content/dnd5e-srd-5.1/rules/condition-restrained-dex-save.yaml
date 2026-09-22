@@ -1,0 +1,21 @@
+key: condition.restrained.dex-save
+op: add
+phase: modifiers
+priority: 305
+label: "Restrained: Dexterity saving throws"
+description: "A restrained creature has disadvantage on Dexterity saving throws."
+tags: [condition, restrained, save]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "save"] }
+    - { "==": [{ "var": "action.ability" }, "dex"] }
+    - { "in": ["restrained", { "var": "actor.conditions" }] }
+
+effects:
+  - type: rollMode
+    target: { kind: save, actor: $actor }
+    mode: disadvantage
+citation:
+  source: srd-5.1
+  section: "Appendix PH-A: Conditions > Restrained"
+interpretation: null

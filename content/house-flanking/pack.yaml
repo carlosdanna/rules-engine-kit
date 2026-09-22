@@ -1,0 +1,17 @@
+# A house rule, and the only pack here that is not the SRD.
+#
+# Flanking is this repository's own invention: a simple rule, written to exercise the layer
+# machinery (VR-2, VR-4) on top of either SRD base. It deliberately does not reproduce the
+# optional flanking rule from any non-SRD book, and nothing in it is derived from one.
+id: house-flanking
+version: 1.0.0
+name: House rule — Flanking
+kind: layer
+# Spans both SRD bases, which is the point of the acceptance scenario: the same house rule
+# stacks on 5.1 and on 5.2.1 (ADR-0018).
+extends: { id: dnd5e-srd, range: ">=5.1.0" }
+license: MIT
+sourceUrl: https://github.com/carlos-danna/rules-engine-kit
+attribution: >-
+  Original content of this repository, written for the demo and licensed with its code under
+  the MIT License. It is not SRD material and is not derived from any published D&D book.

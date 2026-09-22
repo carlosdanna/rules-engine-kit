@@ -1,0 +1,27 @@
+key: spell.bless.attack
+op: add
+phase: modifiers
+priority: 400
+label: "Bless: attack rolls"
+description: "A blessed creature adds 1d4 to its attack rolls."
+tags: [spell, bless, attack]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["blessed", { "var": "actor.conditions" }] }
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: { dice: 1d4 }
+    modifierType: bless
+    # Two castings of bless on one creature do not stack: it is blessed or it is not.
+    stackKey: bless
+    policy: unique
+citation:
+  source: srd-5.2.1
+  section: "Spells > Spell Descriptions > Bless"
+interpretation: >-
+  The die is rolled during the `modifiers` phase and added through the numeric channel, so
+  its stacking policy can apply and the trace can show the d4 behind the bonus (ADR-0011).
+  Which creatures are blessed is the `blessed` condition `spell.bless.cast` applied, not a
+  list the spell keeps.

@@ -1,0 +1,28 @@
+key: attack.ability-modifier.finesse
+op: add
+phase: modifiers
+priority: 202
+label: "Attack roll: finesse"
+description: "A finesse weapon may use Dexterity in place of Strength for its attack roll."
+tags: [attack, ability, weapon]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "action.mode" }, "melee"] }
+    # Guards the two weapon reads below: an unarmed attack has no weapon to ask about.
+    - { "!=": [{ "var": "action.weapon" }, null] }
+    - { "in": ["finesse", { "var": "action.weapon.properties" }] }
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: { fact: actor.abilityMod.dex }
+    modifierType: ability
+    policy: highest
+citation:
+  source: srd-5.2.1
+  section: "Equipment > Weapon Properties > Finesse"
+interpretation: >-
+  Both SRDs leave the choice of ability to the attacker. Player choices are declared up
+  front and evaluation never pauses (ADR-0003), and no intent carries this one, so Strength
+  and Dexterity are both offered as `ability` modifiers under the `highest` policy: the
+  better of the two applies and the trace records the other as dropped.

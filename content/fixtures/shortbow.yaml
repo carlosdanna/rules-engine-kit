@@ -1,0 +1,9 @@
+slug: shortbow
+kind: item
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Shortbow
+  damage: { dice: 1d6, type: piercing }
+  properties: [ammunition, two-handed]
+  mastery: vex
+citation: { source: srd-5.2.1, section: "Equipment > Weapons > Simple Ranged Weapons" }

@@ -1,0 +1,27 @@
+key: cover.three-quarters.dex-save
+op: add
+phase: modifiers
+priority: 103
+label: "Three-quarters cover: Dexterity saving throws"
+description: "A creature with three quarters cover has a +5 bonus to Dexterity saving throws."
+tags: [cover, save]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "save"] }
+    - { "==": [{ "var": "action.ability" }, "dex"] }
+    - { "in": ["three-quarters-cover", { "var": "actor.conditions" }] }
+effects:
+  - type: addModifier
+    target: { kind: save, actor: $actor }
+    value: 5
+    modifierType: cover
+    stackKey: cover
+    policy: highest
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > Combat > Cover"
+interpretation: >-
+  A situation has no geometry — grids and movement are out of scope (ADR-0003) — so cover is
+  carried as a condition on the creature benefiting from it. The SRD says only the most
+  protective degree applies and that the degrees are not added together, which is the
+  `highest` policy on a shared `cover` stack key, not two bonuses that sum.

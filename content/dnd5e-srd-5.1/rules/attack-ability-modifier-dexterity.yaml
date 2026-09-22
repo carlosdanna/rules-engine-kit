@@ -1,0 +1,21 @@
+key: attack.ability-modifier.dexterity
+op: add
+phase: modifiers
+priority: 201
+label: "Attack roll: Dexterity modifier"
+description: "A ranged weapon attack adds the attacker’s Dexterity modifier."
+tags: [attack, ability]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "action.mode" }, "ranged"] }
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: { fact: actor.abilityMod.dex }
+    modifierType: ability
+    policy: highest
+citation:
+  source: srd-5.1
+  section: "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+interpretation: null

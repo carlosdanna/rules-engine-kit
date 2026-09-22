@@ -1,0 +1,23 @@
+key: combat.surprise
+op: add
+phase: declare
+priority: 10
+label: "Surprised: no action on the first turn"
+description: "A surprised creature cannot move or take an action on its first turn of combat."
+tags: [combat, surprise]
+condition:
+  all:
+    - { "in": ["surprised", { "var": "actor.conditions" }] }
+    - { "==": [{ "var": "step.round" }, 1] }
+effects:
+  - type: halt
+    reason: "surprised: no movement or action on the first turn of combat"
+citation:
+  source: srd-5.1
+  section: "Combat > The Order of Combat > Surprise"
+interpretation: >-
+  Who is surprised is the GM’s call, from Stealth checks against passive Perception, which
+  is out of scope (ADR-0003) — so a situation declares it as a `surprised` condition on the
+  creature. The SRD also bars a reaction until that turn ends; reactions are out of scope,
+  so the halt is the whole of what this pack encodes. "First turn of combat" is read as the
+  creature’s turn in round 1, which is what a timeline of rounds can express.

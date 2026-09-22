@@ -1,0 +1,20 @@
+key: condition.restrained.attacked
+op: add
+phase: modifiers
+priority: 303
+label: "Restrained: attacked"
+description: "Attack rolls against a restrained creature have advantage."
+tags: [condition, restrained]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["restrained", { "var": "target.conditions" }] }
+
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: advantage
+citation:
+  source: srd-5.2.1
+  section: "Rules Glossary > Restrained [Condition]"
+interpretation: null

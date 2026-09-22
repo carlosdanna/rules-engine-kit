@@ -1,0 +1,107 @@
+# Every path a rule in this pack may read — in a condition, or as an effect's value
+# (ADR-0021). An unregistered path is an error at load and at evaluation, never a silent
+# `null` (FR-17, ADR-0013), so this file and `rules/` move together.
+#
+# `nullable: true` marks a path whose value is legitimately absent (ADR-0022): an unarmed
+# attack has no weapon, a check need not name a skill, and a situation need not declare an
+# intent. Every other path reading `null` is an error, which is the point.
+
+- path: action.type
+  type: string
+  description: "the declared action kind, or `none` for a step that acts not at all"
+
+- path: action.mode
+  type: string
+  description: "melee or ranged, on an attack"
+
+- path: action.rangeFt
+  type: number
+  description: "distance to the attack's target, in feet"
+
+- path: action.ability
+  type: string
+  description: "the ability a check or a saving throw uses"
+
+- path: action.skill
+  type: string
+  description: "the skill a check names; null when it names none"
+  nullable: true
+
+- path: action.spell
+  type: string
+  description: "the spell being cast"
+
+- path: action.weapon
+  type: string
+  description: "the wielded weapon’s slug; null for an unarmed attack"
+  nullable: true
+
+- path: action.weapon.properties
+  type: stringList
+  description: "the weapon’s SRD properties, e.g. finesse"
+
+- path: action.weapon.damage.dice
+  type: string
+  description: "the weapon’s damage dice as notation, e.g. 1d8"
+
+- path: actor.conditions
+  type: stringList
+  description: "conditions on the creature taking the step, printed plus granted"
+
+- path: actor.hpCurrent
+  type: number
+  description: "current hit points; damage writes this, so the pack has to admit it exists (FR-17)"
+
+- path: actor.proficiencyBonus
+  type: number
+  description: "the printed proficiency bonus"
+
+- path: actor.abilityMod.str
+  type: number
+  description: "the Strength modifier, derived from the printed score"
+
+- path: actor.abilityMod.dex
+  type: number
+  description: "the Dexterity modifier, derived from the printed score"
+
+- path: actor.abilityMod.con
+  type: number
+  description: "the Constitution modifier, derived from the printed score"
+
+- path: actor.abilityMod.int
+  type: number
+  description: "the Intelligence modifier, derived from the printed score"
+
+- path: actor.abilityMod.wis
+  type: number
+  description: "the Wisdom modifier, derived from the printed score"
+
+- path: actor.abilityMod.cha
+  type: number
+  description: "the Charisma modifier, derived from the printed score"
+
+- path: target.conditions
+  type: stringList
+  description: "conditions on the action's target"
+
+- path: step.round
+  type: number
+  description: "the round this step happens in"
+
+- path: step.attack.result
+  type: string
+  description: "how the step's d20 compared: hit, miss, success or failure (ADR-0021)"
+
+- path: step.attack.natural
+  type: number
+  description: "the kept d20 before modifiers, which is what a critical hit is about"
+
+- path: intents.useInspiration
+  type: boolean
+  description: "whether the creature spends inspiration on this step; null when the situation declares no such intent"
+  nullable: true
+
+- path: actor.ac.effective
+  type: number
+  description: "Armor Class as the modifiers phase assembled it (ADR-0006)"
+  derived: true

@@ -1,0 +1,16 @@
+key: action.use-object
+op: add
+phase: declare
+priority: 20
+label: "Utilize"
+description: "Interacting with an object that requires an action is the Utilize action."
+tags: [action]
+condition: { "==": [{ "var": "action.type" }, "useObject"] }
+effects:
+  - type: emitEvent
+    event: action.use-object
+    data: { action: Utilize }
+citation:
+  source: srd-5.2.1
+  section: "Rules Glossary > Utilize [Action]"
+interpretation: null

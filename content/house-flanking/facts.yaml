@@ -1,0 +1,14 @@
+# A layer may read anything its base registered; these three are redeclared here so the
+# pack stands on its own when someone lints or reads it alone. The declarations must agree
+# with the base's, and `pnpm engine run` says so loudly if they ever drift apart.
+- path: action.type
+  type: string
+  description: the declared action kind, or `none` for a step that acts not at all
+
+- path: action.mode
+  type: string
+  description: melee or ranged, on an attack
+
+- path: target.conditions
+  type: stringList
+  description: conditions on the action's target

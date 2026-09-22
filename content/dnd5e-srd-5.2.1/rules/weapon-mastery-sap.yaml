@@ -1,0 +1,29 @@
+key: weapon.mastery.sap
+op: add
+phase: apply
+priority: 20
+label: "Mastery — Sap"
+description: "Hitting with a Sap weapon gives the target disadvantage on its next attack roll."
+tags: [weapon, mastery, sap]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "!=": [{ "var": "action.weapon" }, null] }
+    - { "==": [{ "var": "action.weapon.mastery" }, "sap"] }
+effects:
+  - type: applyCondition
+    actor: $target
+    condition: sapped
+    # "Before the start of your next turn": it ends when the attacker's next turn begins.
+    duration: { kind: untilTurn, anchor: source, edge: start, afterRounds: 1 }
+citation:
+  source: srd-5.2.1
+  section: "Equipment > Mastery Properties > Sap"
+interpretation: >-
+  A mastery property is usable only by a character with a feature that unlocks it, and
+  classes and character building are out of scope (ADR-0003), so this pack applies Sap
+  whenever the weapon has the property. "Its next attack roll" is two rules: this one marks
+  the target, `weapon.mastery.sap.disadvantage` applies the disadvantage, and
+  `weapon.mastery.sap.expend` clears the mark after that one roll — without which the mark
+  would hinder every attack until it expired.

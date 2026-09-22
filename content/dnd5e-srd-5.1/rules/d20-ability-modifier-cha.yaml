@@ -1,0 +1,35 @@
+key: d20.ability-modifier.cha
+op: add
+phase: modifiers
+priority: 215
+label: "Ability check and saving throw: Charisma modifier"
+description: "A Charisma check or Charisma saving throw adds the Charisma modifier."
+tags: [check, save, ability]
+condition:
+  all:
+    # Guards `action.ability`, which only a check or a save declares.
+    - any:
+        - { "==": [{ "var": "action.type" }, "check"] }
+        - { "==": [{ "var": "action.type" }, "save"] }
+    - { "==": [{ "var": "action.ability" }, "cha"] }
+effects:
+  # One rule, both roll kinds: the step declares which one it is, and the modifier on the
+  # channel the step did not roll is never consumed.
+  - type: addModifier
+    target: { kind: check, actor: $actor }
+    value: { fact: actor.abilityMod.cha }
+    modifierType: ability
+    policy: highest
+  - type: addModifier
+    target: { kind: save, actor: $actor }
+    value: { fact: actor.abilityMod.cha }
+    modifierType: ability
+    policy: highest
+citation:
+  source: srd-5.1
+  section: "Using Ability Scores > Ability Checks"
+interpretation: >-
+  One rule covers both rolls because both SRDs state the same arithmetic for them — see also
+  "Using Ability Scores > Saving Throws" in SRD 5.1 and "Playing the Game > D20 Tests >
+  Saving Throws" in SRD 5.2.1. Proficiency is not added: a fixture carries no skill or save
+  proficiencies (FR-8), so this pack has nothing to read.

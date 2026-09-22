@@ -1,0 +1,19 @@
+key: weapon.mastery.sap.disadvantage
+op: add
+phase: modifiers
+priority: 330
+label: "Mastery — Sap: the sapped creature attacks"
+description: "A sapped creature has disadvantage on its attack roll."
+tags: [weapon, mastery, sap]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["sapped", { "var": "actor.conditions" }] }
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: disadvantage
+citation:
+  source: srd-5.2.1
+  section: "Equipment > Mastery Properties > Sap"
+interpretation: null

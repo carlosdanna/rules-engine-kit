@@ -1,0 +1,25 @@
+key: spell.bless.cast
+op: add
+phase: apply
+priority: 10
+label: "Bless: cast"
+description: "Casting bless blesses up to three creatures within range until the spell ends."
+tags: [spell, bless]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "cast"] }
+    - { "==": [{ "var": "action.spell" }, "bless"] }
+effects:
+  - type: applyCondition
+    actor: $target
+    condition: blessed
+    duration: { kind: rounds, rounds: 10, anchor: source, edge: end }
+citation:
+  source: srd-5.1
+  section: "Spell Descriptions > Bless"
+interpretation: >-
+  Two readings are recorded here. Bless lasts "Concentration, up to 1 minute": concentration
+  is not simulated (ADR-0003), so the spell runs its full span and nothing can break it
+  early. A minute is ten rounds, and neither SRD says which edge of a turn a time span ends
+  on, so it ends at the end of the caster's turn in the tenth round after it was cast, per
+  the convention in `docs/content-authoring.md` (ADR-0012).

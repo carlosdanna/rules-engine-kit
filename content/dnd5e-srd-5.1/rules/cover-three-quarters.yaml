@@ -1,0 +1,26 @@
+key: cover.three-quarters
+op: add
+phase: modifiers
+priority: 101
+label: "Three-quarters cover: Armor Class"
+description: "A target with three quarters cover has a +5 bonus to AC."
+tags: [cover]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["three-quarters-cover", { "var": "target.conditions" }] }
+effects:
+  - type: addModifier
+    target: { path: actor.ac.effective, actor: $target }
+    value: 5
+    modifierType: cover
+    stackKey: cover
+    policy: highest
+citation:
+  source: srd-5.1
+  section: "Combat > Cover"
+interpretation: >-
+  A situation has no geometry — grids and movement are out of scope (ADR-0003) — so cover is
+  carried as a condition on the creature benefiting from it. The SRD says only the most
+  protective degree applies and that the degrees are not added together, which is the
+  `highest` policy on a shared `cover` stack key, not two bonuses that sum.

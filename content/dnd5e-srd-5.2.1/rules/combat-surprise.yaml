@@ -1,0 +1,25 @@
+key: combat.surprise
+op: add
+phase: modifiers
+priority: 320
+label: "Surprised: disadvantage on Initiative"
+description: "A creature caught unawares by the start of combat has disadvantage on its Initiative roll."
+tags: [combat, surprise]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "check"] }
+    - { "==": [{ "var": "action.skill" }, "initiative"] }
+    - { "in": ["surprised", { "var": "actor.conditions" }] }
+effects:
+  - type: rollMode
+    target: { kind: check, actor: $actor }
+    mode: disadvantage
+citation:
+  source: srd-5.2.1
+  section: "Rules Glossary > Surprise"
+interpretation: >-
+  The same rule key as SRD 5.1’s, and the whole of what changed between the editions: the
+  surprised creature acts, and pays for it on Initiative. The engine declares no Initiative
+  roll of its own, so an Initiative roll is a `check` step whose `skill` is "initiative" —
+  this demo’s convention, not SRD wording. Who is surprised is declared as a condition, for
+  the reason SRD 5.1’s rule gives.

@@ -1,0 +1,28 @@
+key: damage.ability-modifier.finesse
+op: add
+phase: damage
+priority: 22
+label: "Damage: finesse"
+description: "A finesse weapon may use Dexterity in place of Strength for its damage."
+tags: [damage, ability, weapon]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "!=": [{ "var": "action.weapon" }, null] }
+    - { "==": [{ "var": "action.mode" }, "melee"] }
+    - { "in": ["finesse", { "var": "action.weapon.properties" }] }
+
+effects:
+  - type: addModifier
+    target: { kind: damage, actor: $actor }
+    value: { fact: actor.abilityMod.dex }
+    modifierType: ability
+    policy: highest
+citation:
+  source: srd-5.2.1
+  section: "Equipment > Weapon Properties > Finesse"
+interpretation: >-
+  The mirror of `attack.ability-modifier.finesse`, for the same reason and settled the same
+  way: the better of Strength and Dexterity applies and the trace shows the other as
+  dropped.

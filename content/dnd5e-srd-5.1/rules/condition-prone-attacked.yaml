@@ -1,0 +1,21 @@
+key: condition.prone.attacked
+op: add
+phase: modifiers
+priority: 300
+label: "Prone: attacked from within 5 feet"
+description: "An attack roll against a prone creature has advantage if the attacker is within 5 feet."
+tags: [condition, prone]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["prone", { "var": "target.conditions" }] }
+    - { "<=": [{ "var": "action.rangeFt" }, 5] }
+
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: advantage
+citation:
+  source: srd-5.1
+  section: "Appendix PH-A: Conditions > Prone"
+interpretation: null

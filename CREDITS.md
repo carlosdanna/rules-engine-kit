@@ -10,6 +10,13 @@ This work includes material taken from the System Reference Document 5.1 ("SRD 5
 
 This work includes material from the System Reference Document 5.2.1 ("SRD 5.2.1") by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
 
+## House rules
+
+`content/house-flanking/` is not SRD material. It is original content of this repository,
+licensed with the code under the MIT License, written to exercise the layer machinery on
+top of either SRD base. It does not reproduce the optional flanking rule from any non-SRD
+book.
+
 ## Changes made
 
 Rules from the SRDs have been paraphrased, simplified to a core subset, and restructured into machine-readable rule packs, fixtures and templates. Each rule cites the SRD section it derives from. Interpretations of ambiguous wording are marked in the rule's `interpretation` field.

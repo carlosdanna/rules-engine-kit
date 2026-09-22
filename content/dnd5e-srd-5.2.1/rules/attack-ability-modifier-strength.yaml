@@ -1,0 +1,23 @@
+key: attack.ability-modifier.strength
+op: add
+phase: modifiers
+priority: 200
+label: "Attack roll: Strength modifier"
+description: "A melee weapon attack adds the attacker’s Strength modifier."
+tags: [attack, ability]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "action.mode" }, "melee"] }
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: { fact: actor.abilityMod.str }
+    modifierType: ability
+    # `highest` rather than `sum`: a finesse weapon offers Strength or Dexterity and the
+    # attacker uses one of them, never both (see `attack.ability-modifier.finesse`).
+    policy: highest
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > D20 Tests > Attack Rolls > Ability Modifier"
+interpretation: null

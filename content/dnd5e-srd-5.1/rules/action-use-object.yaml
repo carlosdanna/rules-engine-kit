@@ -1,0 +1,18 @@
+key: action.use-object
+op: add
+phase: declare
+priority: 20
+label: "Use an Object"
+description: "Interacting with an object that requires an action is the Use an Object action."
+tags: [action]
+condition: { "==": [{ "var": "action.type" }, "useObject"] }
+effects:
+  - type: emitEvent
+    event: action.use-object
+    # The name the edition prints. The rule key is stable across both (VR-9); what changed
+    # between them is what a player says at the table.
+    data: { action: Use an Object }
+citation:
+  source: srd-5.1
+  section: "Combat > Actions in Combat > Use an Object"
+interpretation: null

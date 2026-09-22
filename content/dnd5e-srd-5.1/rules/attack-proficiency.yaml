@@ -1,0 +1,24 @@
+key: attack.proficiency
+op: add
+phase: modifiers
+priority: 220
+label: "Attack roll: proficiency bonus"
+description: "An attacker proficient with the attack adds its proficiency bonus."
+tags: [attack, proficiency]
+condition: { "==": [{ "var": "action.type" }, "attack"] }
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: { fact: actor.proficiencyBonus }
+    modifierType: proficiency
+    # Proficiency applies once, however many rules claim it.
+    stackKey: proficiency
+    policy: unique
+citation:
+  source: srd-5.1
+  section: "Combat > Making an Attack > Attack Rolls > Modifiers to the Roll"
+interpretation: >-
+  The SRD adds the bonus only when the attacker is proficient with the weapon it is using. A
+  fixture carries printed values and no proficiency list (FR-8), so this pack reads the
+  printed bonus and assumes proficiency with whatever the situation puts in the attacker’s
+  hands.

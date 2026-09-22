@@ -1,0 +1,12 @@
+# One fixture, both editions. The printed damage and properties are the same in each; the
+# difference is `mastery`, which only SRD 5.2.1 has a rule for — so under a 5.1 profile the
+# field simply goes unread (ADR-0017, ADR-0022).
+slug: longsword
+kind: item
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Longsword
+  damage: { dice: 1d8, type: slashing }
+  properties: [versatile]
+  mastery: sap
+citation: { source: srd-5.2.1, section: "Equipment > Weapons > Martial Melee Weapons" }

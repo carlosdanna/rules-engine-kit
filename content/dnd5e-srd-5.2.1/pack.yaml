@@ -1,0 +1,17 @@
+# A rule pack: what this edition of the SRD says, as data.
+#
+# Rules are paraphrased into conditions and effects, never pasted, and each one cites the
+# section it came from. Where the SRD is silent or the engine forces a reading, the rule
+# carries an `interpretation` saying so. Nothing here comes from any other book.
+id: dnd5e-srd
+version: 5.2.1
+name: SRD 5.2.1
+kind: base
+extends: null
+license: CC-BY-4.0
+sourceUrl: https://www.dndbeyond.com/srd
+attribution: >-
+  This work includes material from the System Reference Document 5.2.1 ("SRD 5.2.1") by
+  Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is
+  licensed under the Creative Commons Attribution 4.0 International License, available at
+  https://creativecommons.org/licenses/by/4.0/legalcode.

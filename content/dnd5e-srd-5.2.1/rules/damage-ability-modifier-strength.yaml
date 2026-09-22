@@ -1,0 +1,27 @@
+key: damage.ability-modifier.strength
+op: add
+phase: damage
+priority: 20
+label: "Damage: Strength modifier"
+description: "A weapon attack adds the same Strength modifier it used for the attack roll to its damage."
+tags: [damage, ability]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "!=": [{ "var": "action.weapon" }, null] }
+    - { "==": [{ "var": "action.mode" }, "melee"] }
+
+effects:
+  - type: addModifier
+    target: { kind: damage, actor: $actor }
+    value: { fact: actor.abilityMod.str }
+    modifierType: ability
+    policy: highest
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > Damage and Healing > Damage Rolls"
+interpretation: >-
+  The SRD says the damage takes "the same modifier used for the attack roll", so these rules
+  mirror the `attack.ability-modifier.*` ones exactly, including the `highest` policy that
+  settles a finesse weapon’s choice the same way on both rolls.

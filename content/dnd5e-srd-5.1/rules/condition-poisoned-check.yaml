@@ -1,0 +1,20 @@
+key: condition.poisoned.check
+op: add
+phase: modifiers
+priority: 309
+label: "Poisoned: ability checks"
+description: "A poisoned creature has disadvantage on ability checks."
+tags: [condition, poisoned, check]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "check"] }
+    - { "in": ["poisoned", { "var": "actor.conditions" }] }
+
+effects:
+  - type: rollMode
+    target: { kind: check, actor: $actor }
+    mode: disadvantage
+citation:
+  source: srd-5.1
+  section: "Appendix PH-A: Conditions > Poisoned"
+interpretation: null

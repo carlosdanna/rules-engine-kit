@@ -1,0 +1,33 @@
+key: inspiration.spend
+op: add
+phase: modifiers
+priority: 500
+label: "Spend inspiration: advantage"
+description: "Spending inspiration gives advantage on one attack roll, ability check or saving throw."
+tags: [inspiration]
+condition:
+  all:
+    - { "==": [{ "var": "intents.useInspiration" }, true] }
+    - any:
+        - { "==": [{ "var": "action.type" }, "attack"] }
+        - { "==": [{ "var": "action.type" }, "check"] }
+        - { "==": [{ "var": "action.type" }, "save"] }
+effects:
+  # One grant per roll kind; the step rolls one of them and the other two are never read.
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: advantage
+  - type: rollMode
+    target: { kind: check, actor: $actor }
+    mode: advantage
+  - type: rollMode
+    target: { kind: save, actor: $actor }
+    mode: advantage
+citation:
+  source: srd-5.1
+  section: "Beyond 1st Level > Inspiration > Using Inspiration"
+interpretation: >-
+  Both SRDs give this to a player character, and a fixture is a stat block rather than a
+  character sheet (FR-8), so the pack spends it for whichever creature the situation
+  declares the intent for. Whether inspiration is held at all is `intents.useInspiration`,
+  declared up front because evaluation never pauses (ADR-0003).
