@@ -11,4 +11,5 @@ export * from './resolver';
 export * from './schema';
 export * from './stacking';
 export * from './time';
+export * from './trace';
 export { ENGINE_VERSION, TRACE_SCHEMA_VERSION } from './version';
