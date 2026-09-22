@@ -23,14 +23,28 @@
  */
 
 import { lintCondition, registryFromFacts } from '../conditions';
+import { makeRollId } from '../dice';
 import { IncompatibleStackError, resolveProfile, satisfiesRange } from '../resolver';
-import type { Conflict, FactDefinition, PackManifest, RuleEntry, RulesetVersion } from '../schema';
+import type {
+  Conflict,
+  FactDefinition,
+  Fixture,
+  PackManifest,
+  ProfileManifest,
+  ResolvedRule,
+  RollTargetKind,
+  RuleEntry,
+  RulesetVersion,
+  Template,
+} from '../schema';
 import { PATCHABLE_RULE_FIELDS } from '../schema';
+import { buildFixtureIndex, renderTemplate, TemplateRenderError } from '../templates';
 import { ContentNormalizeError } from './errors';
 import {
   normalizeFactsFile,
   normalizeFixture,
   normalizePackManifest,
+  normalizeProfilesFile,
   normalizeRuleFile,
   normalizeTemplate,
 } from './normalize';
@@ -51,7 +65,15 @@ export type ContentIssueCode =
   | 'patch-forbidden-field'
   | 'disable-missing'
   | 'priority-tie'
-  | 'unresolvable-base';
+  | 'unresolvable-base'
+  /** A profile slug nothing in `profiles.yaml` declares (ADR-0026). */
+  | 'unknown-profile'
+  /** A profile layer naming a pack, or a pack version, the tree does not hold. */
+  | 'unknown-profile-layer'
+  /** A template that does not render with its defaults into a valid `Situation` (Q24). */
+  | 'template-render'
+  /** A `dieSelector: intent` whose roll has no declared choice, so die 0 is assumed. */
+  | 'undeclared-roll-choice';
 
 export type ContentIssue = {
   /** A warning is something nobody chose; an error is something nobody meant. */
@@ -82,6 +104,8 @@ export type ContentDocs = {
   packs: AuthoredPackDocs[];
   fixtures: ContentDoc[];
   templates: ContentDoc[];
+  /** `profiles.yaml` at the root of the tree, if there is one (ADR-0026). */
+  profiles?: ContentDoc;
 };
 
 /** Stands in for a field whose absence has already been reported under its own name. */
@@ -505,6 +529,212 @@ function dedupe(issues: readonly ContentIssue[]): ContentIssue[] {
   });
 }
 
+/**
+ * `profiles.yaml`, and everything that names a profile by slug (ADR-0026).
+ *
+ * Until this existed, `srd-5.1` was a string three kinds of document agreed on by habit:
+ * nothing declared it, so nothing could report a typo in it. A misspelled `rulesetScope`
+ * entry made a fixture invisible to every profile, which shows up as a template that will
+ * not render rather than as the one-character mistake it is.
+ */
+function lintProfiles(
+  docs: ContentDocs,
+  packs: readonly ParsedPack[],
+  issues: ContentIssue[],
+): ProfileManifest[] {
+  if (docs.profiles === undefined || docs.profiles.doc === undefined) return [];
+  const file = docs.profiles.file;
+
+  let profiles: ProfileManifest[];
+  try {
+    profiles = normalizeProfilesFile(docs.profiles.doc, file);
+  } catch (thrown) {
+    issues.push(...schemaIssues(thrown, file));
+    return [];
+  }
+
+  const available = new Set(packs.map((pack) => `${pack.manifest.id}@${pack.manifest.version}`));
+  const seen = new Set<string>();
+
+  for (const [index, profile] of profiles.entries()) {
+    if (seen.has(profile.slug)) {
+      issues.push(
+        error('unknown-profile', file, `[${index}].slug`, `duplicate profile '${profile.slug}'`),
+      );
+    }
+    seen.add(profile.slug);
+
+    for (const [position, layer] of profile.layers.entries()) {
+      if (!available.has(`${layer.id}@${layer.version}`)) {
+        issues.push(
+          error(
+            'unknown-profile-layer',
+            file,
+            `[${index}].layers[${position}]`,
+            `no pack in this tree is '${layer.id}' at version ${layer.version}`,
+          ),
+        );
+      }
+    }
+  }
+
+  return profiles;
+}
+
+/** One issue per string that names a profile nobody declared. */
+function checkProfileRefs(
+  slugs: readonly string[],
+  declared: ReadonlySet<string>,
+  file: string,
+  path: string,
+  issues: ContentIssue[],
+): void {
+  // A tree that declares no profiles has nothing to check against. `content:lint <one-pack>`
+  // is handed a pack directory and never sees a `profiles.yaml`, and reporting every scope
+  // string in it as unknown would make the single-pack form useless.
+  if (declared.size === 0) return;
+
+  for (const [index, slug] of slugs.entries()) {
+    if (!declared.has(slug)) {
+      issues.push(
+        error(
+          'unknown-profile',
+          file,
+          `${path}[${index}]`,
+          `'${slug}' is not a profile declared in profiles.yaml (ADR-0026)`,
+        ),
+      );
+    }
+  }
+}
+
+/**
+ * The three checks `content-authoring.md` promises and Q24 recorded as unperformed, now that
+ * `renderTemplate` exists (ADR-0026).
+ *
+ * Every one of them is per template *and per suggested profile*, because that is the unit the
+ * promise is made in: a template renders under the profiles it suggests, and a fixture slug
+ * resolving to one variant is a question about a profile rather than about a tree.
+ */
+function lintTemplateRenders(
+  templates: readonly { file: string; template: Template }[],
+  fixtures: readonly Fixture[],
+  packs: readonly ParsedPack[],
+  declaredProfiles: readonly ProfileManifest[],
+  issues: ContentIssue[],
+): void {
+  if (templates.length === 0) return;
+
+  const index = buildFixtureIndex(fixtures);
+  const byName = new Map(declaredProfiles.map((profile) => [profile.slug, profile]));
+  const byPack = new Map(
+    packs.map((pack) => [`${pack.manifest.id}@${pack.manifest.version}`, pack]),
+  );
+
+  for (const { file, template } of templates) {
+    for (const profileSlug of template.suggestedProfiles) {
+      const profile = byName.get(profileSlug);
+      // Already reported as `unknown-profile`; rendering against it would only repeat that.
+      if (profile === undefined) continue;
+
+      let situation: ReturnType<typeof renderTemplate>;
+      try {
+        situation = renderTemplate(template, undefined, index, profileSlug);
+      } catch (thrown) {
+        if (thrown instanceof TemplateRenderError) {
+          issues.push(
+            issue(
+              // A slug that is scoped to no profile or to two is a fixture problem the
+              // author fixes in `fixtures/`, but it is *this* template that cannot render,
+              // so the issue names the template's file and says which profile.
+              'error',
+              thrown.reason === 'fixture-ambiguous' || thrown.reason === 'fixture-unscoped'
+                ? 'template-render'
+                : 'template-render',
+              file,
+              thrown.path,
+              `under profile '${profileSlug}': ${thrown.message.replace(`${thrown.path}: `, '')}`,
+            ),
+          );
+        } else {
+          issues.push(...schemaIssues(thrown, file, 'template-render'));
+        }
+        continue;
+      }
+
+      const stack = profile.layers
+        .map((layer) => byPack.get(`${layer.id}@${layer.version}`))
+        .filter((pack): pack is ParsedPack => pack !== undefined);
+      if (stack.length !== profile.layers.length) continue;
+
+      lintRollChoices(file, profileSlug, situation, stack, issues);
+    }
+  }
+}
+
+/**
+ * A `rollTransform` with `dieSelector: intent` reads
+ * `intents.rollChoices[<rollId>].rerollDieIndex` and defaults to die 0 when nothing declared
+ * one (`schema/effect.ts`). Defaulting is a silent decision rather than a broken one, so this
+ * is a **warning** — but on an advantage pair it decides which of two dice a reroll replaces,
+ * which is observable in the outcome, and nobody chose it.
+ */
+function lintRollChoices(
+  file: string,
+  profileSlug: string,
+  situation: ReturnType<typeof renderTemplate>,
+  stack: readonly ParsedPack[],
+  issues: ContentIssue[],
+): void {
+  let resolved: ResolvedRule[];
+  try {
+    resolved = resolveProfile(stack.map(toRulesetVersion)).rules.filter((rule) => rule.enabled);
+  } catch {
+    // An unresolvable stack is already reported by `lintStacks`.
+    return;
+  }
+
+  const kinds = new Set<RollTargetKind>();
+  for (const rule of resolved) {
+    for (const effect of rule.effects) {
+      if (effect.type === 'rollTransform' && effect.dieSelector.kind === 'intent') {
+        kinds.add(effect.target.kind);
+      }
+    }
+  }
+  if (kinds.size === 0) return;
+
+  const declared = new Set(Object.keys(situation.intents.rollChoices ?? {}));
+
+  for (const step of situation.timeline) {
+    if (step.action === null) continue;
+    const kind = rollKindOf(step.action.type);
+    if (kind === null || !kinds.has(kind)) continue;
+
+    const rollId = makeRollId(step.id, { kind, actorId: step.actorId });
+    if (declared.has(rollId)) continue;
+
+    issues.push(
+      issue(
+        'warning',
+        'undeclared-roll-choice',
+        file,
+        `skeleton.timeline.${step.id}`,
+        `under profile '${profileSlug}': a rule can request a reroll on '${rollId}', and this ` +
+          'template declares no rollChoices entry for it, so die 0 is assumed (ADR-0011)',
+      ),
+    );
+  }
+}
+
+/** Which roll target kind a step's action rolls a d20 on, if it rolls one at all. */
+function rollKindOf(actionType: string): RollTargetKind | null {
+  if (actionType === 'attack') return 'attack';
+  if (actionType === 'check') return 'check';
+  if (actionType === 'save') return 'save';
+  return null;
+}
+
 export function lintContent(docs: ContentDocs): ContentIssue[] {
   const issues: ContentIssue[] = [];
 
@@ -516,6 +746,10 @@ export function lintContent(docs: ContentDocs): ContentIssue[] {
   for (const pack of packs) lintRuleReads(pack, bases, issues);
   for (const pack of packs) parsePackRules(pack, issues);
   lintStacks(packs, issues);
+
+  const declaredProfiles = lintProfiles(docs, packs, issues);
+  const profileSlugs = new Set(declaredProfiles.map((profile) => profile.slug));
+  const parsedFixtures: Fixture[] = [];
 
   for (const fixture of docs.fixtures) {
     if (fixture.doc === undefined) continue;
@@ -536,7 +770,19 @@ export function lintContent(docs: ContentDocs): ContentIssue[] {
     }
 
     try {
-      normalizeFixture(fixture.doc, fixture.file);
+      const parsed = normalizeFixture(fixture.doc, fixture.file);
+      parsedFixtures.push(parsed);
+      checkProfileRefs(parsed.rulesetScope, profileSlugs, fixture.file, 'rulesetScope', issues);
+      if (profileSlugs.size > 0 && !profileSlugs.has(parsed.citation.source)) {
+        issues.push(
+          error(
+            'unknown-profile',
+            fixture.file,
+            'citation.source',
+            `'${parsed.citation.source}' is not a profile declared in profiles.yaml (ADR-0026)`,
+          ),
+        );
+      }
     } catch (thrown) {
       // As for a rule: the gap is already named, so it does not also arrive as Zod output.
       const raised = schemaIssues(thrown, fixture.file);
@@ -544,17 +790,29 @@ export function lintContent(docs: ContentDocs): ContentIssue[] {
     }
   }
 
-  // Schema only. Rendering each template with its defaults and checking that every
-  // suggested profile resolves its fixture slugs needs `renderTemplate`, which is
-  // unwritten — Q24 in `docs/open-questions.md`.
+  const parsedTemplates: { file: string; template: Template }[] = [];
   for (const template of docs.templates) {
     if (template.doc === undefined) continue;
     try {
-      normalizeTemplate(template.doc, template.file);
+      const parsed = normalizeTemplate(template.doc, template.file);
+      parsedTemplates.push({ file: template.file, template: parsed });
+      checkProfileRefs(
+        parsed.suggestedProfiles,
+        profileSlugs,
+        template.file,
+        'suggestedProfiles',
+        issues,
+      );
     } catch (thrown) {
       issues.push(...schemaIssues(thrown, template.file));
     }
   }
+
+  // The three checks Q24 held open, now that `renderTemplate` exists (ADR-0026): every
+  // template renders with its defaults into a valid `Situation`, every fixture slug it names
+  // resolves to exactly one variant under each suggested profile (ADR-0017), and a
+  // `dieSelector: intent` with no declared choice is warned about.
+  lintTemplateRenders(parsedTemplates, parsedFixtures, packs, declaredProfiles, issues);
 
   return dedupe(issues);
 }

@@ -13,16 +13,28 @@
  * "what does this YAML mean", and the point of a golden case is that there is one.
  */
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
-import { normalizePack } from './src/content';
+import {
+  normalizeFixture,
+  normalizePack,
+  normalizeProfilesFile,
+  normalizeTemplate,
+} from './src/content';
 import { evaluate } from './src/evaluator';
 import { resolveProfile } from './src/resolver';
-import type { FactDefinition, RollId, RulesetVersion } from './src/schema';
+import type {
+  FactDefinition,
+  Fixture,
+  ProfileManifest,
+  RollId,
+  RulesetVersion,
+  Template,
+} from './src/schema';
 import { Situation } from './src/schema';
 import { narrateTrace, narrativeContextFromSituation, type TraceLevel } from './src/trace';
 
@@ -70,6 +82,46 @@ export function loadPack(dir: string): RulesetVersion {
     facts: readYaml(join(root, 'facts.yaml')),
     rules: ruleFiles.map((name) => readYaml(join(rulesDir, name))),
   });
+}
+
+/** Sorted by name, for the reason `loadPack` sorts its rule files: one answer per machine. */
+function yamlFilesIn(dir: string): string[] {
+  let names: string[];
+  try {
+    names = readdirSync(dir);
+  } catch {
+    // An absent `fixtures/` or `templates/` is a tree with none, not a broken one.
+    return [];
+  }
+  return names
+    .filter((name) => name.endsWith('.yaml') || name.endsWith('.yml'))
+    .sort()
+    .map((name) => join(dir, name));
+}
+
+/**
+ * The content tree's fixtures, templates and profiles, read the way `loadPack` reads a pack.
+ *
+ * These exist here rather than only in `packages/db/src/content` because the golden harness
+ * renders templates and `packages/engine` may not depend on `packages/db` — the dependency
+ * runs the other way (ADR-0020). That leaves two thin walkers over one shared normaliser, and
+ * `packages/db/test/content/parity.test.ts` holds them to the same answer.
+ */
+export function loadFixtures(root: string): Fixture[] {
+  const dir = join(resolve(root), 'fixtures');
+  return yamlFilesIn(dir).map((file) => normalizeFixture(readYaml(file), file));
+}
+
+export function loadTemplates(root: string): Template[] {
+  const dir = join(resolve(root), 'templates');
+  return yamlFilesIn(dir).map((file) => normalizeTemplate(readYaml(file), file));
+}
+
+/** `profiles.yaml` sits at the root of the tree, beside the pack directories (ADR-0026). */
+export function loadProfiles(root: string): ProfileManifest[] {
+  const file = join(resolve(root), 'profiles.yaml');
+  if (!existsSync(file)) return [];
+  return normalizeProfilesFile(readYaml(file), file);
 }
 
 export type LoadedProfile = {

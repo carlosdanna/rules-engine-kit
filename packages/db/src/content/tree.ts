@@ -13,7 +13,12 @@
 
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import type { AuthoredPackDocs, ContentDocs, ContentIssue } from '@rules-engine-kit/engine';
+import type {
+  AuthoredPackDocs,
+  ContentDoc,
+  ContentDocs,
+  ContentIssue,
+} from '@rules-engine-kit/engine';
 import { displayPath, readYamlDoc } from './read';
 
 export const PACK_MANIFEST = 'pack.yaml';
@@ -21,6 +26,7 @@ const FACTS = 'facts.yaml';
 const RULES_DIR = 'rules';
 const FIXTURES_DIR = 'fixtures';
 const TEMPLATES_DIR = 'templates';
+const PROFILES = 'profiles.yaml';
 
 const isYaml = (name: string) => name.endsWith('.yaml') || name.endsWith('.yml');
 
@@ -92,6 +98,16 @@ export function discoverContent(root: string): DiscoveredContent {
     return { docs: { packs: [readPack(root, issues)], fixtures: [], templates: [] }, issues };
   }
 
+  // `profiles.yaml` is optional: a tree with no templates needs no profile names, and
+  // `content:lint <one-pack>` never sees one. An unreadable file is reported by `readYamlDoc`.
+  const profilesPath = join(root, PROFILES);
+  let profiles: ContentDoc | undefined;
+  if (existsSync(profilesPath)) {
+    const read = readYamlDoc(profilesPath);
+    issues.push(...read.issues);
+    profiles = read.doc;
+  }
+
   const packDirs = isDirectory(root)
     ? readdirSync(root, { withFileTypes: true })
         .filter((entry) => entry.isDirectory())
@@ -105,6 +121,7 @@ export function discoverContent(root: string): DiscoveredContent {
       packs: packDirs.map((dir) => readPack(dir, issues)),
       fixtures: readLoose(join(root, FIXTURES_DIR), issues),
       templates: readLoose(join(root, TEMPLATES_DIR), issues),
+      ...(profiles === undefined ? {} : { profiles }),
     },
     issues,
   };

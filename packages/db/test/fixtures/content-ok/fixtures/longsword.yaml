@@ -1,6 +1,6 @@
 slug: longsword
 kind: item
-rulesetScope: [srd-5.1, srd-5.2.1]
+rulesetScope: [srd-5.2.1]
 data:
   name: Longsword
   damage: { dice: 1d8, type: slashing }

@@ -50,12 +50,22 @@ export type ItemFixtureData = z.infer<typeof ItemFixtureData>;
 const FixtureIdentity = {
   slug: z.string().min(1),
   /**
-   * The ruleset ids this fixture is valid under. At least one, because a fixture no
-   * profile can see is content nothing will ever render. Where a stat block genuinely
-   * differs between editions, write two fixtures and scope each one.
+   * The profile slugs this fixture is valid under, as `content/profiles.yaml` declares them
+   * (ADR-0026). At least one, because a fixture no profile can see is content nothing will
+   * ever render. Where a stat block genuinely differs between editions, write two fixtures
+   * and scope each one; that each slug then resolves to exactly one of them is what
+   * `content:lint` checks for every template that names it (ADR-0017).
    */
   rulesetScope: z.array(z.string().min(1)).min(1),
   citation: Citation,
+  /**
+   * Why these numbers, when the citation alone does not account for them (ADR-0026). A stat
+   * block copied whole leaves this `null`; `fighter-3` cannot, because both SRDs publish the
+   * Fighter class tables and neither publishes a third-level fighter, so the ability array,
+   * the armour and the weapon are this repository's choices and have to say so where the
+   * numbers are. Same field, same purpose and same default as a rule's.
+   */
+  interpretation: z.string().min(1).nullable(),
 };
 
 /**

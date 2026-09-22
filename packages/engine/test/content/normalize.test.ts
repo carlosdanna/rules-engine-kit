@@ -349,6 +349,17 @@ describe('normalizeFixture — the documented fixtures (content-authoring.md)', 
     expect(normalizeFixture(GOBLIN, 'fixtures/goblin.yaml')).toEqual({
       ...GOBLIN,
       data: { ...GOBLIN.data, resistances: [], vulnerabilities: [] },
+      interpretation: null,
+    });
+  });
+
+  it('defaults `interpretation` to null, like a rule`s (ADR-0026)', () => {
+    const derived = { ...GOBLIN, interpretation: 'derived from the Fighter class tables' };
+    expect(normalizeFixture(GOBLIN, 'fixtures/goblin.yaml')).toMatchObject({
+      interpretation: null,
+    });
+    expect(normalizeFixture(derived, 'fixtures/fighter-3.yaml')).toMatchObject({
+      interpretation: 'derived from the Fighter class tables',
     });
   });
 

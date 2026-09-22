@@ -14,6 +14,7 @@ export * from './fixture';
 export * from './json';
 export * from './outcome';
 export * from './primitives';
+export * from './profile';
 export * from './rule';
 export * from './ruleset';
 export * from './situation';

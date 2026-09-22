@@ -1,0 +1,11 @@
+# The named profiles this fixture tree declares (ADR-0026), so the loader tests exercise the
+# profile checks rather than the "no profiles declared, nothing to check" path.
+- slug: srd-5.2.1
+  name: SRD 5.2.1 (loader fixture)
+  layers: [{ id: dnd5e-srd, version: 5.2.1 }]
+
+- slug: srd-5.2.1+flanking
+  name: SRD 5.2.1 + flanking (loader fixture)
+  layers:
+    - { id: dnd5e-srd, version: 5.2.1 }
+    - { id: house-flanking, version: 1.0.0 }

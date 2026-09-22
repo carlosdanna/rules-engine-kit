@@ -23,7 +23,7 @@ packages/engine/     pure TS engine
 packages/db/         Drizzle schema, migrations, seed
   src/content/       reads content/ off a disk: YAML → the documents the lint and the
                      seeds take. `pnpm content:lint` is its bin (FR-17, NFR-6)
-content/             rule packs, fixtures, templates (YAML)
+content/             rule packs, fixtures, templates, profiles.yaml (YAML)
 scenarios/           ready-made situations
 docs/                requirements, architecture, authoring, ADRs
 ```
@@ -49,7 +49,8 @@ ADR-0008), ADR-0009 (layer precedence), ADR-0014 (trace events, superseding ADR-
 ADR-0013 (condition evaluator), ADR-0017 (self-contained situations), ADR-0018 (layers extend
 the base only), ADR-0019 (the trace and outcome corrections that closed Q17–Q20), ADR-0021
 (effect values read facts), ADR-0023 (damage reports the overflow it discards), ADR-0024 (a
-fixture is an actor or an item) and ADR-0025 (the damage scale channel, amending ADR-0011).
+fixture is an actor or an item), ADR-0025 (the damage scale channel, amending ADR-0011) and
+ADR-0026 (profiles are named and seeded; a skeleton is Situation-shaped).
 
 ## Engine API
 
@@ -65,7 +66,12 @@ evaluate(
     facts?: FactDefinition[];             // the pack's fact registry; see below
   },
 ): EvaluationResult                                         // { outcome, trace }
-renderTemplate(template: Template, params: unknown, fixtures: FixtureIndex): Situation  // inlines them
+renderTemplate(
+  template: Template,
+  params: unknown,
+  fixtures: FixtureIndex,                                   // (slug, kind, profile) → Fixture
+  profileSlug: string,                                      // a slug content/profiles.yaml declares
+): Situation                                                // inlines them (ADR-0017, ADR-0026)
 explain(trace: Trace, ruleKey: string): Explanation         // lookup only; never re-evaluates
 diffOutcomes(a: Outcome, b: Outcome): OutcomeDiff
 diffTraces(a: Trace, b: Trace): TraceDiff                   // aligned on (stepId, phase, ruleKey)
@@ -129,9 +135,9 @@ and groups events by `(stepId, phase)`.
 | `rulesets` | seed | slug, name, kind (`base`/`layer`), source_id |
 | `ruleset_versions` | seed | ruleset_id, semver, base_version_id, base_range, content_hash |
 | `rules` | seed | ruleset_version_id, rule_key, op, phase, priority, tags, condition, effects, citation, interpretation |
-| `fixtures` | seed | slug, kind (`actor`/`item`), ruleset_scope, data, source_id |
+| `fixtures` | seed | slug, kind (`actor`/`item`), ruleset_scope, data, interpretation, source_id |
 | `templates` | seed | slug, name, description, tags, params_schema, skeleton, suggested_profiles, schema_version |
-| `profiles` | both | slug, name, resolved_hash, origin (`seed`/`user`) |
+| `profiles` | both | slug, name, resolved_hash, origin (`seed`/`user`). Seeded rows come from `content/profiles.yaml` (ADR-0026) |
 | `profile_layers` | both | profile_id, ruleset_version_id, position |
 | `scenarios` | both | slug, name, situation, template_id?, params?, origin, schema_version |
 | `evaluations` | user | scenario_id, profile_id, profile_hash, seed, engine_version, trace_schema_version, outcome, trace |

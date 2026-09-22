@@ -17,11 +17,19 @@
  */
 
 import { parseDiceNotation } from '../dice';
-import type { FactDefinition, Fixture, PackManifest, RuleEntry, Template } from '../schema';
+import type {
+  FactDefinition,
+  Fixture,
+  PackManifest,
+  ProfileManifest,
+  RuleEntry,
+  Template,
+} from '../schema';
 import {
   FactDefinition as FactDefinitionSchema,
   Fixture as FixtureSchema,
   PackManifest as PackManifestSchema,
+  ProfileManifest as ProfileManifestSchema,
   RuleEntry as RuleEntrySchema,
   RulesetVersion,
   Template as TemplateSchema,
@@ -227,7 +235,8 @@ export function normalizeRuleFile(doc: unknown, path: string): RuleEntry {
  * actor's two damage lists, which most stat blocks leave blank (ADR-0025).
  */
 export function normalizeFixture(doc: unknown, path: string): Fixture {
-  const fixture = requireObject(doc, path);
+  const raw = requireObject(doc, path);
+  const fixture: Record<string, unknown> = { interpretation: null, ...raw };
   if (fixture.kind === 'actor') {
     const actorData = requireObject(fixture.data ?? {}, `${path}.data`);
     return FixtureSchema.parse({
@@ -246,6 +255,18 @@ export function normalizeFixture(doc: unknown, path: string): Fixture {
     ...fixture,
     data: { properties: [], mastery: null, ...data, damage },
   });
+}
+
+/**
+ * `profiles.yaml` is a sequence of profile manifests, and accepts a `profiles:` mapping for
+ * the same reason `facts.yaml` accepts a `facts:` one: it is what a reader who has just seen
+ * `pack.yaml` tends to write.
+ */
+export function normalizeProfilesFile(doc: unknown, path = 'profiles'): ProfileManifest[] {
+  const list = isObject(doc) && 'profiles' in doc ? doc.profiles : doc;
+  return requireArray(list, path).map((profile, index) =>
+    ProfileManifestSchema.parse(requireObject(profile, `${path}[${index}]`)),
+  );
 }
 
 /** `tags` is the only field a template has and rarely varies. */

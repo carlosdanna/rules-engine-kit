@@ -27,6 +27,7 @@ const GOBLIN = {
     vulnerabilities: [],
   },
   citation: CITATION,
+  interpretation: null,
 };
 
 const LONGSWORD = {
@@ -40,6 +41,7 @@ const LONGSWORD = {
     mastery: 'sap',
   },
   citation: { source: 'srd-5.2.1', section: 'Equipment > Weapons' },
+  interpretation: null,
 };
 
 describe('the documented actor fixture', () => {

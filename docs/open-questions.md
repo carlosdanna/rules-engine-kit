@@ -6,28 +6,23 @@ Decisions still to make. When one is settled, write an ADR in `docs/adr/` and re
 
 Numbers are stable; a settled question keeps its number in the ADR that closed it.
 
-| # | Question | Blocks |
-| --- | --- | --- |
-| Q24 | Three checks `content-authoring.md` promises need a rendered situation and so need `renderTemplate`: every template renders with its defaults into a valid `Situation`; every `suggestedProfiles` entry resolves each fixture slug to exactly one variant (ADR-0017); and a `dieSelector: intent` whose roll has no declared choice, which `schema/effect.ts` says is warned about. Until then a template and a fixture are checked against their schemas alone. | M2 |
+There are none. Q24, the last one, was settled by ADR-0026 while the starter templates and
+`renderTemplate` were written; the three checks it recorded as owed are now performed by
+`pnpm content:lint`.
 
-Q24 is not a decision that is stuck: `renderTemplate` is already an M2 exit criterion
-(FR-18, FR-19, FR-20), and ADR-0017 fixed its contract. It stays listed because the three
-checks are promised in `content-authoring.md` today and are not performed, so the row is the
-record of a debt rather than of an argument. Two things will have to be decided when it is
-written, and neither has been: what a `suggestedProfiles` string maps to — no pack declares
-the ids `srd-5.1` and `srd-5.2.1` that templates and fixtures both use — and what type
-indexes a fixture slug to one variant under a profile.
+Q22, Q23 and Q25 were found while closing Q7–Q20 and while writing the SRD packs; ADR-0026
+settled two more that only became visible once there was a template to write, and recorded
+them with Q24. All are listed below.
 
-There are no templates under `content/` yet, so nothing is currently unchecked in practice.
-
-Q22, Q23 and Q25 were found while closing Q7–Q20 and while writing the SRD packs, and are
-settled below.
+`scenarios/` does not exist at the repo root, although `content-authoring.md` and
+`architecture.md` both refer to it. Rendering the six starter templates is the obvious way to
+populate it and no decision is blocking that — it is work not yet done, not a question.
 
 Settled: Q1–Q6 by ADR-0005 to ADR-0010, Q13–Q15 by ADR-0011 to ADR-0013 (2026-09-21),
 Q7–Q12 and Q16–Q20 by ADR-0015 to ADR-0019, Q21 by ADR-0021, Q22 by ADR-0023, Q23 by
-ADR-0024 and Q25 by ADR-0025 (2026-09-22). ADR-0022 was written the same day for a gap no
-question had been raised for: a nullable field the situation schema carries on purpose could
-not be read by a rule at all.
+ADR-0024, Q25 by ADR-0025 and Q24 by ADR-0026 (2026-09-22). ADR-0022 was written the same day
+for a gap no question had been raised for: a nullable field the situation schema carries on
+purpose could not be read by a rule at all.
 ADR-0011 supersedes ADR-0008, ADR-0012 supersedes ADR-0007, ADR-0014 supersedes ADR-0010,
 ADR-0013 amends ADR-0001, ADR-0011 amends ADR-0005, ADR-0019 amends ADR-0014, and ADR-0025
 amends ADR-0011.
@@ -41,9 +36,9 @@ ADR-0024 closed Q23 the same way, by deleting the obligation rather than meeting
 | Risk | Mitigation |
 | --- | --- |
 | Rule model can't express durations and stacking cleanly | Spiked 2026-09-21 (`docs/spike-notes.md`): the shapes hold; ADR-0007's durations and ADR-0008's roll order were wrong in detail and are superseded by ADR-0012 and ADR-0011 |
-| Schema drift across templates, fixtures, scenarios, golden tests | One Zod schema with `schemaVersion`; lint renders every template |
+| Schema drift across templates, fixtures, scenarios, golden tests | One Zod schema with `schemaVersion`; `content:lint` renders every template with its defaults under every profile it suggests (ADR-0026) |
 | Rules silently never fire (JSON Logic missing vars → null) | Fact registry; lint and trace flag unknown facts. Not covered by the spike — `json-logic-js` cannot report facts read or the failing sub-expression, so ADR-0013 replaces it with our own evaluator |
-| A registered fact a situation never declares throws rather than defaulting | Correct per ADR-0013, but sharp: an `intents.*` boolean a rule reads must be declared on every situation, or the comparison throws. `content:lint` should render every template and flag a rule whose condition can reach an undeclared intent |
+| A registered fact a situation never declares throws rather than defaulting | Sharper in theory than in practice, and worth recording accurately: an `intents.*` path a situation does not declare resolves to `null` rather than throwing (`src/evaluator/facts.ts`), so `{ "==": [{ "var": "intents.useInspiration" }, true] }` reads false and the rule is skipped. Every actor- and action-scoped path still throws as ADR-0013 says. `content:lint` renders every template and warns where a `dieSelector: intent` has no declared choice behind it (ADR-0026) |
 | Non-SRD content slips into the public repo | Citation required on every rule/fixture |
 | Hand-encoding takes longer than planned | Core-subset table is the scope contract; every row of it is authorable since ADR-0025 |
 | Golden snapshot churn | Assert outcomes separately from trace snapshots |

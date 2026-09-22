@@ -19,7 +19,9 @@ book.
 
 ## Changes made
 
-Rules from the SRDs have been paraphrased, simplified to a core subset, and restructured into machine-readable rule packs, fixtures and templates. Each rule cites the SRD section it derives from. Interpretations of ambiguous wording are marked in the rule's `interpretation` field.
+Rules from the SRDs have been paraphrased, simplified to a core subset, and restructured into machine-readable rule packs, fixtures and templates. Each rule cites the SRD section it derives from. Interpretations of ambiguous wording are marked in the rule's `interpretation` field, and a fixture carries the same field for the same purpose.
+
+One fixture is **derived rather than copied**: `content/fixtures/fighter-3.yaml` is a third-level fighter, which neither SRD publishes as a stat block. Its hit points, proficiency bonus and armour class follow the SRD 5.1 Fighter class and armour tables; its ability scores, armour and weapon are this repository's choices. The fixture's `interpretation` field says so. No other fixture states a number the SRD does not print.
 
 ## Data
 

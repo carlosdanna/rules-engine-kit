@@ -1,3 +1,6 @@
+# The skeleton is Situation-shaped, minus what `renderTemplate` supplies (ADR-0026): actors
+# name the fixture they inline plus the id their steps address them by, and the timeline is
+# explicit. The loader tests render this with its defaults, so it has to mean something.
 id: melee-attack
 name: Melee attack
 tags: [combat, attack]
@@ -10,7 +13,19 @@ params:
   targetConditions: { type: conditionList, default: [] }
   rerollDie: { type: rollChoice, roll: attack, choice: rerollDieIndex, default: 0 }
 skeleton:
-  action: { type: attack, mode: melee, weapon: "{{weapon}}" }
-  actors: ["{{attacker}}", { ref: "{{target}}", conditions: "{{targetConditions}}" }]
+  actors:
+    - { fixture: "{{attacker}}", id: attacker }
+    - { fixture: "{{target}}", id: target, conditions: "{{targetConditions}}" }
+  timeline:
+    - id: r1-attacker
+      round: 1
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: 5
   intents:
-    rollChoices: { "{{$rollId(attack)}}": { rerollDieIndex: "{{rerollDie}}" } }
+    rollChoices:
+      "{{$rollId(r1-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }

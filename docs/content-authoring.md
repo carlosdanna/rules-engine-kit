@@ -22,6 +22,7 @@ content/
   house-flanking-1.0.0/
   fixtures/*.yaml       # one fixture per file
   templates/*.yaml      # one template per file
+  profiles.yaml         # the named profiles everything else refers to
 ```
 
 `pnpm content:lint` takes the tree as `content/` by default, or any directories you name —
@@ -36,6 +37,34 @@ It reports everything it finds in one pass, each issue against the file it is in
 on an error. A warning does not fail it: two rules sharing a phase and a priority still
 order deterministically, by `rule_key`, but nobody chose that order (ADR-0009), which is
 worth saying and not worth blocking a commit over.
+
+## Profiles
+
+A pack identifies itself as `(id, semver)`, but a template's `suggestedProfiles`, a fixture's
+`rulesetScope` and a citation's `source` all name a **profile**: an ordered stack, base first,
+that resolves into one rule list and one hash. `profiles.yaml` declares them (ADR-0026), which
+is what lets `content:lint` report a typo in one instead of leaving a fixture silently
+invisible:
+
+```yaml
+- slug: srd-5.2.1
+  name: SRD 5.2.1
+  layers: [{ id: dnd5e-srd, version: 5.2.1 }]
+
+- slug: srd-5.2.1+flanking
+  name: SRD 5.2.1 + house flanking
+  layers:
+    - { id: dnd5e-srd, version: 5.2.1 }
+    - { id: house-flanking, version: 1.0.0 }
+```
+
+A slug is a name, not an identity: the profile hash is the canonical JSON of the *resolved*
+rules plus the layer identities (ADR-0009), so renaming one does not invalidate a stored
+evaluation. Every layer must name a pack the tree holds, and every string elsewhere that names
+a profile must be a declared slug — both are `content:lint` errors.
+
+`pnpm content:lint <one-pack>` is handed a pack directory and never sees a `profiles.yaml`, so
+a tree that declares none simply has nothing to check the slugs against.
 
 ## Rule pack
 
@@ -273,6 +302,7 @@ data:
   proficiencyBonus: 2
   abilities: { str: 8, dex: 14, con: 10, int: 10, wis: 8, cha: 8 }
 citation: { source: srd-5.2.1, section: "Monsters > Goblin" }
+interpretation: null
 ```
 
 `kind` is `actor` or `item`, and those are the only two (ADR-0024). A fixture carries printed
@@ -327,13 +357,24 @@ situation holds the data, not the slug, so a saved scenario replays identically 
 corrected. Take a correction up by re-rendering the scenario from its template and params. There is
 no per-scenario override mechanism — once the data is inlined, an override is an edited situation.
 
+Like a rule, a fixture may carry an `interpretation`, and it defaults to `null` when left out.
+Use it when the citation alone does not account for the numbers. `fighter-3` is the case that
+forced the field (ADR-0026): both SRDs publish the Fighter class tables and neither publishes a
+third-level fighter, so the hit points are derived and the ability array, the armour and the
+weapon are this repository's choices — which has to be said where the numbers are, not in a
+commit message.
+
 Where a stat block genuinely differs between editions, write two fixtures and scope each one.
-That every profile in a template's `suggestedProfiles` resolves each slug to exactly one
-variant is **not checked yet**: it needs `renderTemplate`, which is unwritten (Q24).
+`content:lint` checks that every profile in a template's `suggestedProfiles` resolves each slug
+it names to **exactly one** variant: none is an error, and so are two (ADR-0017).
 
 > Check stat values against the SRD before committing; the examples above are illustrative.
 
 ## Template
+
+A template is a situation with holes in it, plus the typed params that fill them (FR-18,
+FR-19). `renderTemplate` fills the holes, inlines every fixture it names and returns a
+`Situation` that is closed over its content (ADR-0017).
 
 ```yaml
 id: melee-attack
@@ -346,27 +387,84 @@ params:
   target:   { type: fixture, kind: actor, default: goblin }
   weapon:   { type: fixture, kind: item,  default: longsword }
   targetConditions: { type: conditionList, default: [] }
+  rangeFt: { type: number, default: 5, min: 0 }
   useInspiration: { type: boolean, default: false }
   rerollDie: { type: rollChoice, roll: attack, choice: rerollDieIndex, default: 0 }
 skeleton:
-  action: { type: attack, mode: melee, weapon: "{{weapon}}" }
-  actors: ["{{attacker}}", { ref: "{{target}}", conditions: "{{targetConditions}}" }]
+  actors:
+    - { fixture: "{{attacker}}", id: attacker }
+    - { fixture: "{{target}}", id: target, conditions: "{{targetConditions}}" }
+  timeline:
+    - id: r1-attacker
+      round: 1
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: "{{rangeFt}}"
   intents:
     useInspiration: "{{useInspiration}}"
-    rollChoices: { "{{$rollId(attack)}}": { rerollDieIndex: "{{rerollDie}}" } }
+    rollChoices:
+      "{{$rollId(r1-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }
 ```
 
-Param types: `fixture`, `number`, `boolean`, `enum`, `conditionList`, `rollChoice`. Anything more
-complex is edited in the JSON tab.
+### The skeleton
 
-A `rollChoice` param declares a per-roll player choice (ADR-0011). Roll ids are derivable from the
-situation before it is evaluated, so the template can address one: `$rollId(attack)` expands to
-`<stepId>/attack:<actorId>` for the step being rendered.
+The skeleton is shaped like the `Situation` it produces, minus what rendering supplies
+(ADR-0026). You write `actors` and `timeline`; `renderTemplate` adds `schemaVersion`, the
+`items` index and each fixture's printed data.
+
+- **An actor** names the fixture slug it inlines, plus the three fields a fixture does not
+  carry: `id` (what its steps and rules address it by), `hpCurrent` (defaults to the fixture's
+  `hp`) and `conditions` (defaults to empty).
+- **The timeline** is explicit, because durations need one: a template about Bless over ten
+  rounds cannot be written without several steps in several rounds (ADR-0005). A single-action
+  template is a timeline of length 1.
+- **Step ids and actor ids are literal**, never params. They are what `$rollId` addresses, and
+  a template that parameterised them could not pre-declare its own roll choices.
+
+Everything else is ordinary situation content, validated by `Situation.parse` at the end of
+rendering — so a weapon slug with nothing behind it or a step naming an actor that does not
+exist is a schema error, and the renderer does not get a second opinion about it (FR-20).
+
+### Placeholders
+
+`{{name}}` is a param. A string that is **exactly** one placeholder is replaced by the param's
+*value*, so a `conditionList` yields an array and a `boolean` yields a boolean — YAML has no
+way to write a non-string hole. A placeholder inside a longer string interpolates, and only a
+scalar may be interpolated.
+
+`{{$rollId(<stepId>, <kind>)}}` expands to `<stepId>/<kind>:<actorId>`, taking the actor from
+the step it names. Roll ids are derivable before evaluation precisely so a template can
+pre-declare a choice (ADR-0011); `kind` is one of `attack`, `save`, `check`, `initiative`,
+`damage`. A placeholder that names neither a param nor `$rollId` is an error, never passed
+through.
+
+### Params
+
+Param types: `fixture`, `number`, `boolean`, `enum`, `conditionList`, `rollChoice`. Anything
+more complex is edited in the JSON tab. Every param carries a `default`, which is what makes
+"renders with its defaults" a check rather than a wish.
+
+A `rollChoice` param declares a per-roll player choice (ADR-0011) — which die a reroll
+touches, declared up front because evaluation never pauses (ADR-0003). One param can serve
+several rolls: list an entry under `rollChoices` for each one.
 
 `tags` may be left out and reads as empty. An `enum` param's `default` must be one of its
-`values`, which `content:lint` does check.
+`values`; a `number` param may carry `min` and `max`. All three are checked.
 
-Every template must render with its defaults into a valid situation. `content:lint` does
-**not** check this yet, nor that a `dieSelector: intent` has a declared choice behind it —
-both need `renderTemplate` (Q24 in `docs/open-questions.md`). Until then a template is
-checked against its schema alone.
+### What `content:lint` checks
+
+Per template, and **per profile it suggests** (ADR-0026, closing Q24):
+
+1. It renders with its defaults into a valid `Situation`.
+2. Every fixture slug it names resolves to exactly one variant under that profile — none is an
+   error, and so are two (ADR-0017).
+3. Every string in `suggestedProfiles` is a profile `profiles.yaml` declares.
+
+It also **warns** when a rule in that profile can request a reroll on a roll the template
+declares no `rollChoices` entry for. Defaulting to die 0 is a silent decision rather than a
+broken one, but on an advantage pair it decides which of two dice is replaced, and nobody
+chose it.

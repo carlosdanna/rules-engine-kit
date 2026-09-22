@@ -1,6 +1,6 @@
 slug: goblin
 kind: actor
-rulesetScope: [srd-5.1, srd-5.2.1]
+rulesetScope: [srd-5.2.1]
 data:
   name: Goblin
   ac: 15

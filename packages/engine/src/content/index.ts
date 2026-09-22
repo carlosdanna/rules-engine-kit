@@ -23,6 +23,7 @@ export {
   normalizeFixture,
   normalizePack,
   normalizePackManifest,
+  normalizeProfilesFile,
   normalizeRuleFile,
   normalizeTemplate,
 } from './normalize';

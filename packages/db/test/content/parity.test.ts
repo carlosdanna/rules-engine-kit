@@ -13,11 +13,16 @@
  * what order the rule files are read in (VR-7), which extensions count. This test is what
  * stops that, by loading the pack the golden cases actually run on through both and
  * demanding the same object back.
+ *
+ * ADR-0026 widened the surface: the golden harness now renders templates, so `cli.ts` also
+ * walks `fixtures/`, `templates/` and `profiles.yaml`. Those walkers are held to the same
+ * answer here for the same reason — a case that passes in the suite must mean the same thing
+ * as the tree `content:lint` and the seeds read.
  */
 
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadPack } from '@rules-engine-kit/engine/cli';
+import { loadFixtures, loadPack, loadProfiles, loadTemplates } from '@rules-engine-kit/engine/cli';
 import { describe, expect, it } from 'vitest';
 import { loadContentTree } from '../../src/content';
 
@@ -44,6 +49,33 @@ describe('the CLI loader and the content loader (ADR-0020)', () => {
     expect(viaContent?.rules.map((rule) => rule.key)).toEqual(
       loadPack(GOLDEN_PACK).rules.map((rule) => rule.key),
     );
+  });
+});
+
+describe('the CLI loader and the content loader — fixtures, templates and profiles (ADR-0026)', () => {
+  const OK = join(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures', 'content-ok');
+
+  it('produce the same fixtures, in the same order', () => {
+    expect(loadFixtures(OK)).toEqual(loadContentTree(OK).fixtures);
+  });
+
+  it('produce the same templates', () => {
+    expect(loadTemplates(OK)).toEqual(loadContentTree(OK).templates);
+  });
+
+  it('read the same profiles.yaml', () => {
+    expect(loadProfiles(OK).map((profile) => profile.slug)).toEqual([
+      'srd-5.2.1',
+      'srd-5.2.1+flanking',
+    ]);
+  });
+
+  it('read an absent fixtures/, templates/ or profiles.yaml as none, not as an error', () => {
+    // `content:lint <one-pack>` is handed a pack directory, which has none of the three.
+    const pack = join(OK, 'dnd5e-srd-5.2.1');
+    expect(loadFixtures(pack)).toEqual([]);
+    expect(loadTemplates(pack)).toEqual([]);
+    expect(loadProfiles(pack)).toEqual([]);
   });
 });
 
