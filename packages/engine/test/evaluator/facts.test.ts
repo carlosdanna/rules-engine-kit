@@ -4,7 +4,7 @@ import { createFactRegistry } from '../../src/conditions';
 import { createWorldStateStore } from '../../src/effects';
 import type { StepResultView } from '../../src/evaluator';
 import { createFactSource, FactResolutionError } from '../../src/evaluator';
-import type { Item, Phase, Step } from '../../src/schema';
+import type { Actor, Item, Phase, Step } from '../../src/schema';
 import { actor } from '../effects/fakeContext';
 
 const registry = createFactRegistry([{ path: 'x', type: z.number() }]);
@@ -32,10 +32,14 @@ function sourceOf(
     items?: Record<string, Item>;
     /** What the `compare` phase has decided so far (ADR-0021). */
     result?: StepResultView;
+    actors?: Actor[];
   } = {},
 ) {
   const store = createWorldStateStore({
-    actors: [actor('fighter', { conditions: ['prone'] }), actor('goblin', { ac: 13 })],
+    actors: options.actors ?? [
+      actor('fighter', { conditions: ['prone'] }),
+      actor('goblin', { ac: 13 }),
+    ],
     registry,
   });
   const source = createFactSource({
@@ -82,6 +86,34 @@ describe('createFactSource — actor paths (ADR-0006)', () => {
 
   it('resolves target.* to the action’s target', () => {
     expect(sourceOf().source.read('target.ac')).toBe(13);
+  });
+
+  it('reads the two damage lists, which a resistance rule matches a damage type against', () => {
+    const actors = [
+      actor('fighter', { resistances: ['fire'] }),
+      actor('goblin', { vulnerabilities: ['bludgeoning'] }),
+    ];
+    const { source } = sourceOf({ actors });
+
+    expect(source.read('actor.resistances')).toEqual(['fire']);
+    expect(source.read('actor.vulnerabilities')).toEqual([]);
+    expect(source.read('target.vulnerabilities')).toEqual(['bludgeoning']);
+    expect(source.read('target.resistances')).toEqual([]);
+  });
+
+  it('reads the damage lists as printed: unlike conditions, nothing grants one (ADR-0025)', () => {
+    const { store, source } = sourceOf({ actors: [actor('fighter'), actor('goblin')] });
+    store.addEffect({
+      id: 'eff-1',
+      sourceRuleKey: 'spell.bless',
+      actorId: 'fighter',
+      condition: 'blessed',
+      duration: { kind: 'permanent' },
+      appliedAt: { round: 1, stepIndex: 0, edge: 'start' },
+      expiresAt: { kind: 'permanent' },
+    });
+    expect(source.read('actor.conditions')).toEqual(['blessed']);
+    expect(source.read('actor.resistances')).toEqual([]);
   });
 
   it('refuses target.* when the action declares no target', () => {

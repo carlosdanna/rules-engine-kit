@@ -1,7 +1,8 @@
 /**
- * The three channels that act on a roll (ADR-0011): numeric modifiers, roll mode, and roll
- * transforms. None of them emits a trace event — each record surfaces later, on the `roll`
- * event that consumed it or on the `stacking` event that resolved it (ADR-0014).
+ * The four channels that act on a roll or its damage (ADR-0011, ADR-0025): numeric
+ * modifiers, roll mode, roll transforms, and the multiplicative damage scale. None of them
+ * emits a trace event — each record surfaces later, on the `roll` event that consumed it or
+ * on the `stacking` or `damageScale` event that resolved it (ADR-0014).
  */
 
 import { withChannel } from '../../dice';
@@ -107,6 +108,23 @@ export function rollTransform(
       transform: effect.transform,
       uses: effect.uses,
       dieSelector: effect.dieSelector,
+    });
+  }
+  return emptyApplication();
+}
+
+export function scaleDamage(
+  effect: Extract<Effect, { type: 'scaleDamage' }>,
+  ctx: EffectContext,
+): EffectApplication {
+  // No collapse here, for the reason `rollMode` gives: resistance and vulnerability
+  // deduplicate as a *set* over every grant, which `resolveDamageScale` does once the whole
+  // phase has contributed (ADR-0025).
+  for (const target of resolvedTargets(effect.target, ctx, 'scaleDamage')) {
+    ctx.bus.scaleDamage({
+      ruleKey: ctx.ruleKey,
+      rollId: ctx.rollIdFor(target),
+      scale: effect.scale,
     });
   }
   return emptyApplication();

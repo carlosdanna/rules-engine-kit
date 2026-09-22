@@ -89,6 +89,7 @@ export function runStep(args: RunStepArgs): RunStepResult {
   let lastRoll: RollOutcome | null = null;
   let lastCompare: CompareOutcome | null = null;
   let damageTotal: number | null = null;
+  let damageType = 'untyped';
 
   const factSource = createFactSource({
     store,
@@ -261,18 +262,34 @@ export function runStep(args: RunStepArgs): RunStepResult {
       }
 
       if (phase === 'damage') {
-        const totalled = totalDamage({ step, rolls: stepRolls, bus, compare: lastCompare });
+        const totalled = totalDamage({
+          step,
+          rolls: stepRolls,
+          bus,
+          items: args.items,
+          compare: lastCompare,
+        });
         if (totalled !== null) {
-          trace.push(totalled.event);
+          trace.pushAll(totalled.events);
           damageTotal = totalled.total;
+          damageType = totalled.damageType;
         }
       }
 
       // `damage` totals it, `apply` spends it: the split is what lets an `apply`-phase rule
       // read the total and react before hit points move.
       if (phase === 'apply' && damageTotal !== null) {
-        const applied = applyDamage({ step, store, amount: damageTotal, ruleKey: 'engine.damage' });
-        if (applied !== null) damage.push(applied.outcome);
+        const applied = applyDamage({
+          step,
+          store,
+          amount: damageTotal,
+          damageType,
+          ruleKey: 'engine.damage',
+        });
+        if (applied !== null) {
+          damage.push(applied.outcome);
+          trace.push(applied.event);
+        }
       }
     }
 

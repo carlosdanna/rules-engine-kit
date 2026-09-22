@@ -44,6 +44,10 @@
   type: string
   description: "the weapon’s damage dice as notation, e.g. 1d8"
 
+- path: action.weapon.damage.type
+  type: string
+  description: "the weapon’s damage type, e.g. slashing — what a resistance is matched against"
+
 - path: actor.conditions
   type: stringList
   description: "conditions on the creature taking the step, printed plus granted"
@@ -83,6 +87,14 @@
 - path: target.conditions
   type: stringList
   description: "conditions on the action's target"
+
+- path: target.resistances
+  type: stringList
+  description: "damage types the action's target takes half of (ADR-0025)"
+
+- path: target.vulnerabilities
+  type: stringList
+  description: "damage types the action's target takes double of (ADR-0025)"
 
 - path: step.round
   type: number

@@ -1,0 +1,25 @@
+key: damage.resistance
+op: add
+phase: damage
+priority: 40
+label: "Resistance: half damage of that type"
+description: "A creature resistant to the damage type takes half of it."
+tags: [damage, resistance]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "!=": [{ "var": "action.weapon" }, null] }
+    - { "in": [{ "var": "action.weapon.damage.type" }, { "var": "target.resistances" }] }
+
+effects:
+  # Not a modifier: halving a total is not a term a stacking policy could weigh against
+  # other terms. It is the multiplicative channel, resolved after the stack (ADR-0025).
+  - type: scaleDamage
+    target: { kind: damage, actor: $actor }
+    scale: resistance
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+interpretation: >-
+  SRD 5.2.1 states the order explicitly: adjustments first, Resistance second, Vulnerability third — and that halving rounds down. The engine applies that order on the damage channel, so a rule only has to say which way the scale bends.

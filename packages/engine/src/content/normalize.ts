@@ -222,11 +222,19 @@ export function normalizeRuleFile(doc: unknown, path: string): RuleEntry {
 
 /**
  * A fixture's `damage.dice` is authored as notation for the same reason a modifier's value
- * is, and refused for the same reason if it carries a flat bonus (FR-11). The three
- * defaults are the fields most items simply do not have.
+ * is, and refused for the same reason if it carries a flat bonus (FR-11). The defaults are
+ * the fields most fixtures of each kind simply do not have: three on an item, and an
+ * actor's two damage lists, which most stat blocks leave blank (ADR-0025).
  */
 export function normalizeFixture(doc: unknown, path: string): Fixture {
   const fixture = requireObject(doc, path);
+  if (fixture.kind === 'actor') {
+    const actorData = requireObject(fixture.data ?? {}, `${path}.data`);
+    return FixtureSchema.parse({
+      ...fixture,
+      data: { resistances: [], vulnerabilities: [], ...actorData },
+    });
+  }
   if (fixture.kind !== 'item') return FixtureSchema.parse(fixture);
 
   const data = requireObject(fixture.data ?? {}, `${path}.data`);

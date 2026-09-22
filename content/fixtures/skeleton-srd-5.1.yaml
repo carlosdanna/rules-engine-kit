@@ -1,0 +1,13 @@
+# Armor Class and Dexterity both changed between the editions, so — like the goblin —
+# there are two fixtures under one slug, each scoped to the profile that prints it.
+slug: skeleton
+kind: actor
+rulesetScope: [srd-5.1]
+data:
+  name: Skeleton
+  ac: 13
+  hp: 13
+  proficiencyBonus: 2
+  abilities: { str: 10, dex: 14, con: 15, int: 6, wis: 8, cha: 5 }
+  vulnerabilities: [bludgeoning]
+citation: { source: srd-5.1, section: "Monsters > Skeleton" }

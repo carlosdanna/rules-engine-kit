@@ -56,7 +56,15 @@
       "comparisons": [
         { "rollId": "r1-guard/attack:guard", "total": 15, "dc": 15, "result": "hit" }
       ],
-      "damage": [{ "actorId": "goblin", "amount": 5, "hpAfter": 5 }],
+      "damage": [
+        {
+          "actorId": "goblin",
+          "damageType": "slashing",
+          "amount": 5,
+          "hpAfter": 5,
+          "overflow": 0
+        }
+      ],
       "halted": null
     }
   ],

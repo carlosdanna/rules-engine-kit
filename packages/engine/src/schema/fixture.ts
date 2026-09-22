@@ -27,6 +27,12 @@ export const ActorFixtureData = z.strictObject({
   /** Printed/base AC. Cover, spells and layers modify `actor.ac.effective`, not this. */
   ac: z.number().int(),
   hp: z.number().int().nonnegative(),
+  /**
+   * Damage types the stat block prints as resistances and vulnerabilities (ADR-0025).
+   * Both may be left out and read as empty, like an item's `properties`.
+   */
+  resistances: z.array(z.string().min(1)),
+  vulnerabilities: z.array(z.string().min(1)),
 });
 export type ActorFixtureData = z.infer<typeof ActorFixtureData>;
 
@@ -53,10 +59,10 @@ const FixtureIdentity = {
 };
 
 /**
- * `architecture.md`'s `fixtures` table lists a third kind, `effect`, which
- * `content-authoring.md` never specifies — see Q23 in `docs/open-questions.md`. Until it
- * says what such a fixture holds, the enum is the two kinds a situation can actually
- * carry.
+ * The two kinds a situation can carry. `architecture.md` used to list a third, `effect`,
+ * that nothing ever specified; ADR-0024 drops it, because an effect is authored inside a
+ * rule's `effects:` list and has no slug, no citation and no data of its own for a
+ * template's `fixture` param to pick from (Q23).
  */
 export const Fixture = z.discriminatedUnion('kind', [
   z.strictObject({ ...FixtureIdentity, kind: z.literal('actor'), data: ActorFixtureData }),

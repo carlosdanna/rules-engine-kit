@@ -1,0 +1,13 @@
+# One fixture, both editions. The printed damage is the same in each; the difference is
+# `mastery`, which only SRD 5.2.1 has a rule for. A bludgeoning weapon is what gives
+# `damage.vulnerability` something to fire against — the skeleton's vulnerability is to
+# bludgeoning, and every other weapon here deals slashing or piercing.
+slug: mace
+kind: item
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Mace
+  damage: { dice: 1d6, type: bludgeoning }
+  properties: []
+  mastery: sap
+citation: { source: srd-5.2.1, section: "Equipment > Weapons > Simple Melee Weapons" }

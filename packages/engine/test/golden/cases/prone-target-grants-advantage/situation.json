@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "items": {},
   "actors": [
     {
@@ -10,7 +10,9 @@
       "ac": 16,
       "hp": 30,
       "hpCurrent": 30,
-      "conditions": []
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
     },
     {
       "id": "goblin",
@@ -20,7 +22,9 @@
       "ac": 15,
       "hp": 7,
       "hpCurrent": 7,
-      "conditions": ["prone"]
+      "conditions": ["prone"],
+      "resistances": [],
+      "vulnerabilities": []
     }
   ],
   "timeline": [

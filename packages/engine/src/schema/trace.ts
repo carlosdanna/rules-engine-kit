@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TRACE_SCHEMA_VERSION } from '../version';
 import { FactRead } from './condition';
+import { DamageScale } from './effect';
 import { Json } from './json';
 import {
   Citation,
@@ -151,6 +152,41 @@ export const TraceEvent = z.discriminatedUnion('kind', [
     actorId: z.string().min(1),
     applied: z.array(AppliedModifier),
     dropped: z.array(DroppedModifier),
+  }),
+  /**
+   * The multiplicative damage channel, resolved (ADR-0025). Emitted in the `damage` phase
+   * only when at least one scale was granted, so a run with no resistance in it reads
+   * exactly as it did before. `inputs` keeps every grant, including the duplicates the
+   * SRD's no-stacking sentence collapses, for the same reason `modeInputs` keeps every
+   * advantage grant: the trace shows the working, not just the answer.
+   */
+  z.strictObject({
+    ...traceEventBase,
+    kind: z.literal('damageScale'),
+    /** A bare registered fact path, as `stacking` uses (ADR-0019). */
+    target: z.string().min(1),
+    actorId: z.string().min(1),
+    damageType: z.string().min(1),
+    inputs: z.array(z.strictObject({ ruleKey: z.string().min(1), scale: DamageScale })),
+    before: z.number().int(),
+    after: z.number().int(),
+  }),
+  /**
+   * Damage reaching hit points, in the `apply` phase (ADR-0023). Before this the phase
+   * emitted nothing at all and `applyDamage`'s state delta never reached the trace, so
+   * FR-14's "state delta" went unmet for the one write the engine makes itself.
+   */
+  z.strictObject({
+    ...traceEventBase,
+    kind: z.literal('damageApplied'),
+    actorId: z.string().min(1),
+    damageType: z.string().min(1),
+    amount: z.number().int().nonnegative(),
+    hpBefore: z.number().int(),
+    hpAfter: z.number().int(),
+    /** Discarded past 0, normally 0. Recorded, never acted on (ADR-0003, ADR-0023). */
+    overflow: z.number().int().nonnegative(),
+    deltas: z.array(StateDelta),
   }),
   z.strictObject({
     ...traceEventBase,

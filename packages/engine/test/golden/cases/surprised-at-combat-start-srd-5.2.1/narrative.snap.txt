@@ -16,3 +16,4 @@ round 1, r1-guard — Guard
   [damage] damage.weapon-dice fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
   [damage] damage.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
   [stacking] damage.total for Guard: +4 weapon +1 ability
+  [apply] Goblin Warrior takes 5 slashing damage, 10 → 5 hp

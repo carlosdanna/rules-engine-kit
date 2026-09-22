@@ -12,7 +12,7 @@ import type { EffectApplication, EffectContext } from './context';
 import { emptyApplication } from './context';
 import { applyCondition, removeCondition } from './handlers/conditions';
 import { emitEvent, halt } from './handlers/control';
-import { addModifier, rollMode, rollTransform } from './handlers/roll';
+import { addModifier, rollMode, rollTransform, scaleDamage } from './handlers/roll';
 import { rollDice, setValue } from './handlers/state';
 
 export type EffectHandler<T extends Effect = Effect> = (
@@ -27,6 +27,7 @@ export const EFFECT_HANDLERS: {
   addModifier,
   rollMode,
   rollTransform,
+  scaleDamage,
   rollDice,
   applyCondition,
   removeCondition,

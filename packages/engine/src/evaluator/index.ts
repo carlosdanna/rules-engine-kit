@@ -4,7 +4,9 @@ export {
   declareStepRolls,
   expandTransforms,
   resolveActionRoll,
+  resolveDamageScale,
   type StepRolls,
+  stepDamageType,
   totalDamage,
 } from './action';
 export { createActorRefResolver, primaryTargetId, targetsOf } from './actorRef';

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 3,
+  "actors": [
+    {
+      "id": "guard",
+      "name": "Guard",
+      "abilities": { "str": 13, "dex": 12, "con": 12, "int": 10, "wis": 11, "cha": 10 },
+      "proficiencyBonus": 2,
+      "ac": 16,
+      "hp": 11,
+      "hpCurrent": 11,
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
+    },
+    {
+      "id": "shrub",
+      "name": "Awakened Shrub",
+      "abilities": { "str": 3, "dex": 8, "con": 11, "int": 10, "wis": 10, "cha": 6 },
+      "proficiencyBonus": 2,
+      "ac": 9,
+      "hp": 10,
+      "hpCurrent": 10,
+      "conditions": [],
+      "resistances": ["piercing"],
+      "vulnerabilities": ["fire"]
+    }
+  ],
+  "items": {
+    "shortbow": {
+      "slug": "shortbow",
+      "name": "Shortbow",
+      "damage": { "dice": { "count": 1, "sides": 6 }, "type": "piercing" },
+      "properties": ["ammunition", "two-handed"],
+      "mastery": "vex"
+    }
+  },
+  "timeline": [
+    {
+      "id": "r1-guard",
+      "round": 1,
+      "actorId": "guard",
+      "action": {
+        "type": "attack",
+        "mode": "ranged",
+        "targetId": "shrub",
+        "weapon": "shortbow",
+        "rangeFt": 40
+      }
+    }
+  ],
+  "intents": {}
+}

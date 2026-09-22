@@ -12,7 +12,7 @@
  */
 
 import type { RollModeInput } from '../dice';
-import type { DieSelector, RollId, RollModeGrant, RollTransform } from '../schema';
+import type { DamageScale, DieSelector, RollId, RollModeGrant, RollTransform } from '../schema';
 import type { PendingModifier } from '../stacking';
 
 export type ModeGrant = { ruleKey: string; rollId: RollId; mode: RollModeGrant };
@@ -25,6 +25,9 @@ export type TransformRequestRecord = {
   dieSelector: DieSelector;
 };
 
+/** One `scaleDamage` grant, before the no-stacking collapse (ADR-0025). */
+export type DamageScaleGrant = { ruleKey: string; rollId: RollId; scale: DamageScale };
+
 export type DerivedGroup = {
   path: string;
   actorId: string;
@@ -36,12 +39,14 @@ export type StepBus = {
   requestTransform(request: TransformRequestRecord): void;
   addRollModifier(rollId: RollId, modifier: PendingModifier): void;
   addDerivedModifier(path: string, actorId: string, modifier: PendingModifier): void;
+  scaleDamage(grant: DamageScaleGrant): void;
   /** Ensures a group exists with no contributors, so a derived value always seals. */
   declareDerived(path: string, actorId: string): void;
 
   modeInputsFor(rollId: RollId): readonly RollModeInput[];
   transformRequestsFor(rollId: RollId): readonly TransformRequestRecord[];
   rollModifiersFor(rollId: RollId): readonly PendingModifier[];
+  damageScalesFor(rollId: RollId): readonly DamageScaleGrant[];
   derivedGroups(): readonly DerivedGroup[];
 };
 
@@ -52,6 +57,7 @@ function derivedKey(path: string, actorId: string): string {
 export function createStepBus(): StepBus {
   const modes: ModeGrant[] = [];
   const transforms: TransformRequestRecord[] = [];
+  const damageScales: DamageScaleGrant[] = [];
   const rollModifiers = new Map<RollId, PendingModifier[]>();
   const derived = new Map<
     string,
@@ -78,6 +84,7 @@ export function createStepBus(): StepBus {
     addDerivedModifier(path, actorId, modifier) {
       derivedGroup(path, actorId).modifiers.push(modifier);
     },
+    scaleDamage: (grant) => void damageScales.push(grant),
     declareDerived(path, actorId) {
       derivedGroup(path, actorId);
     },
@@ -88,6 +95,7 @@ export function createStepBus(): StepBus {
         .map((grant) => ({ ruleKey: grant.ruleKey, mode: grant.mode })),
     transformRequestsFor: (rollId) => transforms.filter((request) => request.rollId === rollId),
     rollModifiersFor: (rollId) => rollModifiers.get(rollId) ?? [],
+    damageScalesFor: (rollId) => damageScales.filter((grant) => grant.rollId === rollId),
     // Sorted by path then actor: a content-stable order, so a golden trace does not reshuffle
     // when a rule's priority changes. First-contribution order would also be deterministic,
     // but it is determined by the rules rather than by what is being derived.

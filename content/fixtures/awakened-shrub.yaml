@@ -1,0 +1,16 @@
+# One fixture, both editions: the stat block is the same in each, down to the two damage
+# lists. `piercing` is a weapon damage type, so the rapier and the shortbow exercise
+# `damage.resistance` against it; `fire` is the vulnerability, which no weapon in these
+# packs deals (ADR-0025).
+slug: awakened-shrub
+kind: actor
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Awakened Shrub
+  ac: 9
+  hp: 10
+  proficiencyBonus: 2
+  abilities: { str: 3, dex: 8, con: 11, int: 10, wis: 10, cha: 6 }
+  resistances: [piercing]
+  vulnerabilities: [fire]
+citation: { source: srd-5.2.1, section: "Monsters > Awakened Shrub" }

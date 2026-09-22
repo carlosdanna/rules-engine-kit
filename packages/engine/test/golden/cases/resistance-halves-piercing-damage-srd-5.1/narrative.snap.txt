@@ -1,0 +1,14 @@
+round 1, r1-guard — Guard
+  [modifiers] attack.ability-modifier.dexterity fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [stacking] actor.ac.effective for Awakened Shrub: no contributions
+  [roll] attack:Guard: no mode inputs ⇒ normal
+         dice [14]
+         kept 14 +1 ability +2 proficiency = 17
+  [compare] 17 vs DC 9 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.dexterity fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.resistance fired (srd-5.1 · Combat > Damage and Healing > Damage Resistance and Vulnerability)
+  [stacking] damage.total for Guard: +5 weapon +1 ability
+  [damage] piercing 6 → 3 for Guard: resistance from damage.resistance
+  [apply] Awakened Shrub takes 3 piercing damage, 10 → 7 hp

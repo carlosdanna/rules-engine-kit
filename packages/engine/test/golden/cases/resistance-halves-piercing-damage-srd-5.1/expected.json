@@ -1,0 +1,59 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "actorId": "guard",
+      "rolls": [
+        {
+          "rollId": "r1-guard/attack:guard",
+          "target": { "kind": "attack", "actorId": "guard" },
+          "mode": "normal",
+          "kept": 14,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.dexterity",
+              "modifierType": "ability",
+              "value": 1,
+              "fromFact": "actor.abilityMod.dex"
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2,
+              "fromFact": "actor.proficiencyBonus"
+            }
+          ],
+          "total": 17,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-guard/attack:guard",
+          "total": 17,
+          "dc": 9,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "shrub",
+          "damageType": "piercing",
+          "amount": 3,
+          "hpAfter": 7,
+          "overflow": 0
+        }
+      ],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "guard": { "id": "guard", "hpCurrent": 11, "conditions": [] },
+      "shrub": { "id": "shrub", "hpCurrent": 7, "conditions": [] }
+    },
+    "activeEffects": []
+  },
+  "events": []
+}

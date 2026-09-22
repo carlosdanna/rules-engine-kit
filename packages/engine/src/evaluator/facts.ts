@@ -18,7 +18,8 @@ import { FactResolutionError } from './errors';
 
 const ABILITY = /^actor\.([^.]+)\.abilities\.([^.]+)$/;
 const ABILITY_MOD = /^actor\.([^.]+)\.abilityMod\.([^.]+)$/;
-const ACTOR_FIELD = /^actor\.([^.]+)\.(name|ac|hp|hpCurrent|proficiencyBonus|conditions)$/;
+const ACTOR_FIELD =
+  /^actor\.([^.]+)\.(name|ac|hp|hpCurrent|proficiencyBonus|conditions|resistances|vulnerabilities)$/;
 
 /**
  * What the `compare` phase has decided for this step, as the fact source sees it
@@ -122,6 +123,12 @@ export function createFactSource(args: FactSourceArgs): FactSource {
           return actor.hpCurrent;
         case 'proficiencyBonus':
           return actor.proficiencyBonus;
+        case 'resistances':
+          // Printed, and nothing writes them, so unlike `conditions` this is the actor's
+          // own list rather than the store's running set (ADR-0025).
+          return [...actor.resistances];
+        case 'vulnerabilities':
+          return [...actor.vulnerabilities];
         default:
           // Printed conditions plus anything an effect granted.
           return [...store.conditionsOf(actorId as string)];

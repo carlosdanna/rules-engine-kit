@@ -55,9 +55,20 @@ export type CompareOutcome = z.infer<typeof CompareOutcome>;
 
 export const DamageOutcome = z.strictObject({
   actorId: z.string().min(1),
+  /**
+   * The type dealt, from the weapon that dealt it, or `untyped` for an attack with no
+   * weapon behind it (ADR-0025). It is what `target.resistances` is matched against.
+   */
   damageType: z.string().min(1),
   amount: z.number().int().nonnegative(),
   hpAfter: z.number().int(),
+  /**
+   * How much of `amount` fell past 0 and was discarded, normally 0 (ADR-0023). Hit points
+   * clamp because `Actor.hpCurrent` is `nonnegative()`, and the SRD's use for the overflow
+   * — instant death — is out of scope (ADR-0003). It is reported rather than dropped, on
+   * the same principle as a clamped roll transform (ADR-0019): nothing reads it.
+   */
+  overflow: z.number().int().nonnegative(),
 });
 export type DamageOutcome = z.infer<typeof DamageOutcome>;
 

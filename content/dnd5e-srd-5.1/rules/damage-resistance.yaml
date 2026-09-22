@@ -1,0 +1,25 @@
+key: damage.resistance
+op: add
+phase: damage
+priority: 40
+label: "Resistance: half damage of that type"
+description: "A creature resistant to the damage type takes half of it."
+tags: [damage, resistance]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "!=": [{ "var": "action.weapon" }, null] }
+    - { "in": [{ "var": "action.weapon.damage.type" }, { "var": "target.resistances" }] }
+
+effects:
+  # Not a modifier: halving a total is not a term a stacking policy could weigh against
+  # other terms. It is the multiplicative channel, resolved after the stack (ADR-0025).
+  - type: scaleDamage
+    target: { kind: damage, actor: $actor }
+    scale: resistance
+citation:
+  source: srd-5.1
+  section: "Combat > Damage and Healing > Damage Resistance and Vulnerability"
+interpretation: >-
+  SRD 5.1 says damage of a resisted type “is halved” without restating the rounding, so this relies on the general rule that a division rounds down; SRD 5.2.1 spells the same rounding out inline. Resistance and vulnerability are applied after all other modifiers, which is why this is a scale on the damage total rather than a modifier on it.

@@ -132,7 +132,8 @@ tree, so a path that lints cannot then be missing at run time.
 
 ## Effects
 
-Three separate channels act on a roll, each with its own algorithm (ADR-0011):
+Four separate channels act on a roll or on its damage, each with its own algorithm
+(ADR-0011, ADR-0025):
 
 ```yaml
 effects:
@@ -155,6 +156,27 @@ effects:
     transform: { kind: reroll, keep: new }   # new | higher
     uses: 1
     dieSelector: intent            # intent | { fixed: <index> }
+
+  # damage scale — multiplicative, applied after the modifiers above are summed
+  - type: scaleDamage
+    target: { kind: damage, actor: $actor }
+    scale: resistance              # resistance | vulnerability
+```
+
+A scale names *which way* the damage total bends and nothing else. The arithmetic is the
+engine's, because it is the part both SRDs state exactly: resistance halves (rounding down),
+then vulnerability doubles, and multiple rules granting the same scale count as one. The two
+do not cancel — a creature with both takes 8 from 9 damage, not 9 — so write the two rules
+independently and let the channel compose them.
+
+`scaleDamage` targets a damage roll, never a derived path: there is no halving an effective
+AC. A rule decides *whether* the scale applies, which is where the content lives:
+
+```yaml
+condition:
+  all:
+    - { "==": [{ "var": "step.attack.result" }, "hit"] }
+    - { "in": [{ "var": "action.weapon.damage.type" }, { "var": "target.resistances" }] }
 ```
 
 A dice value is written as notation — `{ dice: 1d4 }` — and may not carry a flat bonus: `1d4+2`
@@ -253,10 +275,32 @@ data:
 citation: { source: srd-5.2.1, section: "Monsters > Goblin" }
 ```
 
-`kind` is `actor` or `item`. A fixture carries printed values only (FR-8): no effective AC,
-attack bonus or save DC, because rules derive those and report the terms they came from.
-`rulesetScope` needs at least one entry — a fixture no profile can see is content nothing
-will ever render.
+`kind` is `actor` or `item`, and those are the only two (ADR-0024). A fixture carries printed
+values only (FR-8): no effective AC, attack bonus or save DC, because rules derive those and
+report the terms they came from. `rulesetScope` needs at least one entry — a fixture no
+profile can see is content nothing will ever render.
+
+An actor fixture also carries what the stat block prints as `Damage Resistances` and
+`Damage Vulnerabilities`, as the rules read them (ADR-0025):
+
+```yaml
+slug: awakened-shrub
+kind: actor
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Awakened Shrub
+  ac: 9
+  hp: 10
+  proficiencyBonus: 2
+  abilities: { str: 3, dex: 8, con: 11, int: 10, wis: 10, cha: 6 }
+  resistances: [piercing]
+  vulnerabilities: [fire]
+citation: { source: srd-5.2.1, section: "Monsters > Awakened Shrub" }
+```
+
+Write the types the stat block prints, not the ones a scenario happens to use. A creature
+vulnerable to a type no weapon in the packs deals is correct content: the rule lints, and
+never fires.
 
 An item fixture carries what a rule can read. `mastery` is the SRD 5.2.1 weapon mastery property
 and is `null` on a weapon scoped to 5.1, so one fixture can serve both editions and the difference
@@ -275,7 +319,8 @@ citation: { source: srd-5.2.1, section: "Equipment > Weapons" }
 ```
 
 On an item, `damage`, `properties` and `mastery` may be left out and read as `null`, `[]`
-and `null`. An actor's five fields are all required.
+and `null`; on an actor, `resistances` and `vulnerabilities` may be left out and read as
+`[]`. An actor's other five fields are all required.
 
 Fixtures are **inlined** into a situation when a template renders (ADR-0017): the rendered
 situation holds the data, not the slug, so a saved scenario replays identically after a fixture is

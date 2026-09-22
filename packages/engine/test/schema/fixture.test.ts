@@ -23,6 +23,8 @@ const GOBLIN = {
     hp: 7,
     proficiencyBonus: 2,
     abilities: { str: 8, dex: 14, con: 10, int: 10, wis: 8, cha: 8 },
+    resistances: [],
+    vulnerabilities: [],
   },
   citation: CITATION,
 };

@@ -13,7 +13,9 @@ import type {
   CompareOutcome,
   CompareResult,
   DamageOutcome,
+  DamageScale,
   Intents,
+  Item,
   RollId,
   RollOutcome,
   RollTarget,
@@ -180,17 +182,47 @@ export function compareAction(args: {
 }
 
 /**
+ * The type the step's damage is dealt as: the weapon's, or `untyped` for an attack made
+ * with no weapon, or with one that deals no damage of its own (ADR-0025). One type per
+ * step — mixed-type damage is outside the core subset (ADR-0003).
+ */
+export function stepDamageType(step: Step, items: Record<string, Item>): string {
+  const action = step.action;
+  if (action === null || action.type !== 'attack' || action.weapon === null) return 'untyped';
+  return items[action.weapon]?.damage?.type ?? 'untyped';
+}
+
+/**
+ * The multiplicative channel (ADR-0025). Both SRDs state the same three things: resistance
+ * halves (rounding down), vulnerability doubles, and multiple instances of either count as
+ * one. They are applied in that order and do *not* cancel — 9 against a creature with both
+ * is 8 — which is why this is not the roll-mode algorithm, however much it looks like it.
+ */
+export function resolveDamageScale(
+  total: number,
+  grants: readonly { scale: DamageScale }[],
+): number {
+  const has = (scale: DamageScale) => grants.some((grant) => grant.scale === scale);
+  const halved = has('resistance') ? Math.floor(total / 2) : total;
+  return has('vulnerability') ? halved * 2 : halved;
+}
+
+/**
  * Damage has no d20, so it cannot be a `roll` event — that event requires a non-empty pool,
  * a mode and a kept die, and inventing them would be a lie. It is a derived value in exactly
  * ADR-0014's sense ("non-roll derived values — effective AC, damage") and reports as a
  * `stacking` event. `RollTargetKind` includes `'damage'` only so content can name the target.
+ *
+ * The scale runs after the stack, never inside it: `resolveStack` stays integer and additive
+ * for every target it serves, so no `actor.ac.effective` can be halved by accident.
  */
 export function totalDamage(args: {
   step: Step;
   rolls: StepRolls;
   bus: StepBus;
+  items: Record<string, Item>;
   compare: CompareOutcome | null;
-}): { event: TraceEventInput; total: number } | null {
+}): { events: TraceEventInput[]; total: number; damageType: string } | null {
   if (
     args.compare !== null &&
     (args.compare.result === 'miss' || args.compare.result === 'failure')
@@ -198,9 +230,8 @@ export function totalDamage(args: {
     return null;
   }
 
-  const modifiers = args.bus.rollModifiersFor(
-    `${args.step.id}/damage:${args.rolls.damage.actorId}` as RollId,
-  );
+  const rollId = `${args.step.id}/damage:${args.rolls.damage.actorId}` as RollId;
+  const modifiers = args.bus.rollModifiersFor(rollId);
   const derived = args.bus
     .derivedGroups()
     .find((group) => group.path === args.rolls.damage.path)?.modifiers;
@@ -208,9 +239,10 @@ export function totalDamage(args: {
   if (contributions.length === 0) return null;
 
   const stack = resolveStack(contributions);
+  const damageType = stepDamageType(args.step, args.items);
 
-  return {
-    event: {
+  const events: TraceEventInput[] = [
+    {
       stepId: args.step.id,
       round: args.step.round,
       phase: 'damage',
@@ -220,33 +252,71 @@ export function totalDamage(args: {
       applied: stack.applied,
       dropped: stack.dropped,
     },
-    total: stack.total,
-  };
+  ];
+
+  const grants = args.bus.damageScalesFor(rollId);
+  const total = resolveDamageScale(stack.total, grants);
+
+  // Only when something scaled: a run with no resistance in it reads exactly as before.
+  if (grants.length > 0) {
+    events.push({
+      stepId: args.step.id,
+      round: args.step.round,
+      phase: 'damage',
+      kind: 'damageScale',
+      target: args.rolls.damage.path,
+      actorId: args.rolls.damage.actorId,
+      damageType,
+      inputs: grants.map((grant) => ({ ruleKey: grant.ruleKey, scale: grant.scale })),
+      before: stack.total,
+      after: total,
+    });
+  }
+
+  return { events, total, damageType };
 }
 
 export function applyDamage(args: {
   step: Step;
   store: WorldStateStore;
   amount: number;
+  damageType: string;
   ruleKey: string;
-}): { outcome: DamageOutcome; deltas: StateDelta[] } | null {
+}): { outcome: DamageOutcome; event: TraceEventInput; deltas: StateDelta[] } | null {
   const action = args.step.action;
   if (action === null || action.type !== 'attack' || args.amount <= 0) return null;
 
-  const before = args.store.actor(action.targetId).hpCurrent;
+  const hpBefore = args.store.actor(action.targetId).hpCurrent;
   // Clamped at 0: `Actor.hpCurrent` is `nonnegative()`, so the store could not hold a
-  // negative. Whether the overflow should be recorded anyway is Q22 in open-questions —
-  // the SRD uses it for instant death, which ADR-0003 puts out of scope.
-  const hpAfter = Math.max(0, before - args.amount);
+  // negative. The clamp stays and the discarded amount is reported instead of vanishing
+  // (ADR-0023, closing Q22); the SRD's use for it, instant death, is out of scope
+  // (ADR-0003), so nothing reads `overflow`.
+  const hpAfter = Math.max(0, hpBefore - args.amount);
+  const overflow = args.amount - (hpBefore - hpAfter);
   const delta = args.store.write(`actor.${action.targetId}.hpCurrent`, hpAfter, args.ruleKey);
+  const deltas = [delta];
 
   return {
     outcome: {
       actorId: action.targetId,
-      damageType: 'untyped',
+      damageType: args.damageType,
       amount: args.amount,
       hpAfter,
+      overflow,
     },
-    deltas: [delta],
+    event: {
+      stepId: args.step.id,
+      round: args.step.round,
+      phase: 'apply',
+      kind: 'damageApplied',
+      actorId: action.targetId,
+      damageType: args.damageType,
+      amount: args.amount,
+      hpBefore,
+      hpAfter,
+      overflow,
+      deltas,
+    },
+    deltas,
   };
 }

@@ -1,5 +1,5 @@
 {
-  "traceSchemaVersion": 2,
+  "traceSchemaVersion": 3,
   "events": [
     {
       "stepId": "r1-guard-initiative",
@@ -1143,6 +1143,66 @@
     {
       "stepId": "r1-guard-initiative",
       "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.resistance",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "check"
+        }
+      ],
+      "seq": 37
+    },
+    {
+      "stepId": "r1-guard-initiative",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.vulnerability",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "check"
+        }
+      ],
+      "seq": 38
+    },
+    {
+      "stepId": "r1-guard-initiative",
+      "round": 1,
       "phase": "apply",
       "kind": "rule",
       "ruleKey": "spell.bless.cast",
@@ -1168,7 +1228,7 @@
           "value": "check"
         }
       ],
-      "seq": 37
+      "seq": 39
     },
     {
       "stepId": "r1-guard-initiative",
@@ -1198,7 +1258,7 @@
           "value": "check"
         }
       ],
-      "seq": 38
+      "seq": 40
     },
     {
       "stepId": "r1-guard-initiative",
@@ -1228,7 +1288,7 @@
           "value": "check"
         }
       ],
-      "seq": 39
+      "seq": 41
     },
     {
       "stepId": "r1-guard",
@@ -1258,7 +1318,7 @@
           "value": "attack"
         }
       ],
-      "seq": 40
+      "seq": 42
     },
     {
       "stepId": "r1-guard",
@@ -1292,7 +1352,7 @@
           "value": []
         }
       ],
-      "seq": 41
+      "seq": 43
     },
     {
       "stepId": "r1-guard",
@@ -1326,7 +1386,7 @@
           "value": []
         }
       ],
-      "seq": 42
+      "seq": 44
     },
     {
       "stepId": "r1-guard",
@@ -1356,7 +1416,7 @@
           "value": "attack"
         }
       ],
-      "seq": 43
+      "seq": 45
     },
     {
       "stepId": "r1-guard",
@@ -1386,7 +1446,7 @@
           "value": "attack"
         }
       ],
-      "seq": 44
+      "seq": 46
     },
     {
       "stepId": "r1-guard",
@@ -1416,7 +1476,7 @@
           "value": "melee"
         }
       ],
-      "seq": 45
+      "seq": 47
     },
     {
       "stepId": "r1-guard",
@@ -1450,7 +1510,7 @@
           "value": "melee"
         }
       ],
-      "seq": 46
+      "seq": 48
     },
     {
       "stepId": "r1-guard",
@@ -1494,7 +1554,7 @@
           ]
         }
       ],
-      "seq": 47
+      "seq": 49
     },
     {
       "stepId": "r1-guard",
@@ -1528,7 +1588,7 @@
           "value": "attack"
         }
       ],
-      "seq": 48
+      "seq": 50
     },
     {
       "stepId": "r1-guard",
@@ -1562,7 +1622,7 @@
           "value": "attack"
         }
       ],
-      "seq": 49
+      "seq": 51
     },
     {
       "stepId": "r1-guard",
@@ -1596,7 +1656,7 @@
           "value": "attack"
         }
       ],
-      "seq": 50
+      "seq": 52
     },
     {
       "stepId": "r1-guard",
@@ -1630,7 +1690,7 @@
           "value": "attack"
         }
       ],
-      "seq": 51
+      "seq": 53
     },
     {
       "stepId": "r1-guard",
@@ -1664,7 +1724,7 @@
           "value": "attack"
         }
       ],
-      "seq": 52
+      "seq": 54
     },
     {
       "stepId": "r1-guard",
@@ -1698,7 +1758,7 @@
           "value": "attack"
         }
       ],
-      "seq": 53
+      "seq": 55
     },
     {
       "stepId": "r1-guard",
@@ -1724,7 +1784,7 @@
           "value": "attack"
         }
       ],
-      "seq": 54
+      "seq": 56
     },
     {
       "stepId": "r1-guard",
@@ -1758,7 +1818,7 @@
           "value": []
         }
       ],
-      "seq": 55
+      "seq": 57
     },
     {
       "stepId": "r1-guard",
@@ -1792,7 +1852,7 @@
           "value": []
         }
       ],
-      "seq": 56
+      "seq": 58
     },
     {
       "stepId": "r1-guard",
@@ -1828,7 +1888,7 @@
           ]
         }
       ],
-      "seq": 57
+      "seq": 59
     },
     {
       "stepId": "r1-guard",
@@ -1862,7 +1922,7 @@
           "value": []
         }
       ],
-      "seq": 58
+      "seq": 60
     },
     {
       "stepId": "r1-guard",
@@ -1898,7 +1958,7 @@
           ]
         }
       ],
-      "seq": 59
+      "seq": 61
     },
     {
       "stepId": "r1-guard",
@@ -1928,7 +1988,7 @@
           "value": "attack"
         }
       ],
-      "seq": 60
+      "seq": 62
     },
     {
       "stepId": "r1-guard",
@@ -1962,7 +2022,7 @@
           "value": []
         }
       ],
-      "seq": 61
+      "seq": 63
     },
     {
       "stepId": "r1-guard",
@@ -1998,7 +2058,7 @@
           ]
         }
       ],
-      "seq": 62
+      "seq": 64
     },
     {
       "stepId": "r1-guard",
@@ -2034,7 +2094,7 @@
           ]
         }
       ],
-      "seq": 63
+      "seq": 65
     },
     {
       "stepId": "r1-guard",
@@ -2064,7 +2124,7 @@
           "value": "attack"
         }
       ],
-      "seq": 64
+      "seq": 66
     },
     {
       "stepId": "r1-guard",
@@ -2094,7 +2154,7 @@
           "value": "attack"
         }
       ],
-      "seq": 65
+      "seq": 67
     },
     {
       "stepId": "r1-guard",
@@ -2130,7 +2190,7 @@
           ]
         }
       ],
-      "seq": 66
+      "seq": 68
     },
     {
       "stepId": "r1-guard",
@@ -2166,7 +2226,7 @@
           ]
         }
       ],
-      "seq": 67
+      "seq": 69
     },
     {
       "stepId": "r1-guard",
@@ -2196,7 +2256,7 @@
           "value": "attack"
         }
       ],
-      "seq": 68
+      "seq": 70
     },
     {
       "stepId": "r1-guard",
@@ -2226,7 +2286,7 @@
           "value": null
         }
       ],
-      "seq": 69
+      "seq": 71
     },
     {
       "stepId": "r1-guard",
@@ -2237,7 +2297,7 @@
       "actorId": "goblin",
       "applied": [],
       "dropped": [],
-      "seq": 70
+      "seq": 72
     },
     {
       "stepId": "r1-guard",
@@ -2280,7 +2340,7 @@
       ],
       "dropped": [],
       "total": 15,
-      "seq": 71
+      "seq": 73
     },
     {
       "stepId": "r1-guard",
@@ -2295,7 +2355,7 @@
       "total": 15,
       "dc": 15,
       "result": "hit",
-      "seq": 72
+      "seq": 74
     },
     {
       "stepId": "r1-guard",
@@ -2329,7 +2389,7 @@
           "value": "battleaxe"
         }
       ],
-      "seq": 73
+      "seq": 75
     },
     {
       "stepId": "r1-guard",
@@ -2367,7 +2427,7 @@
           "value": "melee"
         }
       ],
-      "seq": 74
+      "seq": 76
     },
     {
       "stepId": "r1-guard",
@@ -2409,7 +2469,7 @@
           "value": "melee"
         }
       ],
-      "seq": 75
+      "seq": 77
     },
     {
       "stepId": "r1-guard",
@@ -2457,7 +2517,7 @@
           ]
         }
       ],
-      "seq": 76
+      "seq": 78
     },
     {
       "stepId": "r1-guard",
@@ -2499,7 +2559,99 @@
           "value": 12
         }
       ],
-      "seq": 77
+      "seq": 79
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.resistance",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        },
+        {
+          "path": "action.weapon.damage.type",
+          "value": "slashing"
+        },
+        {
+          "path": "target.resistances",
+          "value": []
+        }
+      ],
+      "seq": 80
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.vulnerability",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "battleaxe"
+        },
+        {
+          "path": "action.weapon.damage.type",
+          "value": "slashing"
+        },
+        {
+          "path": "target.vulnerabilities",
+          "value": []
+        }
+      ],
+      "seq": 81
     },
     {
       "stepId": "r1-guard",
@@ -2531,7 +2683,7 @@
         }
       ],
       "dropped": [],
-      "seq": 78
+      "seq": 82
     },
     {
       "stepId": "r1-guard",
@@ -2561,7 +2713,7 @@
           "value": "attack"
         }
       ],
-      "seq": 79
+      "seq": 83
     },
     {
       "stepId": "r1-guard",
@@ -2603,7 +2755,7 @@
           "value": "topple"
         }
       ],
-      "seq": 80
+      "seq": 84
     },
     {
       "stepId": "r1-guard",
@@ -2639,7 +2791,27 @@
           ]
         }
       ],
-      "seq": 81
+      "seq": 85
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "apply",
+      "kind": "damageApplied",
+      "actorId": "goblin",
+      "damageType": "slashing",
+      "amount": 5,
+      "hpBefore": 10,
+      "hpAfter": 5,
+      "overflow": 0,
+      "deltas": [
+        {
+          "path": "actor.goblin.hpCurrent",
+          "from": 10,
+          "to": 5
+        }
+      ],
+      "seq": 86
     }
   ]
 }

@@ -24,6 +24,8 @@ function actor(id: string, overrides: Partial<Actor> = {}): Actor {
     hp: 60,
     hpCurrent: 60,
     conditions: [],
+    resistances: [],
+    vulnerabilities: [],
     ...overrides,
   };
 }

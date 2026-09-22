@@ -374,3 +374,38 @@ describe('fact-valued effects — a rule states the rule, not the numbers (ADR-0
     ).toThrow(/dice/);
   });
 });
+
+describe('scaleDamage — the multiplicative channel (ADR-0025)', () => {
+  it('records the grant on the damage lane, resolved to the acting creature', () => {
+    const ctx = fakeContext();
+    applyEffect(
+      { type: 'scaleDamage', target: { kind: 'damage', actor: '$actor' }, scale: 'resistance' },
+      ctx,
+    );
+
+    expect(ctx.bus.damageScalesFor('r1-fighter/damage:fighter')).toEqual([
+      { ruleKey: 'test.rule', rollId: 'r1-fighter/damage:fighter', scale: 'resistance' },
+    ]);
+  });
+
+  it('keeps every grant rather than collapsing here, exactly as rollMode does', () => {
+    // The SRD's "multiple instances count as one" is a property of the *set*, so it is
+    // applied once the whole phase has contributed — in `resolveDamageScale`, not here.
+    const ctx = fakeContext();
+    for (const scale of ['resistance', 'resistance', 'vulnerability'] as const) {
+      applyEffect({ type: 'scaleDamage', target: { kind: 'damage', actor: '$actor' }, scale }, ctx);
+    }
+
+    expect(ctx.bus.damageScalesFor('r1-fighter/damage:fighter')).toHaveLength(3);
+  });
+
+  it('adds nothing to the modifier lane: a scale is not a term (FR-11)', () => {
+    const ctx = fakeContext();
+    applyEffect(
+      { type: 'scaleDamage', target: { kind: 'damage', actor: '$actor' }, scale: 'vulnerability' },
+      ctx,
+    );
+
+    expect(ctx.bus.rollModifiersFor('r1-fighter/damage:fighter')).toEqual([]);
+  });
+});

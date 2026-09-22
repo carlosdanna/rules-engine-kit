@@ -1,5 +1,5 @@
 {
-  "traceSchemaVersion": 2,
+  "traceSchemaVersion": 3,
   "events": [
     {
       "stepId": "r1-guard",
@@ -1238,6 +1238,74 @@
     {
       "stepId": "r1-guard",
       "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.resistance",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "miss"
+        }
+      ],
+      "seq": 38
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.vulnerability",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "miss"
+        }
+      ],
+      "seq": 39
+    },
+    {
+      "stepId": "r1-guard",
+      "round": 1,
       "phase": "apply",
       "kind": "rule",
       "ruleKey": "spell.bless.cast",
@@ -1263,7 +1331,7 @@
           "value": "attack"
         }
       ],
-      "seq": 38
+      "seq": 40
     },
     {
       "stepId": "r1-guard",
@@ -1297,7 +1365,7 @@
           "value": "miss"
         }
       ],
-      "seq": 39
+      "seq": 41
     },
     {
       "stepId": "r1-guard",
@@ -1331,7 +1399,7 @@
           "value": []
         }
       ],
-      "seq": 40
+      "seq": 42
     }
   ]
 }

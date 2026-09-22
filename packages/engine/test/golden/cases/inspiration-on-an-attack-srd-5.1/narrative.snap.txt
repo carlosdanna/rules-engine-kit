@@ -10,3 +10,4 @@ round 1, r1-guard — Guard
   [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
   [damage] damage.ability-modifier.strength fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
   [stacking] damage.total for Guard: +3 weapon +1 ability
+  [apply] Goblin takes 4 slashing damage, 7 → 3 hp

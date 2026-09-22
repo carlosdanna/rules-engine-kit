@@ -42,8 +42,10 @@
       "damage": [
         {
           "actorId": "goblin",
+          "damageType": "slashing",
           "amount": 4,
-          "hpAfter": 3
+          "hpAfter": 3,
+          "overflow": 0
         }
       ],
       "halted": null

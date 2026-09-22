@@ -86,6 +86,20 @@ export function narrateEvent(event: TraceEvent, context?: NarrativeContext): str
       return `  [stacking] ${event.target} for ${whose}: ${terms === '' ? 'no contributions' : terms}${droppedList(event.dropped)}`;
     }
 
+    case 'damageScale': {
+      const whose = actorName(event.actorId, context);
+      const grants = event.inputs.map((i) => `${i.scale} from ${i.ruleKey}`).join(' + ');
+      return `  [damage] ${event.damageType} ${event.before} → ${event.after} for ${whose}: ${grants}`;
+    }
+
+    case 'damageApplied': {
+      const on = actorName(event.actorId, context);
+      // The overflow is only ever mentioned when there is some, so an ordinary hit reads
+      // as it always did (ADR-0023).
+      const lost = event.overflow === 0 ? '' : `, ${event.overflow} past 0 discarded`;
+      return `  [apply] ${on} takes ${event.amount} ${event.damageType} damage, ${event.hpBefore} → ${event.hpAfter} hp${lost}`;
+    }
+
     case 'effectApplied': {
       const on = actorName(event.onActorId, context);
       const until =

@@ -39,6 +39,8 @@ export const situation: Situation = {
       hp: 28,
       hpCurrent: 28,
       conditions: [],
+      resistances: [],
+      vulnerabilities: [],
     },
     {
       id: 'goblin',
@@ -49,6 +51,8 @@ export const situation: Situation = {
       hp: 7,
       hpCurrent: 7,
       conditions: ['prone'],
+      resistances: [],
+      vulnerabilities: [],
     },
   ],
   timeline: [
@@ -234,7 +238,7 @@ export const outcome: Outcome = {
           result: 'hit',
         },
       ],
-      damage: [{ actorId: 'goblin', damageType: 'slashing', amount: 7, hpAfter: 0 }],
+      damage: [{ actorId: 'goblin', damageType: 'slashing', amount: 7, hpAfter: 0, overflow: 0 }],
       halted: null,
     },
   ],

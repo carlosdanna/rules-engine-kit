@@ -3,10 +3,11 @@ import { Ability, DiceExpr, RollId } from './primitives';
 
 /**
  * Bumped whenever the shape changes; saved user scenarios are migrated to it (VR-8).
- * At 2 since ADR-0017 inlined item fixtures, which — like ADR-0011's `intents.rollChoices`
- * before it — landed before anything was persisted.
+ * At 3 since ADR-0025 gave `Actor` its damage resistances and vulnerabilities. Like
+ * ADR-0017's item inlining before it, and ADR-0011's `intents.rollChoices` before that,
+ * it landed before anything was persisted.
  */
-export const SITUATION_SCHEMA_VERSION = 2;
+export const SITUATION_SCHEMA_VERSION = 3;
 
 /**
  * Printed inputs only (ADR-0006, FR-8). Deliberately absent: attack bonus, save DC,
@@ -25,6 +26,14 @@ export const Actor = z.strictObject({
   hpCurrent: z.number().int().nonnegative(),
   /** Condition names such as `prone` or `blessed`, as the rules read them. */
   conditions: z.array(z.string().min(1)),
+  /**
+   * Damage types this creature takes half of, and double of, as the rules read them —
+   * `piercing`, `fire` (ADR-0025). Printed values like everything else here: a rule reads
+   * them to decide whether to grant the scale, and the engine applies it. Nothing writes
+   * them, so a spell that granted resistance would need its own channel.
+   */
+  resistances: z.array(z.string().min(1)),
+  vulnerabilities: z.array(z.string().min(1)),
 });
 export type Actor = z.infer<typeof Actor>;
 

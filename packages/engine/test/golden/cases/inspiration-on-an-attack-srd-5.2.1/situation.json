@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "actors": [
     {
       "id": "guard",
@@ -16,7 +16,9 @@
       "ac": 16,
       "hp": 11,
       "hpCurrent": 11,
-      "conditions": []
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
     },
     {
       "id": "goblin",
@@ -33,7 +35,9 @@
       "ac": 15,
       "hp": 10,
       "hpCurrent": 10,
-      "conditions": []
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
     }
   ],
   "items": {

@@ -263,3 +263,33 @@ describe('an effect value may read a fact (ADR-0021, closing Q21)', () => {
     expect(Effect.safeParse(blank).success).toBe(false);
   });
 });
+
+describe('scaleDamage — the multiplicative channel (ADR-0025, closing Q25)', () => {
+  const scale = (over: Record<string, unknown> = {}) => ({
+    type: 'scaleDamage',
+    target: { kind: 'damage', actor: '$target' },
+    scale: 'resistance',
+    ...over,
+  });
+
+  it('accepts the two scales the core subset names', () => {
+    expect(Effect.safeParse(scale()).success).toBe(true);
+    expect(Effect.safeParse(scale({ scale: 'vulnerability' })).success).toBe(true);
+  });
+
+  it('rejects immunity, which the core-subset table does not ask for', () => {
+    // The channel would admit it as a third member; the scope contract is what keeps it
+    // out until someone decides to widen it (ADR-0025).
+    expect(Effect.safeParse(scale({ scale: 'immunity' })).success).toBe(false);
+  });
+
+  it('rejects a bare multiplier: content names the rule, the engine owns the arithmetic', () => {
+    expect(Effect.safeParse(scale({ scale: 0.5 })).success).toBe(false);
+  });
+
+  it('takes a roll target, not a derived path — only a damage total can be scaled', () => {
+    expect(
+      Effect.safeParse(scale({ target: { path: 'actor.ac.effective', actor: '$actor' } })).success,
+    ).toBe(false);
+  });
+});

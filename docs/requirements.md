@@ -10,13 +10,13 @@ A localhost-only demo of a deterministic, explainable, versioned rules engine. D
 | Fact | Typed value the engine can read or derive, registered in the pack's fact registry |
 | Step | One turn in the timeline: `round`, `actorId`, and zero or one action. Evaluation runs the phase loop once per step |
 | Rule | `rule_key`, phase, priority, condition (JSON Logic), effects, citation, optional interpretation |
-| Effect | set value · add modifier · roll mode · roll transform · roll dice · apply/remove condition · emit event · halt (ADR-0011) |
+| Effect | set value · add modifier · roll mode · roll transform · scale damage · roll dice · apply/remove condition · emit event · halt (ADR-0011, ADR-0025) |
 | Phase | Fixed resolution stage, run per step: `upkeep → declare → modifiers → roll → compare → damage → apply → expire` (ADR-0012) |
 | Ruleset version | Immutable, semver-tagged collection of rules (base or layer) |
 | Layer | Ruleset that adds, overrides, patches or disables rules of its base |
 | Profile | Ordered stack of ruleset versions resolved into one rule list with a hash |
 | Outcome | Per-step results, final state, derived values with their contributing terms, emitted events |
-| Trace | Flat, versioned array of ordered events: rules considered/fired/skipped, facts read, rolls, comparisons, stacking, effect application and expiry (ADR-0014) |
+| Trace | Flat, versioned array of ordered events: rules considered/fired/skipped, facts read, rolls, comparisons, stacking, damage scaling and application, effect application and expiry (ADR-0014, ADR-0023, ADR-0025) |
 
 ## Scope: core subset
 
@@ -39,8 +39,8 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 - **FR-3** Return outcome + trace; never mutate input.
 - **FR-5** Rules carry id/key, version, description, citation, phase, priority, tags, condition, effects.
 - **FR-6** Conditions: all/any/not, comparisons, set membership, references to registered facts. JSON Logic syntax, own evaluator (ADR-0013).
-- **FR-7** Effects as listed in Core concepts, implemented through an effect registry. Numeric modifiers, roll mode and roll transforms are three separate channels per roll target.
-- **FR-8** Fixtures supply only printed values (ability scores, proficiency bonus, base AC, HP; an item's damage dice, properties and mastery). Ability modifiers come from the fact registry; effective AC, attack bonuses and save DCs are derived by rules and reported with their contributing terms.
+- **FR-7** Effects as listed in Core concepts, implemented through an effect registry. Numeric modifiers, roll mode, roll transforms and the multiplicative damage scale are four separate channels per roll target (ADR-0011, ADR-0025).
+- **FR-8** Fixtures supply only printed values (ability scores, proficiency bonus, base AC, HP, damage resistances and vulnerabilities; an item's damage dice, properties and mastery). Ability modifiers come from the fact registry; effective AC, attack bonuses and save DCs are derived by rules and reported with their contributing terms.
 - **FR-9** Each step runs the phases in fixed order; within a phase, priority then `rule_key` for stable ordering.
 - **FR-11** Stacking policies per modifier type: sum, highest-only, same-`stackKey`-doesn't-stack. Advantage/disadvantage cancelling is resolved separately, on the roll-mode channel.
 - **FR-12** Conflicts resolved by explicit `override` or layer order; unresolved conflicts are reported.
@@ -52,6 +52,7 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 - **FR-18** Create situations from a template, from a blank slate, or by duplicating a scenario.
 - **FR-19** Templates declare typed params; the UI generates a form from them.
 - **FR-20** A rendered situation is self-contained: `renderTemplate` inlines every fixture it references, and a weapon slug with nothing behind it is a schema error (ADR-0017).
+- **FR-21** Damage carries the type it was dealt, taken from the weapon behind the attack. Resistance and vulnerability resolve on their own multiplicative channel, after every modifier: resistance halves (rounding down), then vulnerability doubles, each applied at most once however many rules grant it (ADR-0025).
 
 ## Versioning requirements
 

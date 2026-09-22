@@ -345,8 +345,22 @@ describe('normalizeFixture — the documented fixtures (content-authoring.md)', 
     citation: { source: 'srd-5.2.1', section: 'Equipment > Weapons' },
   };
 
-  it('accepts the actor fixture as written', () => {
-    expect(normalizeFixture(GOBLIN, 'fixtures/goblin.yaml')).toEqual(GOBLIN);
+  it('accepts the actor fixture as written, defaulting its two damage lists', () => {
+    expect(normalizeFixture(GOBLIN, 'fixtures/goblin.yaml')).toEqual({
+      ...GOBLIN,
+      data: { ...GOBLIN.data, resistances: [], vulnerabilities: [] },
+    });
+  });
+
+  it('keeps an actor`s resistances and vulnerabilities when the stat block prints them', () => {
+    const shrub = {
+      ...GOBLIN,
+      slug: 'awakened-shrub',
+      data: { ...GOBLIN.data, resistances: ['piercing'], vulnerabilities: ['fire'] },
+    };
+    expect(normalizeFixture(shrub, 'fixtures/awakened-shrub.yaml')).toMatchObject({
+      data: { resistances: ['piercing'], vulnerabilities: ['fire'] },
+    });
   });
 
   it('turns an item fixture`s damage notation into a DiceExpr', () => {

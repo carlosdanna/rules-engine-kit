@@ -68,10 +68,20 @@ export type ModifierTargetRef = z.infer<typeof ModifierTargetRef>;
  */
 
 /**
- * The effect catalogue (FR-7). Three of these act on a roll through separate channels with
- * separate algorithms — numeric `addModifier`, `rollMode` (advantage and disadvantage
- * cancel, however many of each), and `rollTransform` — which is what lets the same
- * `rule_key` grant advantage on SRD 5.1 and a reroll on 5.2.1 (ADR-0008, ADR-0011).
+ * Which way a scale bends the damage total (ADR-0025). The two do not cancel: both SRDs
+ * apply resistance first and vulnerability second, so 9 damage against a creature with
+ * both is 8, not 9. Multiple grants of the same scale count as one.
+ */
+export const DamageScale = z.enum(['resistance', 'vulnerability']);
+export type DamageScale = z.infer<typeof DamageScale>;
+
+/**
+ * The effect catalogue (FR-7). Four of these act on a roll or its damage through separate
+ * channels with separate algorithms — numeric `addModifier`, `rollMode` (advantage and
+ * disadvantage cancel, however many of each), `rollTransform`, and `scaleDamage`
+ * (multiplicative, after the modifiers are summed) — which is what lets the same
+ * `rule_key` grant advantage on SRD 5.1 and a reroll on 5.2.1 (ADR-0008, ADR-0011,
+ * ADR-0025).
  */
 export const Effect = z.discriminatedUnion('type', [
   z.strictObject({
@@ -98,6 +108,17 @@ export const Effect = z.discriminatedUnion('type', [
     transform: RollTransform,
     uses: z.number().int().positive(),
     dieSelector: DieSelector,
+  }),
+  /**
+   * The multiplicative damage channel. It is not a modifier: halving a total is not a
+   * term the stacking policies could weigh against other terms, and `AppliedModifier`
+   * holds integers. It is resolved in the `damage` phase after the additive stack
+   * (ADR-0025).
+   */
+  z.strictObject({
+    type: z.literal('scaleDamage'),
+    target: RollTargetRef,
+    scale: DamageScale,
   }),
   z.strictObject({
     type: z.literal('rollDice'),
@@ -132,6 +153,7 @@ export const EFFECT_TYPES = [
   'addModifier',
   'rollMode',
   'rollTransform',
+  'scaleDamage',
   'rollDice',
   'applyCondition',
   'removeCondition',

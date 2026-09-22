@@ -47,7 +47,9 @@ Decisions behind this shape: ADR-0005 (timeline), ADR-0006 (derived stats), ADR-
 durations, superseding ADR-0007), ADR-0011 (effect channels and roll order, superseding
 ADR-0008), ADR-0009 (layer precedence), ADR-0014 (trace events, superseding ADR-0010),
 ADR-0013 (condition evaluator), ADR-0017 (self-contained situations), ADR-0018 (layers extend
-the base only), ADR-0019 (the trace and outcome corrections that closed Q17–Q20).
+the base only), ADR-0019 (the trace and outcome corrections that closed Q17–Q20), ADR-0021
+(effect values read facts), ADR-0023 (damage reports the overflow it discards), ADR-0024 (a
+fixture is an actor or an item) and ADR-0025 (the damage scale channel, amending ADR-0011).
 
 ## Engine API
 
@@ -108,11 +110,16 @@ and groups events by `(stepId, phase)`.
    modifiers** (ADR-0011). Transforms act on the pool, before the keep, because both SRDs let a
    reroll replace only one die of an advantage pair and leave the choice to the player; that
    choice comes from `intents.rollChoices`.
-6. `upkeep` removes effects whose resolved `expiresAt` falls on the start of this step; `expire`
+6. `damage` sums its modifiers, then applies the multiplicative scale on its own channel —
+   resistance halves (rounding down), then vulnerability doubles, each at most once however many
+   rules granted it — and carries the weapon's damage type with the total. `apply` spends it
+   against hit points, which clamp at 0; the amount discarded past 0 is reported, never acted on
+   (ADR-0025, ADR-0023).
+7. `upkeep` removes effects whose resolved `expiresAt` falls on the start of this step; `expire`
    does the same for the end of it. Durations resolve against the whole timeline at application
    time and name an anchor turn and an edge, so `expiresAt` distinguishes a concrete `TimePoint`
    from `permanent` and from `beyondTimeline` (ADR-0012).
-7. Return `{ outcome, trace }`: per-step results, final state, derived values with their terms, events, seed, profile hash, engine and trace schema versions.
+8. Return `{ outcome, trace }`: per-step results, final state, derived values with their terms, events, seed, profile hash, engine and trace schema versions.
 
 ## Data model (SQLite via Drizzle)
 
@@ -122,7 +129,7 @@ and groups events by `(stepId, phase)`.
 | `rulesets` | seed | slug, name, kind (`base`/`layer`), source_id |
 | `ruleset_versions` | seed | ruleset_id, semver, base_version_id, base_range, content_hash |
 | `rules` | seed | ruleset_version_id, rule_key, op, phase, priority, tags, condition, effects, citation, interpretation |
-| `fixtures` | seed | slug, kind (`actor`/`item`/`effect`), ruleset_scope, data, source_id |
+| `fixtures` | seed | slug, kind (`actor`/`item`), ruleset_scope, data, source_id |
 | `templates` | seed | slug, name, description, tags, params_schema, skeleton, suggested_profiles, schema_version |
 | `profiles` | both | slug, name, resolved_hash, origin (`seed`/`user`) |
 | `profile_layers` | both | profile_id, ruleset_version_id, position |
