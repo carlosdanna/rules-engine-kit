@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 3,
+  "actors": [
+    {
+      "id": "caster",
+      "name": "Priest Acolyte",
+      "abilities": {
+        "str": 14,
+        "dex": 10,
+        "con": 12,
+        "int": 10,
+        "wis": 14,
+        "cha": 11
+      },
+      "proficiencyBonus": 2,
+      "ac": 13,
+      "hp": 11,
+      "hpCurrent": 11,
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
+    },
+    {
+      "id": "attacker",
+      "name": "Fighter (3rd level)",
+      "abilities": {
+        "str": 16,
+        "dex": 12,
+        "con": 14,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "proficiencyBonus": 2,
+      "ac": 16,
+      "hp": 28,
+      "hpCurrent": 28,
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
+    },
+    {
+      "id": "target",
+      "name": "Ogre",
+      "abilities": {
+        "str": 19,
+        "dex": 8,
+        "con": 16,
+        "int": 5,
+        "wis": 7,
+        "cha": 7
+      },
+      "proficiencyBonus": 2,
+      "ac": 11,
+      "hp": 68,
+      "hpCurrent": 68,
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
+    }
+  ],
+  "items": {
+    "longsword": {
+      "slug": "longsword",
+      "name": "Longsword",
+      "damage": {
+        "dice": {
+          "count": 1,
+          "sides": 8
+        },
+        "type": "slashing"
+      },
+      "properties": [
+        "versatile"
+      ],
+      "mastery": "sap"
+    }
+  },
+  "timeline": [
+    {
+      "id": "r1-caster",
+      "round": 1,
+      "actorId": "caster",
+      "action": {
+        "type": "cast",
+        "spell": "bless",
+        "targetIds": [
+          "attacker"
+        ]
+      }
+    },
+    {
+      "id": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "action": {
+        "type": "attack",
+        "mode": "melee",
+        "targetId": "target",
+        "weapon": "longsword",
+        "rangeFt": 5
+      }
+    },
+    {
+      "id": "r2-attacker",
+      "round": 2,
+      "actorId": "attacker",
+      "action": {
+        "type": "attack",
+        "mode": "melee",
+        "targetId": "target",
+        "weapon": "longsword",
+        "rangeFt": 5
+      }
+    },
+    {
+      "id": "r3-attacker",
+      "round": 3,
+      "actorId": "attacker",
+      "action": {
+        "type": "attack",
+        "mode": "melee",
+        "targetId": "target",
+        "weapon": "longsword",
+        "rangeFt": 5
+      }
+    }
+  ],
+  "intents": {
+    "rollChoices": {
+      "r1-attacker/attack:attacker": {
+        "rerollDieIndex": 0
+      },
+      "r2-attacker/attack:attacker": {
+        "rerollDieIndex": 0
+      },
+      "r3-attacker/attack:attacker": {
+        "rerollDieIndex": 0
+      }
+    },
+    "useInspiration": false
+  }
+}

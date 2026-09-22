@@ -1,0 +1,148 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-attacker-initiative",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r1-attacker-initiative/check:attacker",
+          "target": {
+            "kind": "check",
+            "actorId": "attacker"
+          },
+          "mode": "disadvantage",
+          "kept": 6,
+          "modifiers": [
+            {
+              "ruleKey": "d20.ability-modifier.dex",
+              "modifierType": "ability",
+              "value": 1
+            }
+          ],
+          "total": 7,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-attacker-initiative/check:attacker",
+          "total": 7,
+          "dc": 0,
+          "result": "success"
+        }
+      ],
+      "damage": [],
+      "halted": null
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 7,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 3
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            }
+          ],
+          "total": 12,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "total": 12,
+          "dc": 15,
+          "result": "miss"
+        }
+      ],
+      "damage": [],
+      "halted": null
+    },
+    {
+      "stepId": "r2-attacker",
+      "round": 2,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r2-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 16,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 3
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            }
+          ],
+          "total": 21,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r2-attacker/attack:attacker",
+          "total": 21,
+          "dc": 15,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "target",
+          "damageType": "slashing",
+          "amount": 8,
+          "hpAfter": 2,
+          "overflow": 0
+        }
+      ],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "attacker": {
+        "id": "attacker",
+        "hpCurrent": 28,
+        "conditions": ["surprised"]
+      },
+      "target": {
+        "id": "target",
+        "hpCurrent": 2,
+        "conditions": ["sapped"]
+      }
+    },
+    "activeEffects": [
+      {
+        "sourceRuleKey": "weapon.mastery.sap",
+        "actorId": "target",
+        "condition": "sapped"
+      }
+    ]
+  }
+}

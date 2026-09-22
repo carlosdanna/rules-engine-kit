@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 3,
+  "actors": [
+    {
+      "id": "actor",
+      "name": "Fighter (3rd level)",
+      "abilities": {
+        "str": 16,
+        "dex": 12,
+        "con": 14,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "proficiencyBonus": 2,
+      "ac": 16,
+      "hp": 28,
+      "hpCurrent": 28,
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
+    }
+  ],
+  "items": {},
+  "timeline": [
+    {
+      "id": "r1-actor",
+      "round": 1,
+      "actorId": "actor",
+      "action": {
+        "type": "check",
+        "ability": "str",
+        "skill": null,
+        "dc": 15
+      }
+    }
+  ],
+  "intents": {
+    "rollChoices": {
+      "r1-actor/check:actor": {
+        "rerollDieIndex": 0
+      }
+    },
+    "useInspiration": false
+  }
+}

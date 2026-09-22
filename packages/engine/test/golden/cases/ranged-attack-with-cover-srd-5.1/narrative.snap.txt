@@ -1,0 +1,13 @@
+round 1, r1-attacker — Fighter (3rd level)
+  [modifiers] cover.half fired (srd-5.1 · Combat > Cover)
+  [modifiers] attack.ability-modifier.dexterity fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [stacking] actor.ac.effective for Goblin: +2 cover
+  [roll] attack:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [15]
+         kept 15 +1 ability +2 proficiency = 18
+  [compare] 18 vs DC 17 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.dexterity fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +4 weapon +1 ability
+  [apply] Goblin takes 5 piercing damage, 7 → 2 hp

@@ -1,0 +1,67 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 15,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.dexterity",
+              "modifierType": "ability",
+              "value": 1
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            }
+          ],
+          "total": 18,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "total": 18,
+          "dc": 17,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "target",
+          "damageType": "piercing",
+          "amount": 5,
+          "hpAfter": 5,
+          "overflow": 0
+        }
+      ],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "attacker": {
+        "id": "attacker",
+        "hpCurrent": 28,
+        "conditions": []
+      },
+      "target": {
+        "id": "target",
+        "hpCurrent": 5,
+        "conditions": ["half-cover"]
+      }
+    },
+    "activeEffects": []
+  }
+}

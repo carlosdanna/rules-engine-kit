@@ -1,0 +1,42 @@
+round 1, r1-caster — Acolyte
+  [apply] spell.bless.cast fired (srd-5.1 · Spell Descriptions > Bless)
+  [apply] spell.bless.cast on Fighter (3rd level), until round 11, beyond this timeline
+round 1, r1-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] spell.bless.attack fired (srd-5.1 · Spell Descriptions > Bless)
+  [stacking] actor.ac.effective for Ogre: no contributions
+  [roll] attack:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [10]
+         kept 10 +3 ability +2 proficiency +3 bless = 18
+  [compare] 18 vs DC 11 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +4 weapon +3 ability
+  [apply] Ogre takes 7 slashing damage, 59 → 52 hp
+round 2, r2-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] spell.bless.attack fired (srd-5.1 · Spell Descriptions > Bless)
+  [stacking] actor.ac.effective for Ogre: no contributions
+  [roll] attack:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [10]
+         kept 10 +3 ability +2 proficiency +4 bless = 19
+  [compare] 19 vs DC 11 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +4 weapon +3 ability
+  [apply] Ogre takes 7 slashing damage, 52 → 45 hp
+round 3, r3-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] spell.bless.attack fired (srd-5.1 · Spell Descriptions > Bless)
+  [stacking] actor.ac.effective for Ogre: no contributions
+  [roll] attack:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [10]
+         kept 10 +3 ability +2 proficiency +2 bless = 17
+  [compare] 17 vs DC 11 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +4 weapon +3 ability
+  [apply] Ogre takes 7 slashing damage, 45 → 38 hp

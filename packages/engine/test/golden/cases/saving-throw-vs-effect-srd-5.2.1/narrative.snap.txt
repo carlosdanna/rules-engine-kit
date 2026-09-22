@@ -1,0 +1,7 @@
+round 1, r1-saver — Fighter (3rd level)
+  [modifiers] d20.ability-modifier.dex fired (srd-5.2.1 · Playing the Game > D20 Tests > Ability Checks)
+  [modifiers] condition.restrained.dex-save fired (srd-5.2.1 · Rules Glossary > Restrained [Condition])
+  [roll] save:Fighter (3rd level): disadvantage from condition.restrained.dex-save ⇒ disadvantage
+         dice [14,6]
+         kept 6 +1 ability = 7
+  [compare] 7 vs DC 13 → failure

@@ -1,0 +1,91 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-attacker-initiative",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [],
+      "comparisons": [],
+      "damage": [],
+      "halted": {
+        "ruleKey": "combat.surprise",
+        "reason": "surprised: no movement or action on the first turn of combat"
+      }
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [],
+      "comparisons": [],
+      "damage": [],
+      "halted": {
+        "ruleKey": "combat.surprise",
+        "reason": "surprised: no movement or action on the first turn of combat"
+      }
+    },
+    {
+      "stepId": "r2-attacker",
+      "round": 2,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r2-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 12,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 3
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            }
+          ],
+          "total": 17,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r2-attacker/attack:attacker",
+          "total": 17,
+          "dc": 15,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "target",
+          "damageType": "slashing",
+          "amount": 8,
+          "hpAfter": 0,
+          "overflow": 1
+        }
+      ],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "attacker": {
+        "id": "attacker",
+        "hpCurrent": 28,
+        "conditions": ["surprised"]
+      },
+      "target": {
+        "id": "target",
+        "hpCurrent": 0,
+        "conditions": []
+      }
+    },
+    "activeEffects": []
+  }
+}

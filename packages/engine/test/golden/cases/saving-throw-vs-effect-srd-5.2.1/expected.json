@@ -1,0 +1,49 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-saver",
+      "round": 1,
+      "actorId": "saver",
+      "rolls": [
+        {
+          "rollId": "r1-saver/save:saver",
+          "target": {
+            "kind": "save",
+            "actorId": "saver"
+          },
+          "mode": "disadvantage",
+          "kept": 6,
+          "modifiers": [
+            {
+              "ruleKey": "d20.ability-modifier.dex",
+              "modifierType": "ability",
+              "value": 1
+            }
+          ],
+          "total": 7,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-saver/save:saver",
+          "total": 7,
+          "dc": 13,
+          "result": "failure"
+        }
+      ],
+      "damage": [],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "saver": {
+        "id": "saver",
+        "hpCurrent": 28,
+        "conditions": ["restrained"]
+      }
+    },
+    "activeEffects": []
+  }
+}

@@ -1,0 +1,6 @@
+round 1, r1-actor — Fighter (3rd level)
+  [modifiers] d20.ability-modifier.str fired (srd-5.2.1 · Playing the Game > D20 Tests > Ability Checks)
+  [roll] check:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [12]
+         kept 12 +3 ability = 15
+  [compare] 15 vs DC 15 → success

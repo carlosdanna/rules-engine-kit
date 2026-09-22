@@ -1,0 +1,16 @@
+round 1, r1-attacker-initiative — Fighter (3rd level)
+  [declare] combat.surprise fired (srd-5.1 · Combat > The Order of Combat > Surprise)
+round 1, r1-attacker — Fighter (3rd level)
+  [declare] combat.surprise fired (srd-5.1 · Combat > The Order of Combat > Surprise)
+round 2, r2-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [stacking] actor.ac.effective for Goblin: no contributions
+  [roll] attack:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [12]
+         kept 12 +3 ability +2 proficiency = 17
+  [compare] 17 vs DC 15 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +5 weapon +3 ability
+  [apply] Goblin takes 8 slashing damage, 7 → 0 hp, 1 past 0 discarded

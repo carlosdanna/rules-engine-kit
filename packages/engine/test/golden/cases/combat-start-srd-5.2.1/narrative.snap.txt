@@ -1,0 +1,29 @@
+round 1, r1-attacker-initiative — Fighter (3rd level)
+  [modifiers] d20.ability-modifier.dex fired (srd-5.2.1 · Playing the Game > D20 Tests > Ability Checks)
+  [modifiers] combat.surprise fired (srd-5.2.1 · Rules Glossary > Surprise)
+  [roll] check:Fighter (3rd level): disadvantage from combat.surprise ⇒ disadvantage
+         dice [15,6]
+         kept 6 +1 ability = 7
+  [compare] 7 vs DC 0 → success
+round 1, r1-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > D20 Tests > Attack Rolls > Ability Modifier)
+  [modifiers] attack.proficiency fired (srd-5.2.1 · Playing the Game > Proficiency > Proficiency Bonus)
+  [stacking] actor.ac.effective for Goblin Warrior: no contributions
+  [roll] attack:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [7]
+         kept 7 +3 ability +2 proficiency = 12
+  [compare] 12 vs DC 15 → miss
+round 2, r2-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > D20 Tests > Attack Rolls > Ability Modifier)
+  [modifiers] attack.proficiency fired (srd-5.2.1 · Playing the Game > Proficiency > Proficiency Bonus)
+  [stacking] actor.ac.effective for Goblin Warrior: no contributions
+  [roll] attack:Fighter (3rd level): no mode inputs ⇒ normal
+         dice [16]
+         kept 16 +3 ability +2 proficiency = 21
+  [compare] 21 vs DC 15 → hit
+  [damage] damage.weapon-dice fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +5 weapon +3 ability
+  [apply] weapon.mastery.sap fired (srd-5.2.1 · Equipment > Mastery Properties > Sap)
+  [apply] weapon.mastery.sap on Goblin Warrior, until round 3, beyond this timeline
+  [apply] Goblin Warrior takes 8 slashing damage, 10 → 2 hp

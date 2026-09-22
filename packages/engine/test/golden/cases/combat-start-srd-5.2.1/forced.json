@@ -1,0 +1,6 @@
+{
+  "r1-attacker-initiative/check:attacker": [15, 6],
+  "r1-attacker/attack:attacker": [7],
+  "r2-attacker/attack:attacker": [16],
+  "r2-attacker/damage:attacker:weapon": [5]
+}

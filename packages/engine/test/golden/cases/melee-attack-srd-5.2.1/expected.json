@@ -1,0 +1,73 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 12,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 3
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            }
+          ],
+          "total": 17,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "total": 17,
+          "dc": 15,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "target",
+          "damageType": "slashing",
+          "amount": 8,
+          "hpAfter": 2,
+          "overflow": 0
+        }
+      ],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "attacker": {
+        "id": "attacker",
+        "hpCurrent": 28,
+        "conditions": []
+      },
+      "target": {
+        "id": "target",
+        "hpCurrent": 2,
+        "conditions": ["sapped"]
+      }
+    },
+    "activeEffects": [
+      {
+        "sourceRuleKey": "weapon.mastery.sap",
+        "actorId": "target",
+        "condition": "sapped"
+      }
+    ]
+  }
+}

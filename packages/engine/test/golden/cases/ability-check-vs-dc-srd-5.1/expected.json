@@ -1,0 +1,49 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-actor",
+      "round": 1,
+      "actorId": "actor",
+      "rolls": [
+        {
+          "rollId": "r1-actor/check:actor",
+          "target": {
+            "kind": "check",
+            "actorId": "actor"
+          },
+          "mode": "normal",
+          "kept": 12,
+          "modifiers": [
+            {
+              "ruleKey": "d20.ability-modifier.str",
+              "modifierType": "ability",
+              "value": 3
+            }
+          ],
+          "total": 15,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-actor/check:actor",
+          "total": 15,
+          "dc": 15,
+          "result": "success"
+        }
+      ],
+      "damage": [],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "actor": {
+        "id": "actor",
+        "hpCurrent": 28,
+        "conditions": []
+      }
+    },
+    "activeEffects": []
+  }
+}

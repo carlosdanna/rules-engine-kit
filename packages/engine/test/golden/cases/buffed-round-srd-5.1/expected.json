@@ -1,0 +1,193 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-caster",
+      "round": 1,
+      "actorId": "caster",
+      "rolls": [],
+      "comparisons": [],
+      "damage": [],
+      "halted": null
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 10,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 3
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            },
+            {
+              "ruleKey": "spell.bless.attack",
+              "modifierType": "bless",
+              "value": 3
+            }
+          ],
+          "total": 18,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-attacker/attack:attacker",
+          "total": 18,
+          "dc": 11,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "target",
+          "damageType": "slashing",
+          "amount": 7,
+          "hpAfter": 52,
+          "overflow": 0
+        }
+      ],
+      "halted": null
+    },
+    {
+      "stepId": "r2-attacker",
+      "round": 2,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r2-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 10,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 3
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            },
+            {
+              "ruleKey": "spell.bless.attack",
+              "modifierType": "bless",
+              "value": 4
+            }
+          ],
+          "total": 19,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r2-attacker/attack:attacker",
+          "total": 19,
+          "dc": 11,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "target",
+          "damageType": "slashing",
+          "amount": 7,
+          "hpAfter": 45,
+          "overflow": 0
+        }
+      ],
+      "halted": null
+    },
+    {
+      "stepId": "r3-attacker",
+      "round": 3,
+      "actorId": "attacker",
+      "rolls": [
+        {
+          "rollId": "r3-attacker/attack:attacker",
+          "target": {
+            "kind": "attack",
+            "actorId": "attacker"
+          },
+          "mode": "normal",
+          "kept": 10,
+          "modifiers": [
+            {
+              "ruleKey": "attack.ability-modifier.strength",
+              "modifierType": "ability",
+              "value": 3
+            },
+            {
+              "ruleKey": "attack.proficiency",
+              "modifierType": "proficiency",
+              "value": 2
+            },
+            {
+              "ruleKey": "spell.bless.attack",
+              "modifierType": "bless",
+              "value": 2
+            }
+          ],
+          "total": 17,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r3-attacker/attack:attacker",
+          "total": 17,
+          "dc": 11,
+          "result": "hit"
+        }
+      ],
+      "damage": [
+        {
+          "actorId": "target",
+          "damageType": "slashing",
+          "amount": 7,
+          "hpAfter": 38,
+          "overflow": 0
+        }
+      ],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "attacker": {
+        "id": "attacker",
+        "hpCurrent": 28,
+        "conditions": ["blessed"]
+      },
+      "target": {
+        "id": "target",
+        "hpCurrent": 38,
+        "conditions": []
+      }
+    },
+    "activeEffects": [
+      {
+        "sourceRuleKey": "spell.bless.cast",
+        "actorId": "attacker",
+        "condition": "blessed"
+      }
+    ]
+  }
+}
