@@ -38,13 +38,24 @@ resolveProfile(layers: RulesetVersion[]): ResolvedProfile   // { rules, hash, so
 evaluate(
   situation: Situation,                                     // actors + ordered timeline of steps
   profile: ResolvedProfile,
-  opts: { seed: string; forcedRolls?: Record<RollId, number[]>; traceLevel?: 'full' | 'fired-only' },
+  opts: {
+    seed: string;
+    forcedRolls?: Record<RollId, number[]>;
+    traceLevel?: 'full' | 'fired-only';   // default 'full'
+    facts?: FactDefinition[];             // the pack's fact registry; see below
+  },
 ): EvaluationResult                                         // { outcome, trace }
 renderTemplate(template: Template, params: unknown, fixtures: FixtureIndex): Situation
 explain(trace: Trace, ruleKey: string): Explanation         // lookup only; never re-evaluates
 diffOutcomes(a: Outcome, b: Outcome): OutcomeDiff
 diffTraces(a: Trace, b: Trace): TraceDiff                   // aligned on (stepId, phase, ruleKey)
 ```
+
+Fact definitions reach the engine through `opts.facts`, not through `ResolvedProfile`. The
+profile hash is the canonical JSON of the resolved rules plus the layer identities (ADR-0009),
+so putting facts on it would change every stored hash (VR-7) for something the merge does not
+touch. The engine registers no paths of its own: a pack declares all of them, including the
+derived ones, so `content:lint` and the evaluator cannot disagree about what a path means.
 
 `forcedRolls` is keyed by **roll id**, not by step id (ADR-0011): a `RollId` is
 `` `${stepId}/${kind}:${actorId}` `` plus a channel suffix for dice that are not the d20 itself
