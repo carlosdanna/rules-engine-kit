@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "items": {},
+  "actors": [
+    {
+      "id": "fighter",
+      "name": "Fighter",
+      "abilities": { "str": 16, "dex": 14, "con": 14, "int": 10, "wis": 12, "cha": 8 },
+      "proficiencyBonus": 2,
+      "ac": 16,
+      "hp": 30,
+      "hpCurrent": 30,
+      "conditions": ["prone"]
+    },
+    {
+      "id": "goblin",
+      "name": "Goblin",
+      "abilities": { "str": 8, "dex": 14, "con": 10, "int": 10, "wis": 8, "cha": 8 },
+      "proficiencyBonus": 2,
+      "ac": 15,
+      "hp": 7,
+      "hpCurrent": 7,
+      "conditions": ["prone"]
+    }
+  ],
+  "timeline": [
+    {
+      "id": "r1-fighter",
+      "round": 1,
+      "actorId": "fighter",
+      "action": {
+        "type": "attack",
+        "mode": "melee",
+        "targetId": "goblin",
+        "weapon": null,
+        "rangeFt": 5
+      }
+    }
+  ],
+  "intents": {}
+}

@@ -10,6 +10,7 @@
   },
   "scripts": {
     "dev": "pnpm --filter @rules-engine-kit/web dev",
+    "engine": "tsx packages/engine/cli.ts",
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "pnpm -r typecheck",
@@ -21,6 +22,7 @@
     "@biomejs/biome": "^2.5.14",
     "@types/node": "^24.10.1",
     "lefthook": "^2.1.14",
+    "tsx": "^4.21.1",
     "typescript": "^7.0.2",
     "vitest": "^5.0.1"
   }

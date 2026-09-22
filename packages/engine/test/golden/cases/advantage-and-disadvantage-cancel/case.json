@@ -1,0 +1,5 @@
+{
+  "description": "SRD 5.2.1 Prone, both halves at once: advantage and disadvantage cancel, so the roll is normal.",
+  "profile": ["../../packs/srd-5.2.1-min"],
+  "seed": "golden"
+}

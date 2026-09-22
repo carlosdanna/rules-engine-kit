@@ -1,0 +1,10 @@
+round 1, r1-fighter — Fighter
+  [modifiers] attack.ability-modifier fired (srd-5.2.1 · Playing the Game > Attack Rolls)
+  [modifiers] attack.proficiency fired (srd-5.2.1 · Playing the Game > Proficiency Bonus)
+  [modifiers] condition.prone.attacked fired (srd-5.2.1 · Rules Glossary > Prone [Condition])
+  [modifiers] condition.prone.attacking fired (srd-5.2.1 · Rules Glossary > Prone [Condition])
+  [stacking] actor.ac.effective for Goblin: no contributions
+  [roll] attack:Fighter: advantage from condition.prone.attacked + disadvantage from condition.prone.attacking ⇒ normal
+         dice [4]
+         kept 4 +3 ability +2 proficiency = 9
+  [compare] 9 vs DC 15 → miss

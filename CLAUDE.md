@@ -13,7 +13,7 @@ Localhost-only demo of a **versioned rules engine**. Given a situation, the engi
 pnpm workspace · Next.js (App Router) + shadcn/ui + Tailwind · SQLite via better-sqlite3 · Drizzle ORM + drizzle-kit · Zod · conditions in JSON Logic syntax on our own evaluator, no `json-logic-js` (ADR-0013) · Vitest · Playwright · TypeScript strict everywhere.
 
 ## Layout
-- `packages/engine` — pure TS. No imports from Next.js, Drizzle, `fs`, `Date.now()` or `Math.random()`.
+- `packages/engine` — pure TS. `src/` has no imports from Next.js, Drizzle, `fs`, `Date.now()` or `Math.random()`; `test/purity.test.ts` enforces it. `cli.ts` is outside that boundary and may use `fs` (ADR-0020).
 - `packages/db` — Drizzle schema, migrations, seed scripts. Depends on engine, never the reverse.
 - `apps/web` — Next.js app. DB access only in server code (`server-only`), routes touching SQLite use `runtime = 'nodejs'`.
 - `content/` — YAML rule packs, fixtures, templates. Source of truth for seeded data.
@@ -21,6 +21,7 @@ pnpm workspace · Next.js (App Router) + shadcn/ui + Tailwind · SQLite via bett
 
 ## Commands
 - `pnpm dev` — run the app on localhost
+- `pnpm engine run --packs <dirs> --situation <file> --seed <s> [--forced <file>] [--narrative]` — evaluate from the terminal
 - `pnpm test` / `pnpm test -u` — Vitest (update snapshots only when I ask)
 - `pnpm typecheck` · `pnpm lint` · `pnpm content:lint`
 - `pnpm db:migrate` · `pnpm db:seed` · `pnpm db:reset` (seeded data only) · `pnpm db:reset --hard`
@@ -44,7 +45,7 @@ pnpm workspace · Next.js (App Router) + shadcn/ui + Tailwind · SQLite via bett
 
 ## How to work
 - Start each task by restating the goal and listing files you'll touch; wait for my OK on anything spanning more than one package.
-- Write tests first for engine code (golden tests in `packages/engine/test/golden`).
+- Write tests first for engine code. A golden test is a folder in `packages/engine/test/golden/cases/`, not a new `.test.ts`; see the README there.
 - Hand-derive expected outcomes from the SRD text, never from engine output.
 - Keep changes scoped to the current milestone; note anything else in `docs/open-questions.md`.
 - Use Conventional Commits. Don't commit the SQLite file (`data/*.db`).

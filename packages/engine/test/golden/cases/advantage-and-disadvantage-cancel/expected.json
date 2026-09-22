@@ -1,0 +1,41 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "actorId": "fighter",
+      "rolls": [
+        {
+          "rollId": "r1-fighter/attack:fighter",
+          "target": { "kind": "attack", "actorId": "fighter" },
+          "mode": "normal",
+          "kept": 4,
+          "modifiers": [
+            { "ruleKey": "attack.ability-modifier", "modifierType": "ability", "value": 3 },
+            { "ruleKey": "attack.proficiency", "modifierType": "proficiency", "value": 2 }
+          ],
+          "total": 9,
+          "forced": true
+        }
+      ],
+      "comparisons": [
+        {
+          "rollId": "r1-fighter/attack:fighter",
+          "total": 9,
+          "dc": 15,
+          "result": "miss"
+        }
+      ],
+      "damage": [],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "fighter": { "id": "fighter", "hpCurrent": 30, "conditions": ["prone"] },
+      "goblin": { "id": "goblin", "hpCurrent": 7, "conditions": ["prone"] }
+    },
+    "activeEffects": []
+  },
+  "events": []
+}

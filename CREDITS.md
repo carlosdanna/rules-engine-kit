@@ -48,3 +48,5 @@ Tooling:
 | [fast-check](https://fast-check.dev) | MIT |
 | [lefthook](https://lefthook.dev) | MIT |
 | [pnpm](https://pnpm.io) | MIT |
+| [tsx](https://tsx.is) | MIT |
+| [yaml](https://eemeli.org/yaml) | ISC |

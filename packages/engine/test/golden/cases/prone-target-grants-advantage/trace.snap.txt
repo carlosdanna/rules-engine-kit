@@ -1,0 +1,201 @@
+{
+  "traceSchemaVersion": 1,
+  "events": [
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Attack Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 0
+    },
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.proficiency",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Proficiency Bonus"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 1
+    },
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacked",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Prone [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone"
+          ]
+        },
+        {
+          "path": "action.rangeFt",
+          "value": 5
+        }
+      ],
+      "seq": 2
+    },
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacking",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Prone [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 3
+    },
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "stacking",
+      "target": "actor.ac.effective",
+      "actorId": "goblin",
+      "applied": [],
+      "dropped": [],
+      "seq": 4
+    },
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "phase": "roll",
+      "kind": "roll",
+      "rollId": "r1-fighter/attack:fighter",
+      "target": {
+        "kind": "attack",
+        "actorId": "fighter"
+      },
+      "mode": "advantage",
+      "modeInputs": [
+        {
+          "ruleKey": "condition.prone.attacked",
+          "mode": "advantage"
+        }
+      ],
+      "dice": [
+        4,
+        17
+      ],
+      "transforms": [],
+      "diceAfterTransforms": [
+        4,
+        17
+      ],
+      "kept": 17,
+      "keptIndex": 1,
+      "forced": true,
+      "modifiers": [
+        {
+          "ruleKey": "attack.ability-modifier",
+          "modifierType": "ability",
+          "policy": "sum",
+          "value": 3
+        },
+        {
+          "ruleKey": "attack.proficiency",
+          "modifierType": "proficiency",
+          "stackKey": "proficiency",
+          "policy": "unique",
+          "value": 2
+        }
+      ],
+      "dropped": [],
+      "total": 22,
+      "seq": 5
+    },
+    {
+      "stepId": "r1-fighter",
+      "round": 1,
+      "phase": "compare",
+      "kind": "compare",
+      "rollId": "r1-fighter/attack:fighter",
+      "target": {
+        "kind": "attack",
+        "actorId": "fighter"
+      },
+      "total": 22,
+      "dc": 15,
+      "result": "hit",
+      "seq": 6
+    }
+  ]
+}

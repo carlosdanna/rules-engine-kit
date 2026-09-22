@@ -1,0 +1,18 @@
+# Every path a condition in this pack may read. An unregistered path is an error at
+# evaluation, never a silent null (FR-17, ADR-0013), so this list and the conditions in
+# `rules/` have to move together.
+- path: action.type
+  type: string
+  description: the declared action kind
+- path: action.mode
+  type: string
+  description: melee or ranged
+- path: action.rangeFt
+  type: number
+  description: distance to the target
+- path: actor.conditions
+  type: stringList
+  description: conditions on the actor taking the step
+- path: target.conditions
+  type: stringList
+  description: conditions on the action's target

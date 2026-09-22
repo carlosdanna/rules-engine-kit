@@ -2,6 +2,17 @@
 
 All seeded content lives in `content/` as YAML and is validated by `pnpm content:lint`. The database is rebuilt from it; never edit seeded rows directly.
 
+The shapes below are the *authoring* shapes. Several of them are shorter than the schema the engine
+works in, and `packages/engine/src/content/` is the one place the two are reconciled — so anything
+this document says an author may write is a case in `packages/engine/test/content/normalize.test.ts`,
+and anything accepted there and not written down here is a shape only the loader knows about. A pack
+can be run without a database at any point:
+
+```sh
+pnpm engine run --packs content/dnd5e-srd-5.2.1 --situation scenarios/melee-attack.json \
+  --seed demo --narrative
+```
+
 ## Rule pack
 
 ```text
@@ -16,6 +27,7 @@ content/dnd5e-srd-5.2.1/
 ```yaml
 id: dnd5e-srd
 version: 5.2.1          # semver; published versions are immutable
+name: SRD 5.2.1         # what a reader sees in the profile picker
 kind: base              # base | layer
 extends: null           # for layers: { id: dnd5e-srd, range: "^5.2.0" }
 license: CC-BY-4.0
@@ -42,6 +54,12 @@ citation:
   section: "Rules Glossary > Surprise"
 interpretation: null     # explain any reading of ambiguous wording
 ```
+
+One rule per file under `rules/`, and `facts.yaml` is a sequence of fact definitions. Fields a rule
+always has but rarely varies may be left out: `op` defaults to `add`, `label` to the rule key,
+`priority` to `0`, `tags` and `effects` to empty, and `condition` and `interpretation` to `null` — an
+omitted condition reads as "always applies once selected for its phase". On a fact, `derived`
+defaults to `false`.
 
 `phase` is one of `upkeep`, `declare`, `modifiers`, `roll`, `compare`, `damage`, `apply`, `expire`
 (ADR-0012). There is no `initiative` phase — a rule that changes an initiative roll contributes to
@@ -100,6 +118,11 @@ effects:
     uses: 1
     dieSelector: intent            # intent | { fixed: <index> }
 ```
+
+A dice value is written as notation — `{ dice: 1d4 }` — and may not carry a flat bonus: `1d4+2`
+is rejected, because the `+2` would reach the roll without passing through the `addModifier`
+channel and so could never have a stacking policy applied to it (FR-11). Write it as its own
+modifier, which is also the only form the trace can explain.
 
 `dieSelector: intent` reads `situation.intents.rollChoices[<rollId>].rerollDieIndex`, because both
 SRDs leave the choice of which die to reroll to the player and ADR-0003 says choices are declared

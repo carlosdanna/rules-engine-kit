@@ -97,9 +97,14 @@ to a milestone as work reveals them; what is written here is what "done" means, 
 - `pnpm check` green.
 - Golden tests for the attack and Bless scenarios, asserting outcomes separately from trace
   snapshots (NFR-4).
+- A golden case is a folder of data, not a test file: `packages/engine/test/golden/cases/` holds
+  situation, profile, seed and a hand-derived outcome, and trace snapshots are separate files
+  (NFR-4).
+- `pnpm engine run` evaluates a situation against YAML packs from the command line (ADR-0020).
 - Property tests for stacking (FR-11), roll-mode cancelling and rule ordering (FR-9).
 - `explain()` answers why / why not by lookup over a stored trace, never by re-evaluating (FR-15).
-- No `fs`, `Date.now()` or `Math.random()` anywhere in `packages/engine` (NFR-1, ADR-0002).
+- No `fs`, `Date.now()` or `Math.random()` anywhere in `packages/engine/src`, enforced by
+  `test/purity.test.ts` (NFR-1, ADR-0002, ADR-0020).
 
 ### M2 — Content, templates and diff
 

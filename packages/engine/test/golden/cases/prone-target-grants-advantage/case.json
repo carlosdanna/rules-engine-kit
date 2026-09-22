@@ -1,0 +1,5 @@
+{
+  "description": "SRD 5.2.1 Prone: an attack against a prone creature has advantage from within 5 feet.",
+  "profile": ["../../packs/srd-5.2.1-min"],
+  "seed": "golden"
+}

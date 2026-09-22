@@ -1,6 +1,6 @@
 # ADR-0015: Milestone exit criteria
 
-- Status: accepted
+- Status: accepted (M1 criterion amended by ADR-0020)
 - Date: 2026-09-22
 
 ## Context
@@ -42,7 +42,9 @@ recorded exit condition is what "done" means.
 
 - **M1 — Engine core.** `pnpm check` green; the golden attack and Bless scenarios; property tests for
   stacking, roll-mode cancelling and rule ordering; `explain()` answering by lookup over a stored
-  trace (FR-15); no `fs`, `Date.now()` or `Math.random()` anywhere in `packages/engine` (NFR-1).
+  trace (FR-15); no `fs`, `Date.now()` or `Math.random()` anywhere in `packages/engine/src`
+  (NFR-1; the boundary was narrowed from the package to `src/` by ADR-0020, which also added the
+  test that enforces it).
 - **M2 — Content, templates and diff.** `content/` holds the SRD 5.1 base, the 5.2.1 base and the
   house-rule layer with their fact registries; `pnpm content:lint` green; `renderTemplate`,
   `diffOutcomes` and `diffTraces` implemented; a golden test for every template × profile (NFR-4);

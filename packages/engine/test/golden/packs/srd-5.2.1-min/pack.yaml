@@ -1,0 +1,19 @@
+# A fixture, not content.
+#
+# Real packs live in `content/`, cover the core subset and are checked against the SRD
+# before they are committed. This one exists to give the golden cases in `../../cases/` a
+# profile to resolve and to exercise the authoring format end to end, and it is
+# deliberately the smallest pack that does both. The citations name the sections the
+# mechanics paraphrase; the numbers in each case's `expected.json` are derived by hand from
+# those sections, never from what the engine produced.
+id: dnd5e-srd
+version: 5.2.1
+name: SRD 5.2.1 (golden fixture)
+kind: base
+extends: null
+license: CC-BY-4.0
+sourceUrl: https://www.dndbeyond.com/srd
+attribution: >-
+  This work includes material from the System Reference Document 5.2.1 ("SRD 5.2.1")
+  by Wizards of the Coast LLC, available under the Creative Commons Attribution 4.0
+  International License.

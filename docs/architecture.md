@@ -5,6 +5,7 @@
 ```text
 apps/web/            Next.js + shadcn/ui (routes below)
 packages/engine/     pure TS engine
+  cli.ts             `pnpm engine run`; the only place the package touches fs (ADR-0020)
   src/schema/        Zod types: Situation, Rule, Effect, Outcome, Trace
   src/resolver/      layer merge, compatibility, canonical hash
   src/conditions/    JSON Logic-subset evaluator + fact registry; records facts read
@@ -15,9 +16,10 @@ packages/engine/     pure TS engine
   src/evaluator/     phase loop
   src/dice/          seeded dice, forced results
   src/trace/         events + narrative renderer
+  src/content/       authored YAML shape → schema shape; pure, no parsing or fs
   src/diff/          profile, outcome and trace diffs
   src/templates/     render template + params + fixtures → situation
-  test/golden/       situation + profile + seed → expected outcome
+  test/golden/       one folder per case: situation + profile + seed → expected outcome
 packages/db/         Drizzle schema, migrations, seed, content loader
 content/             rule packs, fixtures, templates (YAML)
 scenarios/           ready-made situations
@@ -25,6 +27,12 @@ docs/                requirements, architecture, authoring, ADRs
 ```
 
 Dependency direction: `apps/web → packages/db → packages/engine`. The engine never imports the others.
+
+Purity has a boundary inside `packages/engine`, not around it (ADR-0020). `src/` is what the package
+publishes and what everything else imports, so it has no I/O, no clock and no global randomness, and
+`test/purity.test.ts` fails the build if that stops being true. `cli.ts` and `test/` sit outside it
+and read files. `src/content/` decides what an authored shorthand *means* and is pure; `cli.ts` only
+supplies the bytes, which is why `packages/db`'s seeder can reuse the same normaliser over rows.
 
 Decisions behind this shape: ADR-0005 (timeline), ADR-0006 (derived stats), ADR-0012 (time and
 durations, superseding ADR-0007), ADR-0011 (effect channels and roll order, superseding

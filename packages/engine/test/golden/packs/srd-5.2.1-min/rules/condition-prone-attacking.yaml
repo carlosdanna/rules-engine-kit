@@ -1,0 +1,23 @@
+key: condition.prone.attacking
+op: add
+phase: modifiers
+priority: -9
+label: "Prone: attacking while prone"
+description: A prone creature has disadvantage on its attack rolls.
+tags: [condition, prone]
+condition:
+  all:
+    - { "==": [{ "var": "action.type" }, "attack"] }
+    - { "in": ["prone", { "var": "actor.conditions" }] }
+effects:
+  - type: rollMode
+    target: { kind: attack, actor: $actor }
+    mode: disadvantage
+citation:
+  source: srd-5.2.1
+  section: "Rules Glossary > Prone [Condition]"
+interpretation: >-
+  The same glossary entry states both halves of Prone that this pack encodes: the attacker's
+  own disadvantage here, and the advantage an attack against a prone creature gets in
+  `condition.prone.attacked`. They are separate rules because they have separate conditions
+  and either can fire without the other.

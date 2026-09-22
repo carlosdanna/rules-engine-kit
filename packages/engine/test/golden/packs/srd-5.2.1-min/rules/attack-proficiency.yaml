@@ -1,0 +1,21 @@
+key: attack.proficiency
+op: add
+phase: modifiers
+priority: -19
+label: "Attack roll: proficiency bonus"
+description: A creature proficient with the attack adds its proficiency bonus.
+tags: [attack]
+condition: { "==": [{ "var": "action.type" }, "attack"] }
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: 2
+    modifierType: proficiency
+    # Proficiency applies once however many rules claim it.
+    stackKey: proficiency
+    policy: unique
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > Proficiency Bonus"
+interpretation: >-
+  A fixture: the +2 is a literal for the same reason `attack.ability-modifier`'s +3 is.

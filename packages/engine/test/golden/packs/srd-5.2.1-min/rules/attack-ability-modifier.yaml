@@ -1,0 +1,21 @@
+key: attack.ability-modifier
+op: add
+phase: modifiers
+priority: -20
+label: "Attack roll: ability modifier"
+description: An attack roll adds the ability modifier used to make it.
+tags: [attack]
+condition: { "==": [{ "var": "action.type" }, "attack"] }
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: 3
+    modifierType: ability
+    policy: sum
+citation:
+  source: srd-5.2.1
+  section: "Playing the Game > Attack Rolls"
+interpretation: >-
+  A fixture, so the +3 is written as a literal rather than read from the actor's Strength:
+  deriving it needs `actor.abilityMod.str`, which is a fact this minimal pack does not
+  register.
