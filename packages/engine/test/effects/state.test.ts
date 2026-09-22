@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { z } from 'zod';
+import { createFactRegistry } from '../../src/conditions';
 import { createWorldStateStore, EffectApplicationError } from '../../src/effects';
 import { actor, registry } from './fakeContext';
 
@@ -106,5 +108,41 @@ describe('createWorldStateStore — conditions and active effects', () => {
     const world = store();
     world.addEffect({ ...blessed, expiresAt: { kind: 'beyondTimeline', wouldExpireInRound: 21 } });
     expect(world.snapshot().activeEffects).toHaveLength(1);
+  });
+});
+
+describe('createWorldStateStore — a write is checked in the vocabulary content registers', () => {
+  // A pack cannot know the actor ids a situation will use, so it registers the shape a rule
+  // reads — `actor.conditions`, `actor.hpCurrent` — while a write names the actor the ref
+  // resolved to. Checking only the resolved spelling made every pack that deals damage fail
+  // on `engine.damage`'s own write, which no content could have fixed.
+  const authored = createFactRegistry([
+    { path: 'actor.conditions', type: z.array(z.string()) },
+    { path: 'actor.hpCurrent', type: z.number() },
+  ]);
+  const world = () =>
+    createWorldStateStore({ actors: [actor('fighter'), actor('goblin')], registry: authored });
+
+  it('accepts a resolved actor path whose authored shape is registered', () => {
+    expect(world().write('actor.goblin.hpCurrent', 4, 'engine.damage')).toMatchObject({
+      path: 'actor.goblin.hpCurrent',
+      to: 4,
+    });
+    expect(
+      world().write('actor.fighter.conditions', ['prone'], 'condition.knock-down'),
+    ).toMatchObject({ path: 'actor.fighter.conditions' });
+  });
+
+  it('accepts the `target.` spelling of the same field, which a rule may register instead', () => {
+    const asTarget = createFactRegistry([{ path: 'target.hpCurrent', type: z.number() }]);
+    const store = createWorldStateStore({ actors: [actor('goblin')], registry: asTarget });
+
+    expect(store.write('actor.goblin.hpCurrent', 4, 'engine.damage').to).toBe(4);
+  });
+
+  it('still refuses a field no spelling of which is registered (FR-17)', () => {
+    expect(() => world().write('scratch.unregistered', 1, 'test.rule')).toThrow(
+      EffectApplicationError,
+    );
   });
 });

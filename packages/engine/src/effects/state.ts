@@ -18,7 +18,7 @@ import type {
   WorldState,
 } from '../schema';
 import { EffectApplicationError, UnknownActorError } from './errors';
-import { parseWritablePath } from './paths';
+import { parseWritablePath, type WritablePath } from './paths';
 
 export type ActorRecord = Readonly<Actor>;
 
@@ -46,6 +46,17 @@ export type WorldStateStore = {
 
 function derivedKey(path: string, actorId: string): string {
   return `${path}\u0000${actorId}`;
+}
+
+/** Both spellings of an actor-scoped path: the resolved one, and the two a rule may declare. */
+function isRegisteredWrite(
+  path: string,
+  parsed: WritablePath,
+  registry: { has(path: string): boolean },
+): boolean {
+  if (registry.has(path)) return true;
+  if (parsed.kind !== 'actorField') return false;
+  return registry.has(`actor.${parsed.field}`) || registry.has(`target.${parsed.field}`);
 }
 
 export function createWorldStateStore(args: {
@@ -96,7 +107,10 @@ export function createWorldStateStore(args: {
         throw new EffectApplicationError({ kind: 'unwritable-path', path }, ruleKey, 'setValue');
       }
       // Symmetry with FR-17: you cannot write a path a condition could never legally read.
-      if (!args.registry.has(path)) {
+      // Checked in the vocabulary content actually registers: a pack is written before any
+      // situation exists, so it declares `actor.conditions` or `target.hpCurrent` and never
+      // `actor.goblin.hpCurrent`, which is the spelling a resolved write arrives in.
+      if (!isRegisteredWrite(path, parsed, args.registry)) {
         throw new EffectApplicationError({ kind: 'unregistered-write', path }, ruleKey, 'setValue');
       }
 
