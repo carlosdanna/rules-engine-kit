@@ -1,0 +1,94 @@
+/**
+ * The three channels that act on a roll (ADR-0011): numeric modifiers, roll mode, and roll
+ * transforms. None of them emits a trace event — each record surfaces later, on the `roll`
+ * event that consumed it or on the `stacking` event that resolved it (ADR-0014).
+ */
+
+import { withChannel } from '../../dice';
+import type { Effect, ModifierTargetRef, RollTarget, RollTargetRef } from '../../schema';
+import { rollModifierValue } from '../../stacking';
+import type { EffectApplication, EffectContext } from '../context';
+import { emptyApplication } from '../context';
+
+/** `RollTargetRef` carries `kind`, `DerivedTargetRef` carries `path`. */
+function isRollTargetRef(target: ModifierTargetRef): target is RollTargetRef {
+  return 'kind' in target;
+}
+
+function resolvedTargets(ref: RollTargetRef, ctx: EffectContext): RollTarget[] {
+  return ctx.resolveActorRefs(ref.actor).map((actorId) => ({ kind: ref.kind, actorId }));
+}
+
+export function addModifier(
+  effect: Extract<Effect, { type: 'addModifier' }>,
+  ctx: EffectContext,
+): EffectApplication {
+  const stackKey = effect.stackKey === undefined ? {} : { stackKey: effect.stackKey };
+
+  if (isRollTargetRef(effect.target)) {
+    for (const target of resolvedTargets(effect.target, ctx)) {
+      const rollId = ctx.rollIdFor(target);
+      // Dice roll now, when the effect is applied, not at stacking time: that keeps
+      // `resolveStack` pure, and a modifier later dropped still shows the dice it rolled.
+      const rolled = rollModifierValue({
+        value: effect.value,
+        roller: ctx.roller,
+        channel: withChannel(rollId, effect.modifierType),
+      });
+      ctx.bus.addRollModifier(rollId, {
+        ruleKey: ctx.ruleKey,
+        modifierType: effect.modifierType,
+        ...stackKey,
+        policy: effect.policy,
+        ...rolled,
+      });
+    }
+    return emptyApplication();
+  }
+
+  for (const actorId of ctx.resolveActorRefs(effect.target.actor)) {
+    const rolled = rollModifierValue({
+      value: effect.value,
+      roller: ctx.roller,
+      channel: withChannel(ctx.derivedChannel(effect.target.path, actorId), effect.modifierType),
+    });
+    ctx.bus.addDerivedModifier(effect.target.path, actorId, {
+      ruleKey: ctx.ruleKey,
+      modifierType: effect.modifierType,
+      ...stackKey,
+      policy: effect.policy,
+      ...rolled,
+    });
+  }
+  return emptyApplication();
+}
+
+export function rollMode(
+  effect: Extract<Effect, { type: 'rollMode' }>,
+  ctx: EffectContext,
+): EffectApplication {
+  // No cancelling here: advantage and disadvantage cancel as a *set* over every grant, which
+  // `resolveRollMode` does once the whole phase has contributed (ADR-0011 step 1).
+  for (const target of resolvedTargets(effect.target, ctx)) {
+    ctx.bus.grantMode({ ruleKey: ctx.ruleKey, rollId: ctx.rollIdFor(target), mode: effect.mode });
+  }
+  return emptyApplication();
+}
+
+export function rollTransform(
+  effect: Extract<Effect, { type: 'rollTransform' }>,
+  ctx: EffectContext,
+): EffectApplication {
+  // `uses` and `dieSelector` stay unexpanded: the selector resolves against
+  // `intents.rollChoices` at roll time, when the pool exists to index into.
+  for (const target of resolvedTargets(effect.target, ctx)) {
+    ctx.bus.requestTransform({
+      ruleKey: ctx.ruleKey,
+      rollId: ctx.rollIdFor(target),
+      transform: effect.transform,
+      uses: effect.uses,
+      dieSelector: effect.dieSelector,
+    });
+  }
+  return emptyApplication();
+}
