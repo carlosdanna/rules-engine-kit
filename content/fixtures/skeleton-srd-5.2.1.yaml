@@ -9,3 +9,4 @@ data:
   abilities: { str: 10, dex: 16, con: 15, int: 6, wis: 8, cha: 5 }
   vulnerabilities: [bludgeoning]
 citation: { source: srd-5.2.1, section: "Monsters > Skeleton" }
+interpretation: null

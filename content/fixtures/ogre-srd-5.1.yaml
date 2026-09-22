@@ -1,0 +1,14 @@
+# The stat block differs between the editions — hit points changed, nothing else did — so
+# there are two fixtures under one slug, each scoped to the profile that prints it. The ogre
+# is the heavy-hitting target the templates use when a goblin would die to the first hit.
+slug: ogre
+kind: actor
+rulesetScope: [srd-5.1]
+data:
+  name: Ogre
+  ac: 11
+  hp: 59
+  proficiencyBonus: 2
+  abilities: { str: 19, dex: 8, con: 16, int: 5, wis: 7, cha: 7 }
+citation: { source: srd-5.1, section: "Monsters > Ogre" }
+interpretation: null

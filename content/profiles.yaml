@@ -1,0 +1,32 @@
+# The named profiles this content tree declares (ADR-0026).
+#
+# A pack identifies itself as `(id, semver)`, but a template's `suggestedProfiles`, a
+# fixture's `rulesetScope` and a citation's `source` all name a *profile* — an ordered stack,
+# base first, that `resolveProfile` turns into one rule list and one hash. Declaring them here
+# is what makes those strings checkable: `content:lint` reports a slug nobody declared and a
+# layer that names no pack in this tree.
+#
+# Nothing here is hashed. The profile hash is the canonical JSON of the resolved rules plus the
+# layer identities (ADR-0009), so a slug is a name, not an identity.
+- slug: srd-5.1
+  name: SRD 5.1
+  layers: [{ id: dnd5e-srd, version: 5.1.0 }]
+
+- slug: srd-5.2.1
+  name: SRD 5.2.1
+  layers: [{ id: dnd5e-srd, version: 5.2.1 }]
+
+# The layer acceptance scenario (VR-2, VR-4): the same house rule on either base. Not a
+# `suggestedProfiles` entry on any starter template — the six of them are about the edition
+# difference — but a profile the playground and `/compare` can pick.
+- slug: srd-5.1+flanking
+  name: SRD 5.1 + house flanking
+  layers:
+    - { id: dnd5e-srd, version: 5.1.0 }
+    - { id: house-flanking, version: 1.0.0 }
+
+- slug: srd-5.2.1+flanking
+  name: SRD 5.2.1 + house flanking
+  layers:
+    - { id: dnd5e-srd, version: 5.2.1 }
+    - { id: house-flanking, version: 1.0.0 }

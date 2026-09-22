@@ -1,0 +1,34 @@
+# A saving throw against something the creature is already suffering.
+#
+# The default is a restrained creature making a Dexterity save, which is the shape both SRDs
+# state identically and the one that exercises the roll-mode channel on the `save` target:
+# `condition.restrained.dex-save` grants disadvantage. Swapping `saverConditions` to
+# `[half-cover]` moves the same step onto the numeric channel instead
+# (`cover.half.dex-save`), which is the contrast the template is for.
+id: saving-throw-vs-effect
+name: Saving throw against an effect
+tags: [save, d20, condition]
+schemaVersion: 1
+suggestedProfiles: [srd-5.1, srd-5.2.1]
+params:
+  saver: { type: fixture, kind: actor, default: fighter-3 }
+  ability: { type: enum, values: [str, dex, con, int, wis, cha], default: dex }
+  dc: { type: number, default: 13 }
+  saverConditions: { type: conditionList, default: [restrained] }
+  useInspiration: { type: boolean, default: false }
+  rerollDie: { type: rollChoice, roll: save, choice: rerollDieIndex, default: 0 }
+skeleton:
+  actors:
+    - { fixture: "{{saver}}", id: saver, conditions: "{{saverConditions}}" }
+  timeline:
+    - id: r1-saver
+      round: 1
+      actorId: saver
+      action:
+        type: save
+        ability: "{{ability}}"
+        dc: "{{dc}}"
+  intents:
+    useInspiration: "{{useInspiration}}"
+    rollChoices:
+      "{{$rollId(r1-saver, save)}}": { rerollDieIndex: "{{rerollDie}}" }

@@ -11,3 +11,4 @@ data:
   proficiencyBonus: 2
   abilities: { str: 13, dex: 12, con: 12, int: 10, wis: 11, cha: 10 }
 citation: { source: srd-5.2.1, section: "Monsters > Guard" }
+interpretation: null

@@ -1,0 +1,11 @@
+slug: acolyte
+kind: actor
+rulesetScope: [srd-5.2.1]
+data:
+  name: Priest Acolyte
+  ac: 13
+  hp: 11
+  proficiencyBonus: 2
+  abilities: { str: 14, dex: 10, con: 12, int: 10, wis: 14, cha: 11 }
+citation: { source: srd-5.2.1, section: "Monsters > Priest Acolyte" }
+interpretation: null

@@ -1,0 +1,43 @@
+# The plainest thing the engine does: one creature swings at another, once.
+#
+# The skeleton is a situation with holes (ADR-0026) — actors name the fixture they inline
+# plus the id their steps address them by, and the timeline is explicit. `renderTemplate`
+# supplies `schemaVersion`, the fixtures' printed data and the `items` index.
+#
+# Under SRD 5.1 and SRD 5.2.1 this renders to the same numbers except for the target: the
+# goblin slug resolves to a different stat block per edition, which is the point of scoping
+# a fixture rather than editing one.
+id: melee-attack
+name: Melee attack
+tags: [combat, attack]
+schemaVersion: 1
+suggestedProfiles: [srd-5.1, srd-5.2.1]
+params:
+  attacker: { type: fixture, kind: actor, default: fighter-3 }
+  target: { type: fixture, kind: actor, default: goblin }
+  weapon: { type: fixture, kind: item, default: longsword }
+  targetConditions: { type: conditionList, default: [] }
+  rangeFt: { type: number, default: 5, min: 0 }
+  useInspiration: { type: boolean, default: false }
+  rerollDie: { type: rollChoice, roll: attack, choice: rerollDieIndex, default: 0 }
+skeleton:
+  actors:
+    - { fixture: "{{attacker}}", id: attacker }
+    - { fixture: "{{target}}", id: target, conditions: "{{targetConditions}}" }
+  timeline:
+    - id: r1-attacker
+      round: 1
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: "{{rangeFt}}"
+  intents:
+    useInspiration: "{{useInspiration}}"
+    # Which die a reroll touches is the player's, declared up front because evaluation never
+    # pauses (ADR-0003, ADR-0011). The roll id is derivable before the run, so the template
+    # can address it.
+    rollChoices:
+      "{{$rollId(r1-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }

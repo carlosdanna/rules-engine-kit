@@ -7,3 +7,4 @@ data:
   properties: [ammunition, two-handed]
   mastery: vex
 citation: { source: srd-5.2.1, section: "Equipment > Weapons > Simple Ranged Weapons" }
+interpretation: null

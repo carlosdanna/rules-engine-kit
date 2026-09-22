@@ -1,0 +1,34 @@
+# A D20 Test that is not an attack: one creature, one check, one DC.
+#
+# `skill` is `null` rather than a param. The fact is nullable on purpose (ADR-0022) and a
+# check with no skill is the ordinary case; the one skill either pack reads is `initiative`,
+# which `combat-start` declares because the surprise rule asks for it. A template param
+# cannot express null, so making this one would have forced a sentinel string.
+id: ability-check-vs-dc
+name: Ability check against a DC
+tags: [check, d20]
+schemaVersion: 1
+suggestedProfiles: [srd-5.1, srd-5.2.1]
+params:
+  actor: { type: fixture, kind: actor, default: fighter-3 }
+  ability: { type: enum, values: [str, dex, con, int, wis, cha], default: str }
+  dc: { type: number, default: 15 }
+  actorConditions: { type: conditionList, default: [] }
+  useInspiration: { type: boolean, default: false }
+  rerollDie: { type: rollChoice, roll: check, choice: rerollDieIndex, default: 0 }
+skeleton:
+  actors:
+    - { fixture: "{{actor}}", id: actor, conditions: "{{actorConditions}}" }
+  timeline:
+    - id: r1-actor
+      round: 1
+      actorId: actor
+      action:
+        type: check
+        ability: "{{ability}}"
+        skill: null
+        dc: "{{dc}}"
+  intents:
+    useInspiration: "{{useInspiration}}"
+    rollChoices:
+      "{{$rollId(r1-actor, check)}}": { rerollDieIndex: "{{rerollDie}}" }

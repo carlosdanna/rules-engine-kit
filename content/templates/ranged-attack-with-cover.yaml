@@ -1,0 +1,40 @@
+# The same attack at range, against a target behind something.
+#
+# A situation has no geometry — grids and movement are out of scope (ADR-0003) — so cover is
+# a condition on the creature benefiting from it, which is what `cover.half` and
+# `cover.three-quarters` read. The enum is the two degrees the packs encode; there is no
+# "none" value, because a ranged attack against an exposed target is `melee-attack` with a
+# different `rangeFt` and this template exists to exercise the cover channel.
+id: ranged-attack-with-cover
+name: Ranged attack against a target in cover
+tags: [combat, attack, cover]
+schemaVersion: 1
+suggestedProfiles: [srd-5.1, srd-5.2.1]
+params:
+  attacker: { type: fixture, kind: actor, default: fighter-3 }
+  target: { type: fixture, kind: actor, default: goblin }
+  weapon: { type: fixture, kind: item, default: shortbow }
+  cover: { type: enum, values: [half-cover, three-quarters-cover], default: half-cover }
+  rangeFt: { type: number, default: 60, min: 0 }
+  useInspiration: { type: boolean, default: false }
+  rerollDie: { type: rollChoice, roll: attack, choice: rerollDieIndex, default: 0 }
+skeleton:
+  actors:
+    - { fixture: "{{attacker}}", id: attacker }
+    # The one condition is the cover degree, so the bonus lands on the target's effective AC
+    # rather than on the attack roll (ADR-0006).
+    - { fixture: "{{target}}", id: target, conditions: ["{{cover}}"] }
+  timeline:
+    - id: r1-attacker
+      round: 1
+      actorId: attacker
+      action:
+        type: attack
+        mode: ranged
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: "{{rangeFt}}"
+  intents:
+    useInspiration: "{{useInspiration}}"
+    rollChoices:
+      "{{$rollId(r1-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }

@@ -1,0 +1,31 @@
+# The player character the starter templates attack with, and the only fixture here that is
+# not a stat block copied out of the SRD.
+#
+# Both SRDs publish the Fighter class — hit dice, the proficiency bonus per level, the armour
+# and weapon tables — and neither publishes a third-level fighter, so the numbers below are
+# *derived* and the ability array, the armour and the weapon are this repository's choices.
+# ADR-0026 added `interpretation` for exactly this: a citation alone would not account for
+# them. Nothing here comes from a non-SRD book.
+#
+# The two editions agree on every derived value, so one fixture serves both profiles:
+#   AC 16          chain mail (SRD 5.1 Armor table; SRD 5.2.1 Armor table, Heavy Armor)
+#   PB +2          Fighter table, 3rd level, in both editions
+#   HP 28          1d10 per level: 10 + 2 at 1st, then 6 + 2 twice, with Constitution 14
+slug: fighter-3
+kind: actor
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Fighter (3rd level)
+  ac: 16
+  hp: 28
+  proficiencyBonus: 2
+  abilities: { str: 16, dex: 12, con: 14, int: 10, wis: 12, cha: 8 }
+citation: { source: srd-5.1, section: "Classes > Fighter" }
+interpretation: >-
+  Derived, not printed: neither SRD publishes a third-level fighter. The class tables give
+  the hit die (1d10 per level), the proficiency bonus at 3rd level (+2) and chain mail's AC
+  (16); the ability array, the armour and the weapon are this repository's choices, made to
+  give the templates a Strength-based melee attacker. Hit points take the fixed average the
+  SRD offers for levels after the first (6 + the Constitution modifier) rather than rolling,
+  so the number is reproducible. No class feature is encoded — Second Wind, Action Surge and
+  weapon mastery counts are all outside the core subset (ADR-0003).

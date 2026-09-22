@@ -1,0 +1,19 @@
+# The Bless caster. Bless is not a fixture and cannot be one — ADR-0024 closed the kinds at
+# actor and item, and the spell is already `spell.bless.cast` / `.attack` / `.save` plus a
+# `blessed` condition — so what the buffed-round template needs is a creature that casts it.
+#
+# Both editions print a CR 1/4 junior cleric with bless on its list, under different names and
+# with different numbers, so there are two fixtures under one slug.
+slug: acolyte
+kind: actor
+rulesetScope: [srd-5.1]
+data:
+  name: Acolyte
+  ac: 10
+  hp: 9
+  proficiencyBonus: 2
+  abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 14, cha: 11 }
+citation: { source: srd-5.1, section: "Nonplayer Characters > Acolyte" }
+interpretation: >-
+  The proficiency bonus is not printed on an SRD 5.1 stat block; it is +2 for challenge 1/4,
+  which is what the block's own +2 to hit with a club (Strength +0, proficient) confirms.

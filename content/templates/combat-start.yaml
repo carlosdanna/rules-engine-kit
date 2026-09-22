@@ -1,0 +1,60 @@
+# The edition difference, as a template: what being surprised costs you.
+#
+# Both packs carry `combat.surprise` under the same rule key and it does entirely different
+# things — SRD 5.1 halts the creature's first turn, SRD 5.2.1 lets it act and gives it
+# disadvantage on Initiative. That is acceptance scenario 1 of `docs/requirements.md`, and
+# rendering this one template under both suggested profiles is the whole demonstration.
+#
+# The engine declares no Initiative roll of its own, so an Initiative roll is a `check` step
+# whose `skill` is "initiative" and whose DC is 0 — this repository's convention, recorded on
+# `combat.surprise` in the SRD 5.2.1 pack. Three steps, because the halt has to be visible as
+# something the creature recovers from in round 2.
+id: combat-start
+name: Combat start, with a surprised creature
+tags: [combat, surprise, initiative]
+schemaVersion: 1
+suggestedProfiles: [srd-5.1, srd-5.2.1]
+params:
+  attacker: { type: fixture, kind: actor, default: fighter-3 }
+  target: { type: fixture, kind: actor, default: goblin }
+  weapon: { type: fixture, kind: item, default: longsword }
+  attackerConditions: { type: conditionList, default: [surprised] }
+  useInspiration: { type: boolean, default: false }
+  rerollDie: { type: rollChoice, roll: check, choice: rerollDieIndex, default: 0 }
+skeleton:
+  actors:
+    - { fixture: "{{attacker}}", id: attacker, conditions: "{{attackerConditions}}" }
+    - { fixture: "{{target}}", id: target }
+  timeline:
+    - id: r1-attacker-initiative
+      round: 1
+      actorId: attacker
+      action: { type: check, ability: dex, skill: initiative, dc: 0 }
+    - id: r1-attacker
+      round: 1
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: 5
+    # Round 2 is what makes the 5.1 halt legible: the same step, no longer barred.
+    - id: r2-attacker
+      round: 2
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: 5
+  intents:
+    useInspiration: "{{useInspiration}}"
+    # Every d20 this timeline rolls, not just the Initiative check: under SRD 5.2.1
+    # `inspiration.spend` is a reroll, and which die it touches is the player's to declare
+    # up front (ADR-0003, ADR-0011). `content:lint` warns about any that are left out.
+    rollChoices:
+      "{{$rollId(r1-attacker-initiative, check)}}": { rerollDieIndex: "{{rerollDie}}" }
+      "{{$rollId(r1-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }
+      "{{$rollId(r2-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }

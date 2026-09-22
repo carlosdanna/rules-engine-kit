@@ -1,0 +1,68 @@
+# Bless over a multi-turn timeline: the only template whose subject is a duration.
+#
+# Bless is not a fixture and cannot be one — ADR-0024 closed the fixture kinds at actor and
+# item, and the spell is already three rules plus a `blessed` condition — so the way a
+# template gets it is a `cast` step. `spell.bless.cast` applies the condition during the
+# cast step's `apply` phase, which is why the caster acts before the attacker in round 1.
+#
+# The duration is 10 rounds anchored to the end of the caster's turn (ADR-0012), so the
+# condition is still live on every attack below, and the 1d4 shows up on each one through
+# the numeric channel with its own stack key — two castings would not stack.
+id: buffed-round
+name: Buffed round — Bless over three rounds
+tags: [spell, bless, duration, attack]
+schemaVersion: 1
+suggestedProfiles: [srd-5.1, srd-5.2.1]
+params:
+  caster: { type: fixture, kind: actor, default: acolyte }
+  attacker: { type: fixture, kind: actor, default: fighter-3 }
+  target: { type: fixture, kind: actor, default: ogre }
+  weapon: { type: fixture, kind: item, default: longsword }
+  rangeFt: { type: number, default: 5, min: 0 }
+  useInspiration: { type: boolean, default: false }
+  rerollDie: { type: rollChoice, roll: attack, choice: rerollDieIndex, default: 0 }
+skeleton:
+  actors:
+    - { fixture: "{{caster}}", id: caster }
+    - { fixture: "{{attacker}}", id: attacker }
+    # An ogre rather than a goblin: the point is three attacks landing over three rounds,
+    # and a goblin does not survive the first one.
+    - { fixture: "{{target}}", id: target }
+  timeline:
+    - id: r1-caster
+      round: 1
+      actorId: caster
+      action: { type: cast, spell: bless, targetIds: [attacker] }
+    - id: r1-attacker
+      round: 1
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: "{{rangeFt}}"
+    - id: r2-attacker
+      round: 2
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: "{{rangeFt}}"
+    - id: r3-attacker
+      round: 3
+      actorId: attacker
+      action:
+        type: attack
+        mode: melee
+        targetId: target
+        weapon: "{{weapon}}"
+        rangeFt: "{{rangeFt}}"
+  intents:
+    useInspiration: "{{useInspiration}}"
+    rollChoices:
+      "{{$rollId(r1-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }
+      "{{$rollId(r2-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }
+      "{{$rollId(r3-attacker, attack)}}": { rerollDieIndex: "{{rerollDie}}" }

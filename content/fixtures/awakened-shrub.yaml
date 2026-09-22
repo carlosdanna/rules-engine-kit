@@ -14,3 +14,4 @@ data:
   resistances: [piercing]
   vulnerabilities: [fire]
 citation: { source: srd-5.2.1, section: "Monsters > Awakened Shrub" }
+interpretation: null
