@@ -213,3 +213,53 @@ describe('ActiveEffect', () => {
     expect(ActiveEffect.safeParse(unresolved).success).toBe(false);
   });
 });
+
+describe('an effect value may read a fact (ADR-0021, closing Q21)', () => {
+  it('accepts a fact reference where a number or dice would go', () => {
+    const abilityModifier = Effect.safeParse({
+      type: 'addModifier',
+      target: { kind: 'attack', actor: '$actor' },
+      value: { fact: 'actor.abilityMod.str' },
+      modifierType: 'ability',
+      policy: 'sum',
+    });
+
+    expect(abilityModifier.success).toBe(true);
+  });
+
+  it('accepts one on a `rollDice` expression, which is what Q21 was filed for', () => {
+    const weaponDice = Effect.safeParse({
+      type: 'rollDice',
+      expr: { fact: 'action.weapon.damage.dice' },
+      into: 'scratch.damage.weapon',
+    });
+
+    expect(weaponDice.success).toBe(true);
+  });
+
+  it('rejects a fact reference carrying anything besides the path', () => {
+    // Anything more would be an expression language, which ADR-0021 turned down: a flat
+    // bonus riding along inside a value could never have a stacking policy applied (FR-11).
+    const extra = {
+      type: 'addModifier',
+      target: { kind: 'attack', actor: '$actor' },
+      value: { fact: 'actor.abilityMod.str', plus: 2 },
+      modifierType: 'ability',
+      policy: 'sum',
+    };
+
+    expect(Effect.safeParse(extra).success).toBe(false);
+  });
+
+  it('rejects an empty path, which no registry could hold', () => {
+    const blank = {
+      type: 'addModifier',
+      target: { kind: 'attack', actor: '$actor' },
+      value: { fact: '' },
+      modifierType: 'ability',
+      policy: 'sum',
+    };
+
+    expect(Effect.safeParse(blank).success).toBe(false);
+  });
+});

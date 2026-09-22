@@ -99,11 +99,17 @@ export function loadPacks(dirs: readonly string[]): LoadedProfile {
       const existing = facts.get(fact.path);
       if (existing === undefined) {
         facts.set(fact.path, fact);
-      } else if (existing.type !== fact.type || existing.derived !== fact.derived) {
+      } else if (
+        existing.type !== fact.type ||
+        existing.derived !== fact.derived ||
+        existing.nullable !== fact.nullable
+      ) {
+        const describe = (declaration: FactDefinition) =>
+          `${declaration.type}${declaration.derived ? ' (derived)' : ''}` +
+          `${declaration.nullable ? ' (nullable)' : ''}`;
         throw new CliError(
           `fact '${fact.path}' is declared twice with different meanings: ` +
-            `${existing.type}${existing.derived ? ' (derived)' : ''} then ` +
-            `${fact.type}${fact.derived ? ' (derived)' : ''}`,
+            `${describe(existing)} then ${describe(fact)}`,
         );
       }
     }

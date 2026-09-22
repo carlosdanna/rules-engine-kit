@@ -16,6 +16,11 @@ export {
   type EffectApplicationReason,
   UnknownActorError,
 } from './errors';
+export {
+  type ResolvedEffectValue,
+  resolveDiceValue,
+  resolveEffectValue,
+} from './factValue';
 export { parseWritablePath, type WritablePath } from './paths';
 export { applyEffect, applyEffects, EFFECT_HANDLERS, type EffectHandler } from './registry';
 export { type ActorRecord, createWorldStateStore, type WorldStateStore } from './state';

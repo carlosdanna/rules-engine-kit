@@ -12,8 +12,10 @@
 export const ENGINE_VERSION = '0.0.0';
 
 /**
- * Schema version of the trace envelope. Starts at 1: ADR-0014 corrected ADR-0010's
- * event list before anything was implemented, so no reader ever has to handle 0.
+ * Schema version of the trace envelope. Started at 1: ADR-0014 corrected ADR-0010's
+ * event list before anything was implemented, so no reader ever has to handle 0. At 2
+ * since ADR-0021 added `AppliedModifier.fromFact` — additive and optional, but a viewer
+ * may key on it, and the envelope is versioned precisely so it need not guess.
  * The viewer refuses to render a trace newer than the version it knows.
  */
-export const TRACE_SCHEMA_VERSION = 1;
+export const TRACE_SCHEMA_VERSION = 2;

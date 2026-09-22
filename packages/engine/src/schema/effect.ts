@@ -35,9 +35,25 @@ export const DieSelector = z.discriminatedUnion('kind', [
 ]);
 export type DieSelector = z.infer<typeof DieSelector>;
 
-/** A flat number, or dice rolled during the `modifiers` phase (Bless is `1d4`). */
-export const ModifierValue = z.union([z.number().int(), DiceExpr]);
+/**
+ * A value an effect reads from the fact registry when it is applied, instead of stating a
+ * number a pack could only know for one fixture (ADR-0021, closing Q21). The path must be
+ * registered, like any `var` in a condition, and resolves to a number (`actor.abilityMod.str`)
+ * or to dice notation (`action.weapon.damage.dice` reads `1d8`).
+ *
+ * Deliberately just a path: an arithmetic form would let a flat bonus ride inside a value
+ * where no stacking policy could reach it (FR-11).
+ */
+export const FactValueRef = z.strictObject({ fact: z.string().min(1) });
+export type FactValueRef = z.infer<typeof FactValueRef>;
+
+/** A flat number, dice rolled during the `modifiers` phase (Bless is `1d4`), or a fact. */
+export const ModifierValue = z.union([z.number().int(), DiceExpr, FactValueRef]);
 export type ModifierValue = z.infer<typeof ModifierValue>;
+
+/** Dice as authored, or the path of a fact that reads as dice notation. */
+export const DiceValue = z.union([DiceExpr, FactValueRef]);
+export type DiceValue = z.infer<typeof DiceValue>;
 
 /** A roll target or a non-roll derived value such as `actor.ac.effective` (ADR-0006). */
 export const ModifierTargetRef = z.union([RollTargetRef, DerivedTargetRef]);
@@ -85,7 +101,7 @@ export const Effect = z.discriminatedUnion('type', [
   }),
   z.strictObject({
     type: z.literal('rollDice'),
-    expr: DiceExpr,
+    expr: DiceValue,
     into: z.string().min(1),
   }),
   z.strictObject({

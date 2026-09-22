@@ -336,7 +336,27 @@ function basesFor(pack: ParsedPack, bases: ParsedPack[]): ParsedPack[] {
   });
 }
 
-function lintConditions(pack: ParsedPack, bases: ParsedPack[], issues: ContentIssue[]): void {
+/**
+ * Every `{ fact: <path> }` an effect reads for its value, with the dotted path it sits at
+ * (ADR-0021). A walk rather than a lookup at two known keys: the shape is a value form, so
+ * a new effect that accepts one should be checked without this function being edited.
+ */
+function factRefsIn(node: unknown, at: string, found: { path: string; at: string }[]): void {
+  if (Array.isArray(node)) {
+    for (const [index, child] of node.entries()) factRefsIn(child, `${at}[${index}]`, found);
+    return;
+  }
+  if (!isObject(node)) return;
+
+  if (typeof node.fact === 'string') {
+    found.push({ path: node.fact, at });
+    return;
+  }
+
+  for (const [key, child] of Object.entries(node)) factRefsIn(child, `${at}.${key}`, found);
+}
+
+function lintRuleReads(pack: ParsedPack, bases: ParsedPack[], issues: ContentIssue[]): void {
   let registry: ReturnType<typeof registryFromFacts>;
   try {
     registry = registryFor(pack, bases);
@@ -359,6 +379,27 @@ function lintConditions(pack: ParsedPack, bases: ParsedPack[], issues: ContentIs
     for (const unsupported of result.unsupportedOperators) {
       issues.push(
         error('unsupported-operator', rule.file, unsupported.pointer, unsupported.message),
+      );
+    }
+  }
+
+  // An effect's value may name a fact too (ADR-0021). Checking conditions alone would let
+  // one reach evaluation unchecked, which is the single thing FR-17 promises cannot happen.
+  for (const rule of pack.docs.rules) {
+    if (rule.doc === undefined || !isObject(rule.doc)) continue;
+
+    const refs: { path: string; at: string }[] = [];
+    factRefsIn(rule.doc.effects, 'effects', refs);
+
+    for (const ref of refs) {
+      if (registry.has(ref.path)) continue;
+      issues.push(
+        error(
+          'unknown-fact',
+          rule.file,
+          ref.at,
+          `effect value reads unregistered fact path '${ref.path}': every path an effect reads must be declared in the pack's facts (ADR-0021)`,
+        ),
       );
     }
   }
@@ -472,7 +513,7 @@ export function lintContent(docs: ContentDocs): ContentIssue[] {
     .filter((pack): pack is ParsedPack => pack !== null);
   const bases = packs.filter((pack) => pack.manifest.kind === 'base');
 
-  for (const pack of packs) lintConditions(pack, bases, issues);
+  for (const pack of packs) lintRuleReads(pack, bases, issues);
   for (const pack of packs) parsePackRules(pack, issues);
   lintStacks(packs, issues);
 

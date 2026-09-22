@@ -41,7 +41,7 @@ import {
 } from './action';
 import { createActorRefResolver } from './actorRef';
 import { sealDerivedValues } from './derived';
-import { createFactSource } from './facts';
+import { createFactSource, type StepResultView } from './facts';
 import { disablingLayer, lastProvenance, selectRules } from './select';
 
 export type RunStepArgs = {
@@ -83,6 +83,13 @@ export function runStep(args: RunStepArgs): RunStepResult {
   const comparisons: CompareOutcome[] = [];
   const damage: DamageOutcome[] = [];
 
+  // Declared before the fact source is built, because `step.attack.*` answers "does this
+  // step roll a d20 at all" from it (ADR-0021).
+  const stepRolls = declareStepRolls(step, bus);
+  let lastRoll: RollOutcome | null = null;
+  let lastCompare: CompareOutcome | null = null;
+  let damageTotal: number | null = null;
+
   const factSource = createFactSource({
     store,
     step,
@@ -91,12 +98,18 @@ export function runStep(args: RunStepArgs): RunStepResult {
     items: args.items,
     currentPhase: () => currentPhase,
     derivedSealed: () => derivedSealed,
+    stepResult: (): StepResultView => {
+      if (stepRolls.d20 === undefined) return { kind: 'none' };
+      if (lastCompare === null) return { kind: 'pending' };
+      return {
+        kind: 'decided',
+        result: lastCompare.result,
+        // The kept die, before modifiers: what a critical hit is a property of.
+        natural: lastRoll?.kept ?? 0,
+        total: lastCompare.total,
+      };
+    },
   });
-
-  const stepRolls = declareStepRolls(step, bus);
-  let lastRoll: RollOutcome | null = null;
-  let lastCompare: CompareOutcome | null = null;
-  let damageTotal: number | null = null;
 
   function sweep(edge: 'start' | 'end'): void {
     const now: TimePoint = { round: step.round, stepIndex, edge };
@@ -130,6 +143,9 @@ export function runStep(args: RunStepArgs): RunStepResult {
       timeline: args.timeline,
       resolveActorRefs: (ref: ActorRef, effectType: EffectType) =>
         resolveRef(ref, rule.key, effectType),
+      // The same source conditions read, so a fact-valued effect and a condition can never
+      // disagree about what a path means (ADR-0021).
+      readFact: (path: string) => factSource.read(path),
       rollIdFor: (target: RollTarget) => makeRollId(step.id, target),
       derivedChannel: (path, actorId) => `${step.id}/derived:${actorId}:${path}`,
       nextEffectId: args.nextEffectId,

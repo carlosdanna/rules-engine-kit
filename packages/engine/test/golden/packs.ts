@@ -21,44 +21,68 @@ const SRD_52: Citation['source'] = 'srd-5.2.1';
 const SRD_51: Citation['source'] = 'srd-5.1';
 
 export const facts: FactDefinition[] = [
-  { path: 'action.type', type: 'string', description: 'the declared action kind', derived: false },
-  { path: 'action.rangeFt', type: 'number', description: 'distance to the target', derived: false },
-  { path: 'action.mode', type: 'string', description: 'melee or ranged', derived: false },
+  {
+    path: 'action.type',
+    type: 'string',
+    description: 'the declared action kind',
+    derived: false,
+    nullable: false,
+  },
+  {
+    path: 'action.rangeFt',
+    type: 'number',
+    description: 'distance to the target',
+    derived: false,
+    nullable: false,
+  },
+  {
+    path: 'action.mode',
+    type: 'string',
+    description: 'melee or ranged',
+    derived: false,
+    nullable: false,
+  },
   {
     path: 'actor.conditions',
     type: 'stringList',
     description: "the acting actor's conditions",
     derived: false,
+    nullable: false,
   },
   {
     path: 'target.conditions',
     type: 'stringList',
     description: "the target's conditions",
     derived: false,
+    nullable: false,
   },
   {
     path: 'actor.abilityMod.str',
     type: 'number',
     description: 'strength modifier',
     derived: false,
+    nullable: false,
   },
   {
     path: 'actor.proficiencyBonus',
     type: 'number',
     description: 'proficiency bonus',
     derived: false,
+    nullable: false,
   },
   {
     path: 'intents.useInspiration',
     type: 'boolean',
     description: 'declared up front (ADR-0003)',
     derived: false,
+    nullable: false,
   },
   {
     path: 'actor.ac.effective',
     type: 'number',
     description: 'AC after cover and spells',
     derived: true,
+    nullable: false,
   },
 ];
 

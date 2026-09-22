@@ -140,6 +140,41 @@ describe('conditions (FR-17, ADR-0013)', () => {
     expect(issue?.message).toMatch(/target\.conditions/);
   });
 
+  it('names an unregistered path an effect reads for its value (ADR-0021)', () => {
+    // A lint that walked conditions only would let `{ fact: … }` reach evaluation
+    // unchecked, which is the one thing FR-17 promises cannot happen.
+    const doc = rule('attack.ability-modifier', {
+      effects: [
+        {
+          type: 'addModifier',
+          target: { kind: 'attack', actor: '$actor' },
+          value: { fact: 'actor.abilityMod.str' },
+          modifierType: 'ability',
+          policy: 'sum',
+        },
+      ],
+    });
+    const [issue] = lintContent(tree([{ file: 'rules/ability.yaml', doc }]));
+
+    expect(issue).toMatchObject({ code: 'unknown-fact', file: 'rules/ability.yaml' });
+    expect(issue?.message).toMatch(/actor\.abilityMod\.str/);
+    expect(issue?.path).toMatch(/effects/);
+  });
+
+  it('accepts an effect reading a path the pack did register', () => {
+    const doc = rule('attack.ability-modifier', {
+      effects: [
+        {
+          type: 'rollDice',
+          expr: { fact: 'action.type' },
+          into: 'scratch.damage.weapon',
+        },
+      ],
+    });
+
+    expect(codes(tree([{ file: 'rules/ability.yaml', doc }]))).not.toContain('unknown-fact');
+  });
+
   it('names an operator outside the closed subset, which only a raw walk can see', () => {
     const doc = rule('condition.prone', { condition: { '===': [{ var: 'action.type' }, 'x'] } });
     expect(codes(tree([{ file: 'rules/prone.yaml', doc }]))).toContain('unsupported-operator');

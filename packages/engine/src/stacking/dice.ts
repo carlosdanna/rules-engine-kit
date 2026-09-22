@@ -9,7 +9,7 @@
  */
 
 import { formatDiceNotation, fromDiceExpr, type Roller } from '../dice';
-import type { ModifierValue, RollId } from '../schema';
+import type { DiceExpr, RollId } from '../schema';
 
 export type RolledModifierValue = {
   value: number;
@@ -23,7 +23,12 @@ export type RolledModifierValue = {
  * values in order, at indices 0 and 1.
  */
 export function rollModifierValue(args: {
-  value: ModifierValue;
+  /**
+   * Already resolved: a `{ fact: … }` value is read in the effects layer before it reaches
+   * here (ADR-0021), so this module stays free of the fact source and of the errors reading
+   * one can raise.
+   */
+  value: number | DiceExpr;
   roller: Roller;
   channel: RollId;
 }): RolledModifierValue {

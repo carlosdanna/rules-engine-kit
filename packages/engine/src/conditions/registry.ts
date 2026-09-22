@@ -67,12 +67,18 @@ export function createFactRegistry(facts: readonly RegisteredFact[]): FactRegist
   };
 }
 
-/** Builds the registry straight from a pack's `facts` (`RulesetVersion.facts`). */
+/**
+ * Builds the registry straight from a pack's `facts` (`RulesetVersion.facts`).
+ *
+ * A fact declared `nullable` parses `null` as well as its type (ADR-0022) — that is the
+ * only way a rule can read a field the situation schema makes nullable on purpose, such as
+ * a weapon's 5.2.1 `mastery`. Everything else keeps ADR-0013's strictness.
+ */
 export function registryFromFacts(facts: readonly FactDefinition[]): FactRegistry {
   return createFactRegistry(
     facts.map((fact) => ({
       path: fact.path,
-      type: factTypeSchema(fact.type),
+      type: fact.nullable ? factTypeSchema(fact.type).nullable() : factTypeSchema(fact.type),
       description: fact.description,
     })),
   );

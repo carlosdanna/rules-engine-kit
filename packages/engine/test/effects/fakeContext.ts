@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { createFactRegistry } from '../../src/conditions';
 import { createRoller, makeRollId, type Roller } from '../../src/dice';
 import { createStepBus, createWorldStateStore, type EffectContext } from '../../src/effects';
-import type { Actor, RollId, RollTarget, Step } from '../../src/schema';
+import type { Actor, Json, RollId, RollTarget, Step } from '../../src/schema';
 import { buildTimelineIndex } from '../../src/time';
 
 export const registry = createFactRegistry([
@@ -57,6 +57,8 @@ export function fakeContext(
     ruleKey?: string;
     roller?: Roller;
     timelineSteps?: Step[];
+    /** What `readFact` serves an effect whose value is a fact reference (ADR-0021). */
+    facts?: Record<string, Json>;
   } = {},
 ): EffectContext {
   const step = options.step ?? attackStep();
@@ -85,6 +87,13 @@ export function fakeContext(
     timeline,
     resolveActorRefs: (ref) =>
       ref === '$actor' ? [step.actorId] : ref === '$target' ? targetsOf() : [ref],
+    readFact: (path: string): Json => {
+      const facts = options.facts ?? {};
+      // The real source throws on a path it cannot resolve; a fixture that answered `null`
+      // for everything would hide exactly the failures ADR-0021 asks to be loud.
+      if (!(path in facts)) throw new Error(`fake fact source has no '${path}'`);
+      return facts[path] ?? null;
+    },
     rollIdFor: (target: RollTarget): RollId => makeRollId(step.id, target),
     derivedChannel: (path, actorId) => `${step.id}/derived:${actorId}:${path}` as RollId,
     nextEffectId: () => `eff-${++effectCounter}`,

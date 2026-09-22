@@ -10,7 +10,10 @@ export type EffectApplicationReason =
   | { kind: 'unwritable-path'; path: string }
   | { kind: 'unregistered-write'; path: string }
   | { kind: 'unknown-derived-target'; path: string }
-  | { kind: 'unresolvable-actor-ref'; ref: string; why: 'no-target' | 'unknown-actor' };
+  | { kind: 'unresolvable-actor-ref'; ref: string; why: 'no-target' | 'unknown-actor' }
+  | { kind: 'fact-value-unusable'; path: string; value: string }
+  | { kind: 'fact-value-flat-bonus'; path: string; value: string }
+  | { kind: 'fact-value-not-dice'; path: string; value: string };
 
 export function describeEffectApplication(
   reason: EffectApplicationReason,
@@ -29,6 +32,12 @@ export function describeEffectApplication(
       return reason.why === 'no-target'
         ? `${where} names '${reason.ref}', but this step's action declares no target`
         : `${where} names unknown actor '${reason.ref}'`;
+    case 'fact-value-unusable':
+      return `${where} reads '${reason.path}' as ${reason.value}, which is neither a number nor dice notation: a fact-valued effect needs one of the two (ADR-0021)`;
+    case 'fact-value-flat-bonus':
+      return `${where} reads '${reason.path}' as ${reason.value}, which carries a flat bonus: the bonus would reach the roll without passing through a modifier channel and so could never have a stacking policy applied (FR-11, ADR-0011)`;
+    case 'fact-value-not-dice':
+      return `${where} needs dice, but '${reason.path}' reads as ${reason.value}: a number is a total, not something to roll`;
   }
 }
 

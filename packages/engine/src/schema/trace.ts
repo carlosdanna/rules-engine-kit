@@ -44,6 +44,11 @@ export const AppliedModifier = z.strictObject({
   value: z.number().int(),
   /** Present when the modifier was a dice expression, so "+3 bless" can show its d4. */
   rolled: z.strictObject({ expr: z.string().min(1), dice: z.array(z.number().int()) }).optional(),
+  /**
+   * The fact path the value was read from, when the rule named one rather than a number
+   * (ADR-0021), so a trace can say "+3 ability (actor.abilityMod.str)" (FR-14).
+   */
+  fromFact: z.string().min(1).optional(),
 });
 export type AppliedModifier = z.infer<typeof AppliedModifier>;
 

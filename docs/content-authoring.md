@@ -82,8 +82,22 @@ interpretation: null     # explain any reading of ambiguous wording
 One rule per file under `rules/`, and `facts.yaml` is a sequence of fact definitions. Fields a rule
 always has but rarely varies may be left out: `op` defaults to `add`, `label` to the rule key,
 `priority` to `0`, `tags` and `effects` to empty, and `condition` and `interpretation` to `null` — an
-omitted condition reads as "always applies once selected for its phase". On a fact, `derived`
-defaults to `false`.
+omitted condition reads as "always applies once selected for its phase". On a fact, `derived` and
+`nullable` default to `false`.
+
+A fact is parsed through the type it declares, so a path whose value is legitimately absent —
+an item's `mastery` on a weapon scoped to 5.1, a `check` with no skill — must say so:
+
+```yaml
+- path: action.weapon.mastery
+  type: string
+  nullable: true          # only a nullable fact may read `null` (ADR-0022)
+  description: the SRD 5.2.1 mastery property; null on a weapon scoped to 5.1
+```
+
+Everything else keeps ADR-0013's strictness: a non-nullable fact reading `null` is an error, not
+a silently skipped rule. `==` and `!=` accept a `null` literal on the other side; `<`, `in` and
+the rest still refuse one, because ordering or set-testing an absent value is a content bug.
 
 `phase` is one of `upkeep`, `declare`, `modifiers`, `roll`, `compare`, `damage`, `apply`, `expire`
 (ADR-0012). There is no `initiative` phase — a rule that changes an initiative roll contributes to
@@ -147,6 +161,55 @@ A dice value is written as notation — `{ dice: 1d4 }` — and may not carry a 
 is rejected, because the `+2` would reach the roll without passing through the `addModifier`
 channel and so could never have a stacking policy applied to it (FR-11). Write it as its own
 modifier, which is also the only form the trace can explain.
+
+### Values read from a fact
+
+A value may name a registered fact instead of a number, and the engine reads it when the
+effect is applied (ADR-0021). That is how a pack states what the SRD states — "an attack
+adds the ability modifier used to make it" — without the rule knowing which fixture it will
+run against (FR-8):
+
+```yaml
+effects:
+  - type: addModifier
+    target: { kind: attack, actor: $actor }
+    value: { fact: actor.abilityMod.str }   # a number
+    modifierType: ability
+    policy: sum
+
+  - type: addModifier
+    target: { kind: damage, actor: $actor }
+    value: { fact: action.weapon.damage.dice }   # dice notation, e.g. `1d8`
+    modifierType: weapon
+    policy: sum
+```
+
+The path must appear in `facts.yaml` exactly as a condition's would, and `content:lint`
+reports an unregistered one. A fact reads as a number or as dice notation, and nothing else:
+a fact carrying a flat bonus (`1d8+2`) is refused for the same reason authored notation is,
+and so is a `rollDice` whose fact reads as a plain number — a number is a total, not a pool.
+The reference carries the path and nothing else; arithmetic in a value would put a bonus
+somewhere no stacking policy could reach it.
+
+A *derived* path (`actor.ac.effective`) may not be read this way: the `modifiers` phase is
+still assembling it, so the read fails exactly as the same read inside a condition would.
+
+### The step's roll result
+
+After the `compare` phase, three paths say how the step's d20 went (ADR-0021):
+
+| Path | Reads |
+| --- | --- |
+| `step.attack.result` | `hit` / `miss` / `success` / `failure` |
+| `step.attack.natural` | the kept die, before modifiers — what a critical hit is about |
+| `step.attack.total` | the kept die plus its modifiers |
+
+`attack` names the step's *action*, not the roll's kind: an ability check reads
+`step.attack.result` as `success`. They are what a `damage`- or `apply`-phase rule needs —
+a critical hit, or a weapon mastery that triggers "if you hit". Read from an earlier phase
+they are an error rather than `null`, because the value does not exist yet; on a step whose
+action rolls no d20 they are an error too, so a rule that might see one guards on
+`action.type` first, as every rule already does.
 
 `dieSelector: intent` reads `situation.intents.rollChoices[<rollId>].rerollDieIndex`, because both
 SRDs leave the choice of which die to reroll to the player and ADR-0003 says choices are declared

@@ -263,3 +263,114 @@ describe('emitEvent and halt — control (ADR-0011)', () => {
     expect(application.events).toEqual([]);
   });
 });
+
+describe('fact-valued effects — a rule states the rule, not the numbers (ADR-0021)', () => {
+  it('adds the ability modifier the fixture implies, and says where it came from', () => {
+    const ctx = fakeContext({ facts: { 'actor.abilityMod.str': 3 } });
+    applyEffect(
+      {
+        type: 'addModifier',
+        target: { kind: 'attack', actor: '$actor' },
+        value: { fact: 'actor.abilityMod.str' },
+        modifierType: 'ability',
+        policy: 'sum',
+      },
+      ctx,
+    );
+
+    expect(ctx.bus.rollModifiersFor('r1-fighter/attack:fighter')).toEqual([
+      {
+        ruleKey: 'test.rule',
+        modifierType: 'ability',
+        policy: 'sum',
+        value: 3,
+        fromFact: 'actor.abilityMod.str',
+      },
+    ]);
+  });
+
+  it("rolls the weapon's own dice, read as notation from the inlined fixture (Q21)", () => {
+    const channel = 'r1-fighter/damage:fighter:weapon';
+    const roller = createRoller({ seed: 'demo-seed', forcedRolls: { [channel]: [6] } });
+    const ctx = fakeContext({ roller, facts: { 'action.weapon.damage.dice': '1d8' } });
+    applyEffect(
+      {
+        type: 'addModifier',
+        target: { kind: 'damage', actor: '$actor' },
+        value: { fact: 'action.weapon.damage.dice' },
+        modifierType: 'weapon',
+        policy: 'sum',
+      },
+      ctx,
+    );
+
+    expect(ctx.bus.rollModifiersFor('r1-fighter/damage:fighter')[0]).toMatchObject({
+      value: 6,
+      rolled: { expr: '1d8', dice: [6] },
+      fromFact: 'action.weapon.damage.dice',
+    });
+  });
+
+  it('refuses notation carrying a flat bonus, which would bypass the stacking policy', () => {
+    // The same reason `content-authoring.md` gives for authored dice: the `+2` would reach
+    // the roll without passing through the `addModifier` channel (FR-11, ADR-0011).
+    const ctx = fakeContext({ facts: { 'action.weapon.damage.dice': '1d8+2' } });
+
+    expect(() =>
+      applyEffect(
+        {
+          type: 'addModifier',
+          target: { kind: 'damage', actor: '$actor' },
+          value: { fact: 'action.weapon.damage.dice' },
+          modifierType: 'weapon',
+          policy: 'sum',
+        },
+        ctx,
+      ),
+    ).toThrow(/flat bonus/);
+  });
+
+  it('refuses a value that is neither a number nor dice, naming rule, path and value', () => {
+    const ctx = fakeContext({ facts: { 'action.weapon.damage.dice': null } });
+
+    expect(() =>
+      applyEffect(
+        {
+          type: 'addModifier',
+          target: { kind: 'damage', actor: '$actor' },
+          value: { fact: 'action.weapon.damage.dice' },
+          modifierType: 'weapon',
+          policy: 'sum',
+        },
+        ctx,
+      ),
+    ).toThrow(/'test.rule'.*action\.weapon\.damage\.dice/s);
+  });
+
+  it('reads a fact into a `rollDice` expression too', () => {
+    const channel = 'r1-fighter/dice:fighter:scratch.damage.total';
+    const roller = createRoller({ seed: 'demo-seed', forcedRolls: { [channel]: [2, 5] } });
+    const ctx = fakeContext({ roller, facts: { 'action.weapon.damage.dice': '2d6' } });
+    const { deltas } = applyEffect(
+      {
+        type: 'rollDice',
+        expr: { fact: 'action.weapon.damage.dice' },
+        into: 'scratch.damage.total',
+      },
+      ctx,
+    );
+
+    expect(deltas[0]?.to).toBe(7);
+  });
+
+  it('refuses a `rollDice` fact that reads as a plain number: dice are not a total', () => {
+    const ctx = fakeContext({ facts: { 'actor.abilityMod.str': 3 } });
+
+    expect(() =>
+      applyEffect(
+        { type: 'rollDice', expr: { fact: 'actor.abilityMod.str' }, into: 'scratch.damage.total' },
+        ctx,
+      ),
+    ).toThrow(/dice/);
+  });
+});

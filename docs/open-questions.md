@@ -8,19 +8,25 @@ Numbers are stable; a settled question keeps its number in the ADR that closed i
 
 | # | Question | Blocks |
 | --- | --- | --- |
-| Q21 | A rule can now *read* a weapon's dice (`action.weapon.damage.dice`, ADR-0017) but `rollDice.expr` is a literal, so an effect cannot use what a condition read. Either damage rules are written per weapon, duplicating fixture data, or an effect's value gains a "read this fact path" form. | M2 |
 | Q22 | Damage is clamped at 0 because `Actor.hpCurrent` is `nonnegative()` (`evaluator/action.ts`), so overflow past 0 is discarded. The SRD uses it for instant death, which ADR-0003 puts out of scope — record the overflow anyway, or state that it is dropped? | M2 |
 | Q23 | `architecture.md`'s `fixtures` table has a third kind, `effect`, which `content-authoring.md` never specifies — nothing says what its `data` holds. `FixtureKind` is `actor \| item` until it does. Write the shape, or drop the kind? | M3 |
 | Q24 | Three checks `content-authoring.md` promises need a rendered situation and so need `renderTemplate`, which is unwritten: every template renders with its defaults into a valid `Situation`; every `suggestedProfiles` entry resolves each fixture slug to exactly one variant (ADR-0017); and a `dieSelector: intent` whose roll has no declared choice, which `schema/effect.ts` says is warned about. Until then a template and a fixture are checked against their schemas alone. | M2 |
+| Q25 | Resistance and vulnerability are in the core-subset table but nothing can express them: halving or doubling a total is not a modifier, `applyDamage` hard-codes `damageType: 'untyped'` and `Actor` carries no resistances. It needs a multiplicative damage channel, a damage type on `DamageOutcome` and a field on the fixture — three decisions, none of them made. Every other row of the table is authorable since ADR-0021. | M2 |
 
-Q21 and Q22 were found while closing Q7–Q20 (2026-09-22). Q22 is not new: a comment in
+Q22 was found while closing Q7–Q20 (2026-09-22), alongside Q21. Q22 is not new: a comment in
 `applyDamage` already claimed it was logged here, and it was not.
+
+Q25 was found while writing the SRD packs (2026-09-22). It is the one row of the core-subset
+table ADR-0021 did not unblock: that ADR gave effects a fact-valued form and published the
+step's roll result, which is what crits and the 5.2.1 weapon masteries needed.
 
 Q23 and Q24 were found while implementing the content loader and `pnpm content:lint`
 (2026-09-22). Neither blocks that command; both block a criterion it is part of.
 
 Settled: Q1–Q6 by ADR-0005 to ADR-0010, Q13–Q15 by ADR-0011 to ADR-0013 (2026-09-21),
-Q7–Q12 and Q16–Q20 by ADR-0015 to ADR-0019 (2026-09-22).
+Q7–Q12 and Q16–Q20 by ADR-0015 to ADR-0019, Q21 by ADR-0021 (2026-09-22). ADR-0022 was
+written the same day for a gap no question had been raised for: a nullable field the
+situation schema carries on purpose could not be read by a rule at all.
 ADR-0011 supersedes ADR-0008, ADR-0012 supersedes ADR-0007, ADR-0014 supersedes ADR-0010,
 ADR-0013 amends ADR-0001, ADR-0011 amends ADR-0005, and ADR-0019 amends ADR-0014.
 

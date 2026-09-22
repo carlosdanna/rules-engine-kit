@@ -12,13 +12,28 @@
 import type { FactSource } from '../conditions';
 import { formatDiceNotation } from '../dice';
 import type { WorldStateStore } from '../effects';
-import type { Intents, Item, Json, Phase, Step } from '../schema';
+import type { CompareResult, Intents, Item, Json, Phase, Step } from '../schema';
 import { primaryTargetId } from './actorRef';
 import { FactResolutionError } from './errors';
 
 const ABILITY = /^actor\.([^.]+)\.abilities\.([^.]+)$/;
 const ABILITY_MOD = /^actor\.([^.]+)\.abilityMod\.([^.]+)$/;
 const ACTOR_FIELD = /^actor\.([^.]+)\.(name|ac|hp|hpCurrent|proficiencyBonus|conditions)$/;
+
+/**
+ * What the `compare` phase has decided for this step, as the fact source sees it
+ * (ADR-0021). Three-way, because "not yet" and "this step rolls no d20" are different
+ * answers and neither is a value: a `useObject` step never has a result, while an attack
+ * read during `modifiers` has one that does not exist *yet*, and telling an author which
+ * mistake they made is the whole point of not returning `null`.
+ */
+export type StepResultView =
+  | { kind: 'pending' }
+  | { kind: 'none' }
+  | { kind: 'decided'; result: CompareResult; natural: number; total: number };
+
+/** The three paths a rule reads a decided roll through. */
+const RESULT_PATHS = ['step.attack.result', 'step.attack.natural', 'step.attack.total'] as const;
 
 export type FactSourceArgs = {
   store: WorldStateStore;
@@ -30,6 +45,8 @@ export type FactSourceArgs = {
   /** Read when a derived value is asked for too early, so the error can name the phase. */
   currentPhase(): Phase;
   derivedSealed(): boolean;
+  /** What `compare` has decided so far, for `step.attack.*` (ADR-0021). */
+  stepResult(): StepResultView;
 };
 
 function abilityModifier(score: number): number {
@@ -146,6 +163,25 @@ export function createFactSource(args: FactSourceArgs): FactSource {
           throw new FactResolutionError({ kind: 'no-target', path });
         }
         return readActorScoped(`actor.${targetId}.${path.slice('target.'.length)}`);
+      }
+
+      // The step's own d20, once `compare` has decided it: what a critical hit and a
+      // weapon mastery's "if you hit" read (ADR-0021). `attack` names the step's action
+      // rather than the roll's kind, so a check reads `step.attack.result` = 'success'.
+      if ((RESULT_PATHS as readonly string[]).includes(path)) {
+        const result = args.stepResult();
+        if (result.kind === 'none') {
+          throw new FactResolutionError({ kind: 'no-roll', path });
+        }
+        if (result.kind === 'pending') {
+          throw new FactResolutionError({
+            kind: 'result-not-decided',
+            path,
+            phase: args.currentPhase(),
+          });
+        }
+        if (path === 'step.attack.result') return result.result;
+        return path === 'step.attack.natural' ? result.natural : result.total;
       }
 
       if (path.startsWith('step.')) {

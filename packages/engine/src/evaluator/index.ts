@@ -15,6 +15,6 @@ export {
   type FactResolutionReason,
 } from './errors';
 export { type EvaluateOptions, evaluate } from './evaluate';
-export { createFactSource, type FactSourceArgs } from './facts';
+export { createFactSource, type FactSourceArgs, type StepResultView } from './facts';
 export { disablingLayer, lastProvenance, selectRules } from './select';
 export { type RunStepArgs, type RunStepResult, runStep } from './step';

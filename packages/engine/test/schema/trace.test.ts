@@ -11,7 +11,9 @@ describe('Trace', () => {
   });
 
   it('refuses a trace stamped with a version this engine does not know', () => {
-    expect(Trace.safeParse({ ...trace, traceSchemaVersion: 2 }).success).toBe(false);
+    expect(
+      Trace.safeParse({ ...trace, traceSchemaVersion: TRACE_SCHEMA_VERSION + 1 }).success,
+    ).toBe(false);
   });
 
   it('accepts an empty event list, which is what `fired-only` can produce', () => {

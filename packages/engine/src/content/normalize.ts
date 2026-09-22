@@ -175,7 +175,7 @@ function normalizeRuleEntry(raw: unknown, path: string): JsonObject {
 
 /** `derived` is the only `FactDefinition` field an author can reasonably leave implicit. */
 function normalizeFact(raw: unknown, path: string): JsonObject {
-  return { derived: false, ...requireObject(raw, path) };
+  return { derived: false, nullable: false, ...requireObject(raw, path) };
 }
 
 /**

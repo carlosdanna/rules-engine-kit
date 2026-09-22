@@ -232,14 +232,20 @@ describe('normalizePack — facts.yaml', () => {
   });
 
   it('defaults derived to false, the common case', () => {
-    expect(pack([DOC_RULE]).facts[0]).toMatchObject({ derived: false });
+    expect(pack([DOC_RULE]).facts[0]).toMatchObject({ derived: false, nullable: false });
   });
 
   it('keeps an explicit derived: true', () => {
     const derived = [
-      { path: 'actor.ac.effective', type: 'number', description: 'AC', derived: true },
+      {
+        path: 'actor.ac.effective',
+        type: 'number',
+        description: 'AC',
+        derived: true,
+        nullable: false,
+      },
     ];
-    expect(pack([DOC_RULE], derived).facts[0]).toMatchObject({ derived: true });
+    expect(pack([DOC_RULE], derived).facts[0]).toMatchObject({ derived: true, nullable: false });
   });
 });
 
@@ -285,8 +291,8 @@ describe('per-document entry points (content:lint)', () => {
 
   it('parses facts.yaml on its own, applying the derived default', () => {
     expect(normalizeFactsFile(FACTS)).toEqual([
-      { ...FACTS[0], derived: false },
-      { ...FACTS[1], derived: false },
+      { ...FACTS[0], derived: false, nullable: false },
+      { ...FACTS[1], derived: false, nullable: false },
     ]);
   });
 

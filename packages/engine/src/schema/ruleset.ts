@@ -27,6 +27,12 @@ export const FactDefinition = z.strictObject({
   description: z.string().min(1),
   /** True for values assembled during evaluation, e.g. `actor.ac.effective`. */
   derived: z.boolean(),
+  /**
+   * True for a path whose value is legitimately absent — an item's `mastery` on a weapon
+   * scoped to 5.1, a check with no skill. Only a nullable fact may read `null`; every
+   * other one still raises `FactTypeError`, which is what the registry is for (ADR-0022).
+   */
+  nullable: z.boolean(),
 });
 export type FactDefinition = z.infer<typeof FactDefinition>;
 

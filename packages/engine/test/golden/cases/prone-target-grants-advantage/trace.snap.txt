@@ -1,5 +1,5 @@
 {
-  "traceSchemaVersion": 1,
+  "traceSchemaVersion": 2,
   "events": [
     {
       "stepId": "r1-fighter",

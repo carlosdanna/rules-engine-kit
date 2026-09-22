@@ -12,6 +12,7 @@ import type {
   ActorRef,
   EffectType,
   EmittedEvent,
+  Json,
   Phase,
   RollId,
   RollTarget,
@@ -40,6 +41,12 @@ export type EffectContext = {
    * is passed in so a failure can name the effect that could not resolve its ref.
    */
   resolveActorRefs(ref: ActorRef, effectType: EffectType): readonly string[];
+  /**
+   * The same fact source conditions read, for an effect whose value names a path rather
+   * than a number (ADR-0021). Registration is checked by `content:lint`, so a path that
+   * reaches here is one the pack declared.
+   */
+  readFact(path: string): Json;
   rollIdFor(target: RollTarget): RollId;
   derivedChannel(path: string, actorId: string): RollId;
   nextEffectId(): string;

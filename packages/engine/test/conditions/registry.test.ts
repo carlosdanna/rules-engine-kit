@@ -111,12 +111,19 @@ describe('a fact value must match its registered type', () => {
 describe('registryFromFacts — the authored facts.yaml form', () => {
   it('builds a registry straight from a pack, mapping each FactType to a schema', () => {
     const packRegistry = registryFromFacts([
-      { path: 'actor.ac.effective', type: 'number', description: 'AC after cover', derived: true },
+      {
+        path: 'actor.ac.effective',
+        type: 'number',
+        description: 'AC after cover',
+        derived: true,
+        nullable: false,
+      },
       {
         path: 'actor.conditions',
         type: 'stringList',
         description: 'Active conditions',
         derived: false,
+        nullable: false,
       },
     ]);
     expect(packRegistry.paths()).toEqual(['actor.ac.effective', 'actor.conditions']);
@@ -129,7 +136,13 @@ describe('registryFromFacts — the authored facts.yaml form', () => {
 
   it('still rejects a value that does not match the declared type', () => {
     const packRegistry = registryFromFacts([
-      { path: 'actor.ac.effective', type: 'number', description: 'AC after cover', derived: true },
+      {
+        path: 'actor.ac.effective',
+        type: 'number',
+        description: 'AC after cover',
+        derived: true,
+        nullable: false,
+      },
     ]);
     const { source } = testSource({ 'actor.ac.effective': '15' });
     expect(() =>
@@ -141,5 +154,31 @@ describe('registryFromFacts — the authored facts.yaml form', () => {
     for (const type of FactType.options) {
       expect(() => factTypeSchema(type)).not.toThrow();
     }
+  });
+});
+
+describe('a nullable fact (ADR-0022)', () => {
+  it('lets a declared-nullable path read null, which a plain one may not', () => {
+    const registry = registryFromFacts([
+      {
+        path: 'action.weapon.mastery',
+        type: 'string',
+        description: 'the 5.2.1 mastery property, null on a 5.1 weapon',
+        derived: false,
+        nullable: true,
+      },
+      {
+        path: 'action.weapon.damage.dice',
+        type: 'string',
+        description: 'the weapon damage dice',
+        derived: false,
+        nullable: false,
+      },
+    ]);
+
+    expect(registry.get('action.weapon.mastery')?.type.safeParse(null).success).toBe(true);
+    expect(registry.get('action.weapon.mastery')?.type.safeParse('sap').success).toBe(true);
+    // The strictness ADR-0013 bought is unchanged for everything that did not ask for it.
+    expect(registry.get('action.weapon.damage.dice')?.type.safeParse(null).success).toBe(false);
   });
 });

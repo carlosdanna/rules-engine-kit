@@ -19,6 +19,8 @@ export type PendingModifier = {
   value: number;
   /** Present when the modifier was authored as dice, so "+3 bless" can show its d4. */
   rolled?: { expr: string; dice: number[] };
+  /** Present when the value was read from a fact rather than authored (ADR-0021). */
+  fromFact?: string;
 };
 
 export type StackResult = {
@@ -38,6 +40,7 @@ function toApplied(modifier: PendingModifier): AppliedModifier {
     policy: modifier.policy,
     value: modifier.value,
     ...(modifier.rolled === undefined ? {} : { rolled: modifier.rolled }),
+    ...(modifier.fromFact === undefined ? {} : { fromFact: modifier.fromFact }),
   };
 }
 

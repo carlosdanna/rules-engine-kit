@@ -15,6 +15,7 @@ import type {
 import { rollModifierValue } from '../../stacking';
 import type { EffectApplication, EffectContext } from '../context';
 import { emptyApplication } from '../context';
+import { resolveEffectValue } from '../factValue';
 
 /** `RollTargetRef` carries `kind`, `DerivedTargetRef` carries `path`. */
 function isRollTargetRef(target: ModifierTargetRef): target is RollTargetRef {
@@ -36,6 +37,10 @@ export function addModifier(
   ctx: EffectContext,
 ): EffectApplication {
   const stackKey = effect.stackKey === undefined ? {} : { stackKey: effect.stackKey };
+  // Read once for the effect, not once per target: the path is a property of the rule, and
+  // a `$target` naming three creatures must not read three different numbers (ADR-0021).
+  const resolved = resolveEffectValue(effect.value, ctx, 'addModifier');
+  const fromFact = resolved.fromFact === undefined ? {} : { fromFact: resolved.fromFact };
 
   if (isRollTargetRef(effect.target)) {
     for (const target of resolvedTargets(effect.target, ctx, 'addModifier')) {
@@ -43,7 +48,7 @@ export function addModifier(
       // Dice roll now, when the effect is applied, not at stacking time: that keeps
       // `resolveStack` pure, and a modifier later dropped still shows the dice it rolled.
       const rolled = rollModifierValue({
-        value: effect.value,
+        value: resolved.value,
         roller: ctx.roller,
         channel: withChannel(rollId, effect.modifierType),
       });
@@ -53,6 +58,7 @@ export function addModifier(
         ...stackKey,
         policy: effect.policy,
         ...rolled,
+        ...fromFact,
       });
     }
     return emptyApplication();
@@ -60,7 +66,7 @@ export function addModifier(
 
   for (const actorId of ctx.resolveActorRefs(effect.target.actor, 'addModifier')) {
     const rolled = rollModifierValue({
-      value: effect.value,
+      value: resolved.value,
       roller: ctx.roller,
       channel: withChannel(ctx.derivedChannel(effect.target.path, actorId), effect.modifierType),
     });
@@ -70,6 +76,7 @@ export function addModifier(
       ...stackKey,
       policy: effect.policy,
       ...rolled,
+      ...fromFact,
     });
   }
   return emptyApplication();

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { createFactRegistry } from '../../src/conditions';
 import { createWorldStateStore } from '../../src/effects';
+import type { StepResultView } from '../../src/evaluator';
 import { createFactSource, FactResolutionError } from '../../src/evaluator';
 import type { Item, Phase, Step } from '../../src/schema';
 import { actor } from '../effects/fakeContext';
@@ -24,7 +25,14 @@ const longsword: Item = {
 };
 
 function sourceOf(
-  options: { step?: Step; sealed?: boolean; phase?: Phase; items?: Record<string, Item> } = {},
+  options: {
+    step?: Step;
+    sealed?: boolean;
+    phase?: Phase;
+    items?: Record<string, Item>;
+    /** What the `compare` phase has decided so far (ADR-0021). */
+    result?: StepResultView;
+  } = {},
 ) {
   const store = createWorldStateStore({
     actors: [actor('fighter', { conditions: ['prone'] }), actor('goblin', { ac: 13 })],
@@ -38,6 +46,7 @@ function sourceOf(
     items: options.items ?? {},
     currentPhase: () => options.phase ?? 'modifiers',
     derivedSealed: () => options.sealed ?? true,
+    stepResult: () => options.result ?? { kind: 'pending' },
   });
   return { store, source };
 }
@@ -195,5 +204,47 @@ describe('createFactSource — the wielded item, inlined into the situation (ADR
     const { source } = sourceOf(armed);
 
     expect(() => source.read('action.weapon.weight')).toThrow(FactResolutionError);
+  });
+});
+
+describe("createFactSource — the step's roll result (ADR-0021)", () => {
+  const decided: StepResultView = { kind: 'decided', result: 'hit', natural: 17, total: 22 };
+
+  it('serves the result, the natural die and the total once `compare` has run', () => {
+    const { source } = sourceOf({ phase: 'damage', result: decided });
+
+    expect(source.read('step.attack.result')).toBe('hit');
+    // The kept die before modifiers — what a crit reads, and not the 22 it totalled to.
+    expect(source.read('step.attack.natural')).toBe(17);
+    expect(source.read('step.attack.total')).toBe(22);
+  });
+
+  it('serves a check or save result through the same paths', () => {
+    const save: StepResultView = { kind: 'decided', result: 'failure', natural: 4, total: 6 };
+
+    expect(sourceOf({ phase: 'damage', result: save }).source.read('step.attack.result')).toBe(
+      'failure',
+    );
+  });
+
+  it('refuses the read before `compare` has decided, rather than answering null', () => {
+    // ADR-0013's principle: a value that does not exist yet is an error. A rule in
+    // `modifiers` asking whether the attack hit would be forward chaining (ADR-0003).
+    const { source } = sourceOf({ phase: 'modifiers', result: { kind: 'pending' } });
+
+    expect(() => source.read('step.attack.result')).toThrow(FactResolutionError);
+    expect(() => source.read('step.attack.result')).toThrow(/compare/);
+  });
+
+  it('says so when the step makes no d20 roll at all', () => {
+    const { source } = sourceOf({ phase: 'damage', result: { kind: 'none' } });
+
+    expect(() => source.read('step.attack.result')).toThrow(/no d20/);
+  });
+
+  it('still refuses a `step.` path the engine does not serve', () => {
+    const { source } = sourceOf({ phase: 'damage', result: decided });
+
+    expect(() => source.read('step.attack.margin')).toThrow(FactResolutionError);
   });
 });
