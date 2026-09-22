@@ -8,6 +8,6 @@
 
 export { canonicalJson } from './canonical';
 export { IncompatibleStackError, type IncompatibleStackReason } from './errors';
-export { resolveProfile } from './resolveProfile';
+export { compareResolvedRules, resolveProfile } from './resolveProfile';
 export { compareSemver, parseSemver, type SemverParts, satisfiesRange } from './semver';
 export { sha256Hex } from './sha256';

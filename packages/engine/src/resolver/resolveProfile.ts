@@ -163,7 +163,7 @@ function applyEntry(
 }
 
 /** Phase, then priority, then key — the order the evaluator reads them in (FR-9). */
-function compareRules(a: ResolvedRule, b: ResolvedRule): number {
+export function compareResolvedRules(a: ResolvedRule, b: ResolvedRule): number {
   const phase = (PHASE_ORDER.get(a.phase) ?? 0) - (PHASE_ORDER.get(b.phase) ?? 0);
   if (phase !== 0) return phase;
   if (a.priority !== b.priority) return a.priority - b.priority;
@@ -279,7 +279,7 @@ export function resolveProfile(layers: readonly RulesetVersion[]): ResolvedProfi
 
   const rules: ResolvedRule[] = [...drafts.values()]
     .map((draft) => ({ ...draft.rule, enabled: draft.enabled, provenance: draft.provenance }))
-    .sort(compareRules);
+    .sort(compareResolvedRules);
   conflicts.push(...priorityTies(rules));
 
   const sources: ProfileSource[] = layers.map((pack) => ({
