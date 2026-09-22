@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { evaluate } from '../../src/evaluator';
 import { resolveProfile } from '../../src/resolver';
-import type { Actor, Situation } from '../../src/schema';
+import { type Actor, SITUATION_SCHEMA_VERSION, type Situation } from '../../src/schema';
 import { explain, narrateTrace, narrativeContextFromSituation } from '../../src/trace';
 import { facts, srd51, srd521 } from './packs';
 
@@ -31,7 +31,8 @@ function situation(options: {
   rangeFt?: number;
 }): Situation {
   return {
-    schemaVersion: 1,
+    schemaVersion: SITUATION_SCHEMA_VERSION,
+    items: {},
     actors: [
       actor('fighter'),
       actor('goblin', { ac: options.targetAc, conditions: options.targetConditions ?? [] }),
@@ -89,7 +90,14 @@ describe('golden — a reroll on one die of an advantage pair (ADR-0011)', () =>
     expect(event?.kind === 'roll' && event.dice).toEqual([4, 16]);
     expect(event?.kind === 'roll' && event.diceAfterTransforms).toEqual([11, 16]);
     expect(event?.kind === 'roll' && event.transforms).toEqual([
-      { ruleKey: 'inspiration.spend', kind: 'reroll', dieIndex: 0, from: 4, to: 11 },
+      {
+        ruleKey: 'inspiration.spend',
+        kind: 'reroll',
+        dieIndex: 0,
+        from: 4,
+        to: 11,
+        clamped: false,
+      },
     ]);
     expect(event?.kind === 'roll' && event.keptIndex).toBe(1);
   });

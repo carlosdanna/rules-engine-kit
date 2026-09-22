@@ -59,7 +59,12 @@ export function narrateEvent(event: TraceEvent, context?: NarrativeContext): str
       const mode =
         event.modeInputs.map((m) => `${m.mode} from ${m.ruleKey}`).join(' + ') || 'no mode inputs';
       const transforms = event.transforms
-        .map((t) => `${t.kind} die[${t.dieIndex}] ${t.from}→${t.to} (${t.ruleKey})`)
+        .map((t) => {
+          // ADR-0011 wants the clamp visible; since ADR-0019 it is a field rather than an
+          // event of its own, so the narration has to say it here or it is said nowhere.
+          const clamped = t.clamped ? ' (clamped into the pool)' : '';
+          return `${t.kind} die[${t.dieIndex}]${clamped} ${t.from}→${t.to} (${t.ruleKey})`;
+        })
         .join('; ');
       const pool =
         transforms === ''
@@ -77,7 +82,8 @@ export function narrateEvent(event: TraceEvent, context?: NarrativeContext): str
 
     case 'stacking': {
       const terms = modifierList(event.applied);
-      return `  [stacking] ${event.target}: ${terms === '' ? 'no contributions' : terms}${droppedList(event.dropped)}`;
+      const whose = actorName(event.actorId, context);
+      return `  [stacking] ${event.target} for ${whose}: ${terms === '' ? 'no contributions' : terms}${droppedList(event.dropped)}`;
     }
 
     case 'effectApplied': {

@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { evaluate } from '../../src/evaluator';
 import { resolveProfile } from '../../src/resolver';
-import type { Actor, RollId, Situation, Step } from '../../src/schema';
+import {
+  type Actor,
+  type RollId,
+  SITUATION_SCHEMA_VERSION,
+  type Situation,
+  type Step,
+} from '../../src/schema';
 import { narrateTrace, narrativeContextFromSituation } from '../../src/trace';
 import { facts, srd521 } from './packs';
 
@@ -46,8 +52,9 @@ function timeline(): Step[] {
 }
 
 const situation: Situation = {
-  schemaVersion: 1,
+  schemaVersion: SITUATION_SCHEMA_VERSION,
   actors: [actor('cleric'), actor('fighter'), actor('goblin', { ac: 20, hp: 200, hpCurrent: 200 })],
+  items: {},
   timeline: timeline(),
   // Declared even though it is false: `intents.useInspiration` is registered as a boolean,
   // so leaving it out makes it read `null` and the comparison throws rather than silently

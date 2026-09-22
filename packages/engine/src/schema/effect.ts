@@ -43,22 +43,13 @@ export type ModifierValue = z.infer<typeof ModifierValue>;
 export const ModifierTargetRef = z.union([RollTargetRef, DerivedTargetRef]);
 export type ModifierTargetRef = z.infer<typeof ModifierTargetRef>;
 
-/**
- * One numeric contribution, collected from a fired rule and waiting for its stacking
- * policy (FR-11). This is the engine-side record; the trace's `AppliedModifier` is the
- * same contribution after the policy ran and after any dice were rolled.
+/*
+ * There is deliberately no `Modifier` type here. One numeric contribution has three live
+ * shapes and a fourth would only drift: the authored form is the `addModifier` effect
+ * below, the engine-side form after its dice are rolled is `PendingModifier`
+ * (`src/stacking/`), and the traced form after the policy ran is `AppliedModifier`
+ * (`src/schema/trace.ts`). ADR-0019 closes Q20.
  */
-export const Modifier = z.strictObject({
-  /** The modifier's type, e.g. `bless`, `proficiency`, `cover`. Stacking is per type. */
-  type: z.string().min(1),
-  /** The `rule_key` that contributed it. */
-  source: z.string().min(1),
-  /** Two modifiers sharing a key don't stack under the `unique` policy. */
-  stackKey: z.string().min(1).optional(),
-  policy: StackPolicy,
-  value: ModifierValue,
-});
-export type Modifier = z.infer<typeof Modifier>;
 
 /**
  * The effect catalogue (FR-7). Three of these act on a roll through separate channels with

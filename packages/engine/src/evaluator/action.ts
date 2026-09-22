@@ -22,7 +22,6 @@ import type {
   TraceEventInput,
 } from '../schema';
 import { resolveStack } from '../stacking';
-import { derivedTargetLabel } from './derived';
 
 export type StepRolls = {
   /** Absent for `cast`, `useObject` and a step that takes no action. */
@@ -108,7 +107,7 @@ export function resolveActionRoll(args: {
       mode: roll.mode,
       modeInputs: [...modeInputs],
       dice: roll.dice,
-      transforms: roll.transforms.map(({ clamped: _clamped, ...rest }) => rest),
+      transforms: roll.transforms,
       diceAfterTransforms: roll.diceAfterTransforms,
       kept: roll.kept,
       keptIndex: roll.keptIndex,
@@ -118,26 +117,6 @@ export function resolveActionRoll(args: {
       total,
     },
   ];
-
-  // ADR-0011 requires an out-of-range die selector to clamp *visibly*. The `roll` event's
-  // `transforms[]` has no `clamped` field, so the clamp rides on its own event rather than
-  // being swallowed. Logged in docs/open-questions.md as a trace-schema gap.
-  for (const transform of roll.transforms) {
-    if (transform.clamped) {
-      events.push({
-        stepId: args.step.id,
-        round: args.step.round,
-        phase: 'roll',
-        kind: 'event',
-        event: 'roll.transform.clamped',
-        data: {
-          rollId: declared.rollId,
-          ruleKey: transform.ruleKey,
-          usedDieIndex: transform.dieIndex,
-        },
-      });
-    }
-  }
 
   return {
     events,
@@ -236,7 +215,8 @@ export function totalDamage(args: {
       round: args.step.round,
       phase: 'damage',
       kind: 'stacking',
-      target: derivedTargetLabel(args.rolls.damage.path, args.rolls.damage.actorId),
+      target: args.rolls.damage.path,
+      actorId: args.rolls.damage.actorId,
       applied: stack.applied,
       dropped: stack.dropped,
     },
@@ -255,7 +235,8 @@ export function applyDamage(args: {
 
   const before = args.store.actor(action.targetId).hpCurrent;
   // Clamped at 0: `Actor.hpCurrent` is `nonnegative()`, so the store could not hold a
-  // negative. Whether the SRD wants the overflow recorded is noted in open-questions.
+  // negative. Whether the overflow should be recorded anyway is Q22 in open-questions —
+  // the SRD uses it for instant death, which ADR-0003 puts out of scope.
   const hpAfter = Math.max(0, before - args.amount);
   const delta = args.store.write(`actor.${action.targetId}.hpCurrent`, hpAfter, args.ruleKey);
 

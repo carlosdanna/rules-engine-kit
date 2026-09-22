@@ -8,7 +8,7 @@ export {
   totalDamage,
 } from './action';
 export { createActorRefResolver, primaryTargetId, targetsOf } from './actorRef';
-export { DERIVED_BASES, derivedTargetLabel, sealDerivedValues } from './derived';
+export { DERIVED_BASES, sealDerivedValues } from './derived';
 export {
   describeFactResolution,
   FactResolutionError,

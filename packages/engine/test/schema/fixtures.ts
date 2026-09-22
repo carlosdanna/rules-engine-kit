@@ -20,6 +20,15 @@ export const ATTACK_ROLL_ID = 'r1-fighter/attack:fighter';
 /** A fighter attacking a prone goblin in melee, over a single round. */
 export const situation: Situation = {
   schemaVersion: SITUATION_SCHEMA_VERSION,
+  items: {
+    longsword: {
+      slug: 'longsword',
+      name: 'Longsword',
+      damage: { dice: { count: 1, sides: 8 }, type: 'slashing' },
+      properties: ['versatile'],
+      mastery: 'sap',
+    },
+  },
   actors: [
     {
       id: 'fighter',
@@ -134,7 +143,9 @@ export const rollEvent: TraceEvent = {
   mode: 'advantage',
   modeInputs: [{ ruleKey: 'condition.prone.attacked-within-5ft', mode: 'advantage' }],
   dice: [4, 16],
-  transforms: [{ ruleKey: 'inspiration.spend', kind: 'reroll', dieIndex: 0, from: 4, to: 11 }],
+  transforms: [
+    { ruleKey: 'inspiration.spend', kind: 'reroll', dieIndex: 0, from: 4, to: 11, clamped: false },
+  ],
   diceAfterTransforms: [11, 16],
   kept: 16,
   keptIndex: 1,
@@ -236,6 +247,7 @@ export const outcome: Outcome = {
     {
       path: 'roll.attack.bonus',
       actorId: 'fighter',
+      stepId: 'r1-fighter',
       base: 0,
       terms: [
         {

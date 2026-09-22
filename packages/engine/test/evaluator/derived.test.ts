@@ -47,6 +47,7 @@ describe('sealDerivedValues — effective AC from printed AC plus terms (ADR-000
     expect(derived[0]).toMatchObject({
       path: 'actor.ac.effective',
       actorId: 'goblin',
+      stepId: 'r1-fighter',
       base: 15,
       total: 17,
     });
@@ -73,6 +74,21 @@ describe('sealDerivedValues — effective AC from printed AC plus terms (ADR-000
     expect(derived[0]).toMatchObject({ base: 15, total: 15, terms: [] });
   });
 
+  it('stamps the step, so one path derived on many steps stays distinguishable (Q18)', () => {
+    const store = createWorldStateStore({ actors: [actor('goblin', { ac: 15 })], registry });
+    const laterStep: Step = { id: 'r2-fighter', round: 2, actorId: 'fighter', action: null };
+    const bus = createStepBus();
+    bus.declareDerived('actor.ac.effective', 'goblin');
+    const { derived } = sealDerivedValues({
+      bus,
+      store,
+      step: laterStep,
+      rulesByKey: new Map(),
+    });
+
+    expect(derived[0]?.stepId).toBe('r2-fighter');
+  });
+
   it('starts an unregistered base at zero rather than guessing', () => {
     const store = createWorldStateStore({ actors: [actor('fighter')], registry });
     const bus = createStepBus();
@@ -88,7 +104,7 @@ describe('sealDerivedValues — effective AC from printed AC plus terms (ADR-000
 });
 
 describe('sealDerivedValues — stacking events are for non-roll targets only (ADR-0014)', () => {
-  it('emits a stacking event for effective AC, encoding the actor into the target', () => {
+  it('emits a stacking event for effective AC, naming the path and the actor separately', () => {
     const { events } = seal([
       { ruleKey: 'cover.half', value: 2, type: 'cover' },
       { ruleKey: 'cover.quarter', value: 1, type: 'cover' },
@@ -96,8 +112,10 @@ describe('sealDerivedValues — stacking events are for non-roll targets only (A
     expect(events).toHaveLength(1);
     expect(events[0]).toMatchObject({
       kind: 'stacking',
-      // `stacking.target` is a bare string in the schema, so the actor rides in the label.
-      target: 'actor.ac.effective@goblin',
+      // A bare registered fact path plus the actor as its own field (ADR-0019, Q17), so a
+      // viewer can look the target up in `facts.yaml` without unpicking a composite string.
+      target: 'actor.ac.effective',
+      actorId: 'goblin',
       phase: 'modifiers',
     });
   });

@@ -76,12 +76,13 @@ export function evaluate(
       timeline,
       trace,
       intents: parsed.intents,
+      items: parsed.items,
       rulesByKey,
       nextEffectId,
     });
     steps.push(result.outcome);
-    // Appended in evaluation order; the co-ordered `stacking` events carry the step id,
-    // which `DerivedValue` itself has no field for (see docs/open-questions.md).
+    // Flat and in evaluation order, each entry naming its own step (ADR-0019): the array
+    // is what `diffOutcomes` aligns over, and `(stepId, path, actorId)` is the key.
     derived.push(...result.derived);
     events.push(...result.emitted);
   }

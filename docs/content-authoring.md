@@ -142,7 +142,32 @@ data:
 citation: { source: srd-5.2.1, section: "Monsters > Goblin" }
 ```
 
-> Check stat values against the SRD before committing; the example above is illustrative.
+An item fixture carries what a rule can read. `mastery` is the SRD 5.2.1 weapon mastery property
+and is `null` on a weapon scoped to 5.1, so one fixture can serve both editions and the difference
+is whether a rule reads the field:
+
+```yaml
+slug: longsword
+kind: item
+rulesetScope: [srd-5.1, srd-5.2.1]
+data:
+  name: Longsword
+  damage: { dice: 1d8, type: slashing }
+  properties: [versatile]
+  mastery: sap            # null under SRD 5.1
+citation: { source: srd-5.2.1, section: "Equipment > Weapons" }
+```
+
+Fixtures are **inlined** into a situation when a template renders (ADR-0017): the rendered
+situation holds the data, not the slug, so a saved scenario replays identically after a fixture is
+corrected. Take a correction up by re-rendering the scenario from its template and params. There is
+no per-scenario override mechanism — once the data is inlined, an override is an edited situation.
+
+Where a stat block genuinely differs between editions, write two fixtures and scope each one.
+`content:lint` checks that every profile in a template's `suggestedProfiles` resolves each slug to
+exactly one variant.
+
+> Check stat values against the SRD before committing; the examples above are illustrative.
 
 ## Template
 

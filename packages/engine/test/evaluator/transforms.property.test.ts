@@ -71,11 +71,11 @@ describe('roll transforms — uses and clamping (ADR-0011, NFR-4)', () => {
   it('clamps visibly: an out-of-range selector is traced, not swallowed', () => {
     fc.assert(
       fc.property(arbOptions, (options) => {
-        const { trace, roll } = runWith(options);
+        const { roll } = runWith(options);
         const poolSize = roll?.dice.length ?? 0;
-        const clamped = trace.events.some(
-          (event) => event.kind === 'event' && event.event === 'roll.transform.clamped',
-        );
+        // Since ADR-0019 the clamp is a field on the transform that clamped, not an event
+        // of its own — same property, on the channel a reader of the roll already reads.
+        const clamped = (roll?.transforms ?? []).some((transform) => transform.clamped);
         expect(clamped).toBe(options.dieIndex >= poolSize);
       }),
     );

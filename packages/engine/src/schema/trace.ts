@@ -32,8 +32,9 @@ export type SkipReason = z.infer<typeof SkipReason>;
 
 /**
  * A numeric contribution as the trace records it: the policy has run and any dice have
- * been rolled, so `value` is a number. The pre-resolution form is `Modifier`, whose
- * `type`/`source` are this record's `modifierType`/`ruleKey` (ADR-0014 fixes these names).
+ * been rolled, so `value` is a number. The engine-side form it came from is
+ * `PendingModifier` (`src/stacking/`); the authored form is the `addModifier` effect, whose
+ * `modifierType` this keeps the name of (ADR-0014 fixes these names, ADR-0019 closes Q20).
  */
 export const AppliedModifier = z.strictObject({
   ruleKey: z.string().min(1),
@@ -101,9 +102,16 @@ export const TraceEvent = z.discriminatedUnion('kind', [
       z.strictObject({
         ruleKey: z.string().min(1),
         kind: z.string().min(1),
+        /** The die the transform acted on, after any clamp. */
         dieIndex: z.number().int().nonnegative(),
         from: z.number().int(),
         to: z.number().int(),
+        /**
+         * The selector named a die outside the pool and was clamped into it. ADR-0011
+         * requires the clamp to be visible, and a field on the transform that clamped is
+         * where a reader of the roll will look (ADR-0019, closing Q19).
+         */
+        clamped: z.boolean(),
       }),
     ),
     /** The pool the keep runs against — transforms act before the keep (ADR-0011). */
@@ -128,8 +136,14 @@ export const TraceEvent = z.discriminatedUnion('kind', [
   z.strictObject({
     ...traceEventBase,
     kind: z.literal('stacking'),
-    /** Non-roll derived values only — effective AC, damage. Rolls carry their own (ADR-0006). */
+    /**
+     * Non-roll derived values only — effective AC, damage. Rolls carry their own (ADR-0006).
+     * A bare registered fact path: the actor is the field below, not part of the string
+     * (ADR-0019, closing Q17).
+     */
     target: z.string().min(1),
+    /** Whose value this is, so two actors' `actor.ac.effective` are distinguishable. */
+    actorId: z.string().min(1),
     applied: z.array(AppliedModifier),
     dropped: z.array(DroppedModifier),
   }),

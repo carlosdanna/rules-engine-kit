@@ -13,6 +13,12 @@ export const DerivedValue = z.strictObject({
   /** A registered derived fact path, e.g. `actor.ac.effective` or `roll.attack.bonus`. */
   path: z.string().min(1),
   actorId: z.string().min(1),
+  /**
+   * The step this was assembled on. `Outcome.derived` is flat and a twelve-round run
+   * derives the same path twelve times, so without this they are distinguishable only by
+   * position — and `diffOutcomes` needs a key to align on (FR-16, ADR-0019 closing Q18).
+   */
+  stepId: z.string().min(1),
   base: z.number().int(),
   terms: z.array(
     z.strictObject({

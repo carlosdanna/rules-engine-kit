@@ -139,6 +139,7 @@ describe('TraceEvent', () => {
       phase: 'modifiers',
       kind: 'stacking',
       target: 'actor.ac.effective',
+      actorId: 'goblin',
       applied: [{ ruleKey: 'cover.half', modifierType: 'cover', policy: 'highest', value: 2 }],
       dropped: [
         {

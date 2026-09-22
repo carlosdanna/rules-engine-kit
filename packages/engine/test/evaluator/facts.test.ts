@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createFactRegistry } from '../../src/conditions';
 import { createWorldStateStore } from '../../src/effects';
 import { createFactSource, FactResolutionError } from '../../src/evaluator';
-import type { Phase, Step } from '../../src/schema';
+import type { Item, Phase, Step } from '../../src/schema';
 import { actor } from '../effects/fakeContext';
 
 const registry = createFactRegistry([{ path: 'x', type: z.number() }]);
@@ -15,7 +15,17 @@ const attackStep: Step = {
   action: { type: 'attack', mode: 'melee', targetId: 'goblin', weapon: null, rangeFt: 5 },
 };
 
-function sourceOf(options: { step?: Step; sealed?: boolean; phase?: Phase } = {}) {
+const longsword: Item = {
+  slug: 'longsword',
+  name: 'Longsword',
+  damage: { dice: { count: 1, sides: 8 }, type: 'slashing' },
+  properties: ['versatile'],
+  mastery: 'sap',
+};
+
+function sourceOf(
+  options: { step?: Step; sealed?: boolean; phase?: Phase; items?: Record<string, Item> } = {},
+) {
   const store = createWorldStateStore({
     actors: [actor('fighter', { conditions: ['prone'] }), actor('goblin', { ac: 13 })],
     registry,
@@ -25,6 +35,7 @@ function sourceOf(options: { step?: Step; sealed?: boolean; phase?: Phase } = {}
     step: options.step ?? attackStep,
     stepIndex: 0,
     intents: { useInspiration: true },
+    items: options.items ?? {},
     currentPhase: () => options.phase ?? 'modifiers',
     derivedSealed: () => options.sealed ?? true,
   });
@@ -127,6 +138,7 @@ describe('createFactSource — derived values are sealed, not partial (ADR-0003,
     store.sealDerived({
       path: 'actor.ac.effective',
       actorId: 'fighter',
+      stepId: 'r1-fighter',
       base: 15,
       terms: [{ source: 'dnd5e-srd', ruleKey: 'cover.half', value: 2, modifierType: 'cover' }],
       total: 17,
@@ -136,5 +148,52 @@ describe('createFactSource — derived values are sealed, not partial (ADR-0003,
 
   it('reads null for a derived path nothing sealed a value for', () => {
     expect(sourceOf({ sealed: true }).source.read('actor.ac.effective')).toBeNull();
+  });
+});
+
+describe('createFactSource — the wielded item, inlined into the situation (ADR-0017)', () => {
+  const armed = {
+    step: { ...attackStep, action: { ...attackStep.action, weapon: 'longsword' } } as Step,
+    items: { longsword },
+  };
+
+  it('reads the weapon fields a rule needs, including 5.2.1 mastery', () => {
+    const { source } = sourceOf(armed);
+
+    expect(source.read('action.weapon.name')).toBe('Longsword');
+    expect(source.read('action.weapon.mastery')).toBe('sap');
+    expect(source.read('action.weapon.properties')).toEqual(['versatile']);
+  });
+
+  it('reads the slug through the bare path, so a rule can still compare names', () => {
+    expect(sourceOf(armed).source.read('action.weapon')).toBe('longsword');
+  });
+
+  it('serves the damage dice as notation and as numbers, both registrable fact types', () => {
+    const { source } = sourceOf(armed);
+
+    expect(source.read('action.weapon.damage.dice')).toBe('1d8');
+    expect(source.read('action.weapon.damage.count')).toBe(1);
+    expect(source.read('action.weapon.damage.sides')).toBe(8);
+    expect(source.read('action.weapon.damage.type')).toBe('slashing');
+  });
+
+  it('reads null for an unarmed attack rather than throwing: fighting bare-handed is legal', () => {
+    expect(sourceOf().source.read('action.weapon.mastery')).toBeNull();
+  });
+
+  it('reads null for a weapon with no mastery, which is every 5.1-scoped fixture', () => {
+    const { source } = sourceOf({
+      ...armed,
+      items: { longsword: { ...longsword, mastery: null } },
+    });
+
+    expect(source.read('action.weapon.mastery')).toBeNull();
+  });
+
+  it('refuses an item field the engine does not serve, rather than reading null', () => {
+    const { source } = sourceOf(armed);
+
+    expect(() => source.read('action.weapon.weight')).toThrow(FactResolutionError);
   });
 });

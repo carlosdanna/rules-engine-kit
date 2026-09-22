@@ -13,7 +13,7 @@ const context: NarrativeContext = {
     { id: 'r11-cleric', round: 11, actorId: 'cleric' },
     { id: 'r11-fighter', round: 11, actorId: 'fighter' },
   ],
-  actorNames: { cleric: 'Cleric', fighter: 'Fighter' },
+  actorNames: { cleric: 'Cleric', fighter: 'Fighter', goblin: 'Goblin' },
 };
 
 const withSeq = (event: object): TraceEvent => ({ seq: 0, ...event }) as TraceEvent;
@@ -32,7 +32,14 @@ describe('narrateEvent — rules and rolls (NFR-7)', () => {
     const event = withSeq(
       rollEvent({
         transforms: [
-          { ruleKey: 'inspiration.spend', kind: 'reroll', dieIndex: 0, from: 4, to: 11 },
+          {
+            ruleKey: 'inspiration.spend',
+            kind: 'reroll',
+            dieIndex: 0,
+            from: 4,
+            to: 11,
+            clamped: false,
+          },
         ],
         diceAfterTransforms: [11, 16],
         modifiers: [
@@ -76,7 +83,8 @@ describe('narrateEvent — rules and rolls (NFR-7)', () => {
       round: 1,
       phase: 'modifiers',
       kind: 'stacking',
-      target: 'actor.ac.effective@goblin',
+      target: 'actor.ac.effective',
+      actorId: 'goblin',
       applied: [{ ruleKey: 'cover.half', modifierType: 'cover', policy: 'highest', value: 2 }],
       dropped: [
         {
@@ -92,7 +100,7 @@ describe('narrateEvent — rules and rolls (NFR-7)', () => {
       ],
     });
     expect(narrateEvent(event, context)).toBe(
-      '  [stacking] actor.ac.effective@goblin: +2 cover (dropped +1 cover, beaten by cover.half)',
+      '  [stacking] actor.ac.effective for Goblin: +2 cover (dropped +1 cover, beaten by cover.half)',
     );
   });
 });

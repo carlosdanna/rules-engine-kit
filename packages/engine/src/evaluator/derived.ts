@@ -18,11 +18,6 @@ export const DERIVED_BASES: Record<string, (actor: ActorRecord) => number> = {
   'actor.ac.effective': (actor) => actor.ac,
 };
 
-/** `stacking.target` is a bare string in the schema, so the actor is encoded into it. */
-export function derivedTargetLabel(path: string, actorId: string): string {
-  return `${path}@${actorId}`;
-}
-
 /** A roll's modifiers ride on its own `roll` event, so these get no `stacking` event. */
 function isRollTarget(path: string): boolean {
   return path.startsWith('roll.') || path.startsWith('damage.');
@@ -44,6 +39,7 @@ export function sealDerivedValues(args: {
     const value: DerivedValue = {
       path: group.path,
       actorId: group.actorId,
+      stepId: args.step.id,
       base,
       terms: applied.map((modifier) => ({
         // `ruleKey` and `modifierType` already say which rule and which label, so `source`
@@ -69,7 +65,8 @@ export function sealDerivedValues(args: {
         round: args.step.round,
         phase: 'modifiers',
         kind: 'stacking',
-        target: derivedTargetLabel(group.path, group.actorId),
+        target: group.path,
+        actorId: group.actorId,
         applied,
         dropped,
       });

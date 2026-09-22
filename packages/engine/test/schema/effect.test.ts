@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ActiveEffect, Duration, Effect, Expiry, Modifier } from '../../src/index';
+import { ActiveEffect, Duration, Effect, Expiry } from '../../src/index';
 
 describe('Effect channels (ADR-0008, ADR-0011)', () => {
   it('accepts a numeric modifier with dice and a stacking policy', () => {
@@ -115,45 +115,23 @@ describe('Effect channels (ADR-0008, ADR-0011)', () => {
   });
 });
 
-describe('Modifier', () => {
-  it('carries its type, the rule that contributed it, and its policy', () => {
-    const parsed = Modifier.parse({
-      type: 'proficiency',
-      source: 'attack.proficiency',
-      stackKey: 'proficiency',
-      policy: 'unique',
-      value: 2,
-    });
-
-    expect(parsed.source).toBe('attack.proficiency');
-  });
-
-  it('accepts a dice value, so Bless can be "+1d4" before it is rolled', () => {
-    const parsed = Modifier.parse({
-      type: 'bless',
-      source: 'spell.bless.attack',
-      policy: 'unique',
-      value: { count: 1, sides: 4 },
-    });
-
-    expect(parsed.value).toEqual({ count: 1, sides: 4 });
-  });
-
-  it('makes stackKey optional, since only `unique` needs one', () => {
-    const parsed = Modifier.parse({
-      type: 'ability',
-      source: 'attack.ability-modifier',
-      policy: 'sum',
-      value: 3,
-    });
-
-    expect(parsed.stackKey).toBeUndefined();
-  });
-
+describe('addModifier is the only authored form of a modifier (ADR-0019)', () => {
   it('rejects an unknown stacking policy', () => {
-    const unknown = { type: 'cover', source: 'cover.half', policy: 'average', value: 2 };
+    const unknown = {
+      type: 'addModifier',
+      target: { kind: 'attack', actor: '$actor' },
+      value: 2,
+      modifierType: 'cover',
+      policy: 'average',
+    };
 
-    expect(Modifier.safeParse(unknown).success).toBe(false);
+    expect(Effect.safeParse(unknown).success).toBe(false);
+  });
+
+  it('has no separate `Modifier` schema to drift from it: the effect is the authored shape', async () => {
+    const schema = await import('../../src/index');
+
+    expect('Modifier' in schema).toBe(false);
   });
 });
 

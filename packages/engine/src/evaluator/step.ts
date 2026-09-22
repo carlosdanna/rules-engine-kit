@@ -18,6 +18,7 @@ import type {
   EffectType,
   EmittedEvent,
   Intents,
+  Item,
   Phase,
   PHASES as PhaseList,
   ResolvedProfile,
@@ -53,6 +54,8 @@ export type RunStepArgs = {
   timeline: TimelineIndex;
   trace: TraceBuilder;
   intents: Intents;
+  /** The situation's inlined item fixtures, for `action.weapon.*` (ADR-0017). */
+  items: Record<string, Item>;
   rulesByKey: ReadonlyMap<string, ResolvedRule>;
   nextEffectId(): string;
 };
@@ -85,6 +88,7 @@ export function runStep(args: RunStepArgs): RunStepResult {
     step,
     stepIndex,
     intents: args.intents,
+    items: args.items,
     currentPhase: () => currentPhase,
     derivedSealed: () => derivedSealed,
   });

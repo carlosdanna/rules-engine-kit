@@ -6,7 +6,7 @@ A localhost-only demo of a deterministic, explainable, versioned rules engine. D
 
 | Term | Meaning |
 | --- | --- |
-| Situation | Immutable input: actors, their state, an ordered `timeline` of turns, `intents` (ADR-0005) |
+| Situation | Immutable input: actors, their state, inlined item fixtures, an ordered `timeline` of turns, `intents` (ADR-0005, ADR-0017) |
 | Fact | Typed value the engine can read or derive, registered in the pack's fact registry |
 | Step | One turn in the timeline: `round`, `actorId`, and zero or one action. Evaluation runs the phase loop once per step |
 | Rule | `rule_key`, phase, priority, condition (JSON Logic), effects, citation, optional interpretation |
@@ -40,7 +40,7 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 - **FR-5** Rules carry id/key, version, description, citation, phase, priority, tags, condition, effects.
 - **FR-6** Conditions: all/any/not, comparisons, set membership, references to registered facts. JSON Logic syntax, own evaluator (ADR-0013).
 - **FR-7** Effects as listed in Core concepts, implemented through an effect registry. Numeric modifiers, roll mode and roll transforms are three separate channels per roll target.
-- **FR-8** Fixtures supply only printed values (ability scores, proficiency bonus, base AC, HP). Ability modifiers come from the fact registry; effective AC, attack bonuses and save DCs are derived by rules and reported with their contributing terms.
+- **FR-8** Fixtures supply only printed values (ability scores, proficiency bonus, base AC, HP; an item's damage dice, properties and mastery). Ability modifiers come from the fact registry; effective AC, attack bonuses and save DCs are derived by rules and reported with their contributing terms.
 - **FR-9** Each step runs the phases in fixed order; within a phase, priority then `rule_key` for stable ordering.
 - **FR-11** Stacking policies per modifier type: sum, highest-only, same-`stackKey`-doesn't-stack. Advantage/disadvantage cancelling is resolved separately, on the roll-mode channel.
 - **FR-12** Conflicts resolved by explicit `override` or layer order; unresolved conflicts are reported.
@@ -51,6 +51,7 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 - **FR-17** Lint on load: unknown facts, duplicate keys, overrides of missing keys, missing citations.
 - **FR-18** Create situations from a template, from a blank slate, or by duplicating a scenario.
 - **FR-19** Templates declare typed params; the UI generates a form from them.
+- **FR-20** A rendered situation is self-contained: `renderTemplate` inlines every fixture it references, and a weapon slug with nothing behind it is a schema error (ADR-0017).
 
 ## Versioning requirements
 
@@ -62,7 +63,9 @@ Out of scope: reactions/interrupts, spells beyond Bless, movement/grids, classes
 - **VR-8** Situation schema is versioned; saved user scenarios can be migrated.
 - **VR-9** Diff rules between two ruleset versions.
 
-Deferred: VR-5 (select profile by campaign/date), VR-6 (effective dates) — see `open-questions.md`.
+Out of scope: VR-5 (select profile by campaign/date) and VR-6 (effective dates), closed by
+ADR-0016. A profile is always an explicit ordered stack; a ruleset version is identified by semver
+alone.
 
 ## Non-functional requirements
 
@@ -83,3 +86,44 @@ Deferred: VR-5 (select profile by campaign/date), VR-6 (effective dates) — see
 | "Use an Object" action | Use an Object | Utilize (same `rule_key`, new label) |
 | Attack with a weapon mastery property | No effect | Mastery applies |
 | Melee vs prone + house flanking | Advantage, doesn't double | Same, on either base |
+
+## Milestones
+
+A milestone is finished when every criterion listed for it passes (ADR-0015). Criteria may be added
+to a milestone as work reveals them; what is written here is what "done" means, not a schedule.
+
+### M1 — Engine core
+
+- `pnpm check` green.
+- Golden tests for the attack and Bless scenarios, asserting outcomes separately from trace
+  snapshots (NFR-4).
+- Property tests for stacking (FR-11), roll-mode cancelling and rule ordering (FR-9).
+- `explain()` answers why / why not by lookup over a stored trace, never by re-evaluating (FR-15).
+- No `fs`, `Date.now()` or `Math.random()` anywhere in `packages/engine` (NFR-1, ADR-0002).
+
+### M2 — Content, templates and diff
+
+- `content/` holds the SRD 5.1 base, the SRD 5.2.1 base and the house-rule layer, each with its
+  fact registry, licence and attribution (NFR-6).
+- `pnpm content:lint` green: no unknown facts, duplicate keys, overrides of missing keys or missing
+  citations (FR-17); every template renders with its defaults into a valid situation.
+- `renderTemplate` (FR-18, FR-19), `diffOutcomes` and `diffTraces` (FR-16) implemented.
+- A golden test for every template × profile (NFR-4).
+- All five acceptance scenarios above produce their stated outcomes under both editions.
+
+### M3 — Persistence
+
+- Drizzle schema and migrations for every table in `architecture.md`.
+- `pnpm db:seed` and `pnpm db:reset` rebuild the seeded rows from `content/` and `scenarios/` and
+  leave user rows untouched; `pnpm db:reset --hard` observably differs (ADR-0004).
+- A stored evaluation carries profile hash, seed, `engine_version` and `trace_schema_version` (VR-7).
+- Seeding fails on a pack with no licence or attribution (NFR-6).
+
+### M4 — Web
+
+- Every route in `architecture.md` reachable on localhost via `pnpm i && pnpm db:reset && pnpm dev`
+  (NFR-8).
+- The trace viewer renders a stored trace as narrative text and exports it as JSON (NFR-7).
+- `/compare` shows one situation under two profiles, aligned on step, phase and `rule_key` (FR-16).
+- Scenarios can be created from a template, from a blank slate and by duplicating (FR-18).
+- `/credits` renders from the `sources` table and is linked in the footer (NFR-6).

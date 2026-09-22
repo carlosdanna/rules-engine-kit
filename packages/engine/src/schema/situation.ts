@@ -1,11 +1,12 @@
 import { z } from 'zod';
-import { Ability, RollId } from './primitives';
+import { Ability, DiceExpr, RollId } from './primitives';
 
 /**
  * Bumped whenever the shape changes; saved user scenarios are migrated to it (VR-8).
- * Starts at 1 — ADR-0011 added `intents.rollChoices` before anything was persisted.
+ * At 2 since ADR-0017 inlined item fixtures, which — like ADR-0011's `intents.rollChoices`
+ * before it — landed before anything was persisted.
  */
-export const SITUATION_SCHEMA_VERSION = 1;
+export const SITUATION_SCHEMA_VERSION = 2;
 
 /**
  * Printed inputs only (ADR-0006, FR-8). Deliberately absent: attack bonus, save DC,
@@ -27,13 +28,35 @@ export const Actor = z.strictObject({
 });
 export type Actor = z.infer<typeof Actor>;
 
+/**
+ * An item fixture, inlined (ADR-0017). Printed values only, like `Actor`: the citation
+ * stays on the fixture row, which is seeded content, not on the copy inside a situation.
+ *
+ * `mastery` is the 5.2.1 weapon mastery property and is `null` on a 5.1-scoped fixture, so
+ * one fixture can serve both editions and the difference is a rule reading the field or not.
+ */
+export const Item = z.strictObject({
+  slug: z.string().min(1),
+  name: z.string().min(1),
+  /** `null` for anything that deals no damage of its own. */
+  damage: z.strictObject({ dice: DiceExpr, type: z.string().min(1) }).nullable(),
+  /** SRD weapon properties such as `finesse` or `heavy`, as the rules read them. */
+  properties: z.array(z.string().min(1)),
+  mastery: z.string().min(1).nullable(),
+});
+export type Item = z.infer<typeof Item>;
+
 /** What an actor does on its turn. One action per step at most (ADR-0005). */
 export const Action = z.discriminatedUnion('type', [
   z.strictObject({
     type: z.literal('attack'),
     mode: z.enum(['melee', 'ranged']),
     targetId: z.string().min(1),
-    /** Fixture slug of the weapon used, or `null` for an unarmed/improvised attack. */
+    /**
+     * Key into `situation.items`, or `null` for an unarmed/improvised attack. The slug is
+     * kept rather than the item inlined here, so a weapon used on twelve steps is stored
+     * once and `action.weapon` still reads as a slug for a rule that compares names.
+     */
     weapon: z.string().min(1).nullable(),
     /** Distance to the target; prone reads it to decide advantage vs disadvantage. */
     rangeFt: z.number().int().nonnegative(),
@@ -95,6 +118,8 @@ export const Situation = z
   .strictObject({
     schemaVersion: z.literal(SITUATION_SCHEMA_VERSION),
     actors: z.array(Actor).min(1),
+    /** Inlined item fixtures, keyed by slug (ADR-0017). Empty when nothing wields anything. */
+    items: z.record(z.string(), Item),
     timeline: z.array(Step).min(1),
     intents: Intents,
   })
@@ -158,6 +183,21 @@ export const Situation = z
             message: `unknown target actor '${targetId}'`,
           });
         }
+      }
+
+      // What makes "self-contained" a guarantee rather than a convention (ADR-0017): a
+      // rendered situation has no slug pointing at a row outside it.
+      if (
+        step.action !== null &&
+        step.action.type === 'attack' &&
+        step.action.weapon !== null &&
+        situation.items[step.action.weapon] === undefined
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['timeline', index, 'action', 'weapon'],
+          message: `unknown item '${step.action.weapon}': every weapon slug must be inlined in \`items\` (ADR-0017)`,
+        });
       }
     }
   });

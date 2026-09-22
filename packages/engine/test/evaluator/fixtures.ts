@@ -6,12 +6,14 @@
 import type {
   Actor,
   FactDefinition,
+  Item,
   Rule,
   RuleEntry,
   RulesetVersion,
   Situation,
   Step,
 } from '../../src/schema';
+import { SITUATION_SCHEMA_VERSION } from '../../src/schema';
 
 export const BASE_ID = 'dnd5e-srd';
 export const BASE_VERSION = '5.2.1';
@@ -126,10 +128,23 @@ export function attackStep(id: string, round: number, overrides: Partial<Step> =
   };
 }
 
+/** An inlined item fixture (ADR-0017). `mastery` is the 5.2.1-only field. */
+export function longsword(overrides: Partial<Item> = {}): Item {
+  return {
+    slug: 'longsword',
+    name: 'Longsword',
+    damage: { dice: { count: 1, sides: 8 }, type: 'slashing' },
+    properties: ['versatile'],
+    mastery: 'sap',
+    ...overrides,
+  };
+}
+
 export function situation(overrides: Partial<Situation> = {}): Situation {
   return {
-    schemaVersion: 1,
+    schemaVersion: SITUATION_SCHEMA_VERSION,
     actors: [actor('fighter'), actor('goblin', { ac: 15 })],
+    items: {},
     timeline: [attackStep('r1-fighter', 1)],
     intents: {},
     ...overrides,

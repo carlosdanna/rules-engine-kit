@@ -10,8 +10,9 @@
  */
 
 import type { FactSource } from '../conditions';
+import { formatDiceNotation } from '../dice';
 import type { WorldStateStore } from '../effects';
-import type { Intents, Json, Phase, Step } from '../schema';
+import type { Intents, Item, Json, Phase, Step } from '../schema';
 import { primaryTargetId } from './actorRef';
 import { FactResolutionError } from './errors';
 
@@ -24,6 +25,8 @@ export type FactSourceArgs = {
   step: Step;
   stepIndex: number;
   intents: Intents;
+  /** The situation's inlined item fixtures, keyed by slug (ADR-0017). */
+  items: Record<string, Item>;
   /** Read when a derived value is asked for too early, so the error can name the phase. */
   currentPhase(): Phase;
   derivedSealed(): boolean;
@@ -34,7 +37,43 @@ function abilityModifier(score: number): number {
 }
 
 export function createFactSource(args: FactSourceArgs): FactSource {
-  const { store, step, stepIndex, intents } = args;
+  const { store, step, stepIndex, intents, items } = args;
+
+  /**
+   * The weapon's own fields, from the index the situation inlines them into (ADR-0017).
+   * Everything here fits the `FactType` vocabulary a pack can register, which is why the
+   * dice come back as notation (`1d8`) with `count` and `sides` beside them for arithmetic.
+   */
+  function readWeapon(rest: string): Json {
+    const action = step.action;
+    if (action === null || action.type !== 'attack' || action.weapon === null) return null;
+    // The situation schema rejects a slug with no entry, so a miss here is an engine gap.
+    const item = items[action.weapon];
+    if (item === undefined) {
+      throw new FactResolutionError({ kind: 'unresolved', path: `action.weapon.${rest}` });
+    }
+
+    switch (rest) {
+      case 'slug':
+        return item.slug;
+      case 'name':
+        return item.name;
+      case 'properties':
+        return [...item.properties];
+      case 'mastery':
+        return item.mastery;
+      case 'damage.dice':
+        return item.damage === null ? null : formatDiceNotation(item.damage.dice);
+      case 'damage.count':
+        return item.damage === null ? null : item.damage.dice.count;
+      case 'damage.sides':
+        return item.damage === null ? null : item.damage.dice.sides;
+      case 'damage.type':
+        return item.damage === null ? null : item.damage.type;
+      default:
+        throw new FactResolutionError({ kind: 'unresolved', path: `action.weapon.${rest}` });
+    }
+  }
 
   function readActorScoped(path: string): Json {
     const ability = ABILITY.exec(path);
@@ -122,6 +161,10 @@ export function createFactSource(args: FactSourceArgs): FactSource {
           default:
             throw new FactResolutionError({ kind: 'unresolved', path });
         }
+      }
+
+      if (path.startsWith('action.weapon.')) {
+        return readWeapon(path.slice('action.weapon.'.length));
       }
 
       if (path.startsWith('action.')) {

@@ -69,6 +69,26 @@ describe('Situation', () => {
     expect(result.error?.issues[0]?.message).toContain("unknown target actor 'nobody'");
   });
 
+  it('rejects a weapon slug with nothing inlined behind it (ADR-0017)', () => {
+    const dangling = structuredClone(situation);
+    delete dangling.items.longsword;
+
+    const result = Situation.safeParse(dangling);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toContain("unknown item 'longsword'");
+  });
+
+  it('accepts an unarmed attack with no items at all', () => {
+    const barehanded = structuredClone(situation);
+    barehanded.items = {};
+    for (const step of barehanded.timeline) {
+      if (step.action?.type === 'attack') step.action.weapon = null;
+    }
+
+    expect(Situation.safeParse(barehanded).success).toBe(true);
+  });
+
   it('rejects duplicate step ids, which trace events and roll ids address', () => {
     const clashing = structuredClone(situation);
     const step = clashing.timeline[1];
