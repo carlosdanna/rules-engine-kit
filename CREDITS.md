@@ -45,5 +45,6 @@ Tooling:
 | [TypeScript](https://www.typescriptlang.org) | Apache-2.0 |
 | [Biome](https://biomejs.dev) | MIT OR Apache-2.0 |
 | [Vitest](https://vitest.dev) | MIT |
+| [fast-check](https://fast-check.dev) | MIT |
 | [lefthook](https://lefthook.dev) | MIT |
 | [pnpm](https://pnpm.io) | MIT |
