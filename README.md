@@ -18,7 +18,7 @@ editions gives two different, fully explained answers.
 
 ```sh
 pnpm i
-pnpm db:reset   # seeds the SQLite database — arrives in M3, skip it until then
+pnpm db:reset   # builds data/app.db and seeds it from content/ and scenarios/
 pnpm dev
 ```
 
@@ -34,9 +34,14 @@ pnpm dev
 | `pnpm lint` | Biome check (lint + format) across the workspace |
 | `pnpm format` | Biome, writing fixes |
 | `pnpm check` | Lint, typecheck and test — must pass before a change is done |
+| `pnpm db:migrate` | Applies the committed migrations to `data/app.db` |
+| `pnpm db:seed` | Migrates, then rebuilds the seeded rows from `content/` and `scenarios/` |
+| `pnpm db:reset` | The same, without refusing a changed pack version (ADR-0027) |
+| `pnpm db:reset --hard` | Deletes every row first, including the ones you made |
+| `pnpm content:lint` | Checks `content/` (FR-17, NFR-6) |
 
-Database and content scripts (`pnpm db:migrate`, `pnpm db:seed`, `pnpm db:reset`,
-`pnpm content:lint`) land with the packages that own them; see `docs/architecture.md`.
+`db:seed` and `db:reset` only touch seeded rows; scenarios, profiles and evaluations you
+created survive both (ADR-0004). `DATABASE_URL` overrides the database path.
 
 ## Layout
 

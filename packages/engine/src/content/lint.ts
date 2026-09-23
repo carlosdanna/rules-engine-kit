@@ -55,6 +55,8 @@ export type ContentIssueCode =
   | 'schema'
   | 'missing-license'
   | 'missing-attribution'
+  /** A pack with nobody to attribute it to. Named beside the two NFR-6 checks (ADR-0028). */
+  | 'missing-author'
   | 'missing-citation'
   | 'unknown-fact'
   | 'unsupported-operator'
@@ -184,8 +186,20 @@ function parsePackHead(docs: AuthoredPackDocs, issues: ContentIssue[]): ParsedPa
   if (raw === undefined || docs.facts.doc === undefined) return null;
 
   // Named before the schema parse rather than after it: NFR-6 is a licensing promise this
-  // repository makes in public, and "invalid_type at license" is not that sentence.
+  // repository makes in public, and "invalid_type at license" is not that sentence. `author`
+  // joins them because the placeholder pass below would otherwise swallow it or, without a
+  // placeholder, let one missing line hide every other mistake in the pack (ADR-0028).
   if (isObject(raw)) {
+    if (isBlank(raw.author)) {
+      issues.push(
+        error(
+          'missing-author',
+          manifestFile,
+          'author',
+          'every pack names the party its content is attributed to; `sources.author` is seeded from it (ADR-0028)',
+        ),
+      );
+    }
     if (isBlank(raw.license)) {
       issues.push(
         error(
@@ -208,13 +222,14 @@ function parsePackHead(docs: AuthoredPackDocs, issues: ContentIssue[]): ParsedPa
     }
   }
 
-  // Both gaps are now reported, so they are filled with a placeholder before the parse:
+  // All three gaps are now reported, so they are filled with a placeholder before the parse:
   // a pack with no licence still has its rules linted. A missing licence is one thing to
   // fix, and it should not also hide the six mistakes in `rules/`. The placeholder reaches
   // nothing but this function's own resolution pass.
   const candidate = isObject(raw)
     ? {
         ...raw,
+        ...(isBlank(raw.author) ? { author: UNSET } : {}),
         ...(isBlank(raw.license) ? { license: UNSET } : {}),
         ...(isBlank(raw.attribution) ? { attribution: UNSET } : {}),
       }

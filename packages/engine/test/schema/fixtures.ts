@@ -103,6 +103,7 @@ export const rulesetVersion: RulesetVersion = {
   name: 'SRD 5.2.1',
   kind: 'base',
   extends: null,
+  author: 'Wizards of the Coast LLC',
   license: 'CC-BY-4.0',
   sourceUrl: 'https://www.dndbeyond.com/srd',
   attribution: 'This work includes material from the System Reference Document 5.2.1.',

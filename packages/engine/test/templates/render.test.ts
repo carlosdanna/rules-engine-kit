@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import type { Fixture, Template } from '../../src/schema';
+import { type Fixture, TEMPLATE_SCHEMA_VERSION, type Template } from '../../src/schema';
 import { buildFixtureIndex, renderTemplate, TemplateRenderError } from '../../src/templates';
 
 const CITATION = { source: 'srd-5.2.1', section: 'Monsters > Goblin' };
@@ -59,8 +59,9 @@ function template(overrides: Partial<Template> = {}): Template {
   return {
     id: 'melee-attack',
     name: 'Melee attack',
+    description: 'One creature swings at another, once.',
     tags: [],
-    schemaVersion: 1,
+    schemaVersion: TEMPLATE_SCHEMA_VERSION,
     suggestedProfiles: ['srd-5.1', 'srd-5.2.1'],
     params: {
       attacker: { type: 'fixture', kind: 'actor', default: 'fighter' },

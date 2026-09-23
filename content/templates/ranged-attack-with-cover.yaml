@@ -7,8 +7,11 @@
 # different `rangeFt` and this template exists to exercise the cover channel.
 id: ranged-attack-with-cover
 name: Ranged attack against a target in cover
+description: >-
+  A ranged attack against a target behind half or three-quarters cover, which is where the AC
+  bonus and the Dexterity save bonus come from the same rule.
 tags: [combat, attack, cover]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.1, srd-5.2.1]
 params:
   attacker: { type: fixture, kind: actor, default: fighter-3 }

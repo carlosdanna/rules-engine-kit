@@ -5,9 +5,11 @@ import { RollTargetKind } from './primitives';
 
 /**
  * Bumped whenever the shape changes; `templates.schema_version` records which one a row
- * was seeded at (VR-8). At 1 because nothing has been persisted yet.
+ * was seeded at (VR-8). At 2 since ADR-0028 gave a template the `description` the
+ * `templates` table and `/templates` need. That it was free to bump is the point: no row
+ * had ever been written, and M3 is the last milestone where that is true.
  */
-export const TEMPLATE_SCHEMA_VERSION = 1;
+export const TEMPLATE_SCHEMA_VERSION = 2;
 
 /**
  * A typed parameter the UI generates a form control from (FR-19). The vocabulary is
@@ -83,6 +85,8 @@ export type TemplateParam = z.infer<typeof TemplateParam>;
 export const Template = z.strictObject({
   id: z.string().min(1),
   name: z.string().min(1),
+  /** One or two sentences: what this template is for, as `/templates` lists it (ADR-0028). */
+  description: z.string().min(1),
   tags: z.array(z.string().min(1)),
   schemaVersion: z.literal(TEMPLATE_SCHEMA_VERSION),
   /** The profiles a golden test runs this template under (NFR-4). */

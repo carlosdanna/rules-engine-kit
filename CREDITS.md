@@ -47,6 +47,8 @@ Runtime:
 | [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) | MIT |
 | [Zod](https://zod.dev) | MIT |
 | [yaml](https://eemeli.org/yaml) | ISC |
+| [Drizzle ORM](https://orm.drizzle.team) | Apache-2.0 |
+| [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) | MIT |
 
 Tooling:
 
@@ -59,3 +61,4 @@ Tooling:
 | [lefthook](https://lefthook.dev) | MIT |
 | [pnpm](https://pnpm.io) | MIT |
 | [tsx](https://tsx.is) | MIT |
+| [drizzle-kit](https://orm.drizzle.team/docs/kit-overview) | MIT |

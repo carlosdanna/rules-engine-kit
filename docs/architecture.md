@@ -21,10 +21,16 @@ packages/engine/     pure TS engine
   src/templates/     render template + params + fixtures → situation
   test/golden/       one folder per case: situation + profile + seed → expected outcome
 packages/db/         Drizzle schema, migrations, seed
+  src/schema/        the tables below, one file per group
+  src/seed/          content → rows, the rebuild, and VR-1's content-hash guard
+  src/bin/db.ts      `pnpm db:migrate`, `db:seed`, `db:reset [--hard]`
+  src/client.ts      the one place the database is opened (foreign_keys, WAL)
   src/content/       reads content/ off a disk: YAML → the documents the lint and the
                      seeds take. `pnpm content:lint` is its bin (FR-17, NFR-6)
+  drizzle/           generated migrations, committed
 content/             rule packs, fixtures, templates, profiles.yaml (YAML)
-scenarios/           ready-made situations
+scenarios/           ready-made situations: a template call, or a literal one (ADR-0028)
+data/app.db          the SQLite file; not committed
 docs/                requirements, architecture, authoring, ADRs
 ```
 
@@ -50,7 +56,9 @@ ADR-0013 (condition evaluator), ADR-0017 (self-contained situations), ADR-0018 (
 the base only), ADR-0019 (the trace and outcome corrections that closed Q17–Q20), ADR-0021
 (effect values read facts), ADR-0023 (damage reports the overflow it discards), ADR-0024 (a
 fixture is an actor or an item), ADR-0025 (the damage scale channel, amending ADR-0011) and
-ADR-0026 (profiles are named and seeded; a skeleton is Situation-shaped).
+ADR-0026 (profiles are named and seeded; a skeleton is Situation-shaped), ADR-0027 (a
+seeded row's identity, and the content hash) and ADR-0028 (a scenario file is a template
+call).
 
 ## Engine API
 
@@ -132,8 +140,8 @@ and groups events by `(stepId, phase)`.
 | Table | Owner | Key columns |
 | --- | --- | --- |
 | `sources` | seed | name, author, url, license, attribution_text |
-| `rulesets` | seed | slug, name, kind (`base`/`layer`), source_id |
-| `ruleset_versions` | seed | ruleset_id, semver, base_version_id, base_range, content_hash |
+| `rulesets` | seed | slug, name, kind (`base`/`layer`) |
+| `ruleset_versions` | seed | ruleset_id, semver, base_ruleset_id, base_range, content_hash, source_id |
 | `rules` | seed | ruleset_version_id, rule_key, op, phase, priority, tags, condition, effects, citation, interpretation |
 | `fixtures` | seed | slug, kind (`actor`/`item`), ruleset_scope, data, interpretation, source_id |
 | `templates` | seed | slug, name, description, tags, params_schema, skeleton, suggested_profiles, schema_version |
@@ -143,6 +151,32 @@ and groups events by `(stepId, phase)`.
 | `evaluations` | user | scenario_id, profile_id, profile_hash, seed, engine_version, trace_schema_version, outcome, trace |
 
 `scenarios.situation` holds the whole timeline; `evaluations.trace` holds the flat event array and its `trace_schema_version`. JSON columns use `text({ mode: 'json' })` typed with Zod-inferred types. `db:seed` and `db:reset` only touch seeded rows; `db:reset --hard` wipes everything.
+
+Two things hold across every table, both from ADR-0027. **A seeded row's primary key is a
+deterministic text id** derived from the natural key the content already carries —
+`dnd5e-srd@5.2.1`, `dnd5e-srd@5.2.1#condition.prone.attacked`, `actor:goblin:srd-5.1`, and the
+slug itself for a ruleset, template, profile or scenario. That is what makes reseeding
+idempotent rather than merely careful, and what lets a user `evaluation` keep pointing at the
+seeded `scenario` it ran after `db:reset` has deleted and rewritten that row. Where the table
+above says "slug", the id *is* the slug and there is no second column. And **there are no
+timestamp columns**: a clock in a seeded row would make two rebuilds differ for a reason
+nothing in `content/` changed.
+
+Two columns moved from where this table first put them, for reasons that only appear once
+something is written. `source_id` is on `ruleset_versions` rather than on `rulesets`, because
+SRD 5.1 and SRD 5.2.1 are two versions of the one ruleset slug `dnd5e-srd` and share neither
+their URL nor their attribution — one `source_id` per slug could hold only one of them, and
+`/credits` would attribute one edition to the other. And `base_version_id` is
+`base_ruleset_id`, because a layer declares a *range* of compatible base versions (VR-3): the
+house rule's `>=5.1.0` matches both seeded SRD versions on purpose (ADR-0018), so there is no
+single base version to point at.
+
+`ruleset_versions.content_hash` is `sha256Hex(canonicalJson(pack))` over the normalised
+`RulesetVersion`, using the same canonical spelling the profile hash uses (ADR-0009). It is a
+different number answering a different question: what was *authored*, not what the merge
+*produced*. `db:seed` refuses to re-seed a `(ruleset, semver)` already stored under a different
+hash (VR-1); `db:reset` rebuilds instead of comparing, which is what makes it the escape hatch
+while content is being written.
 
 ## Web routes
 

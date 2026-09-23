@@ -4,6 +4,7 @@ version: 1.0.0
 name: A layer whose base is not here
 kind: layer
 extends: { id: nonesuch, range: "^1.0.0" }
+author: rules-engine-kit contributors
 license: CC-BY-4.0
 sourceUrl: https://example.invalid/not-a-real-source
 attribution: A loader fixture, not content.

@@ -15,6 +15,7 @@ import {
   normalizeRuleFile,
   normalizeTemplate,
 } from '../../src/content';
+import { TEMPLATE_SCHEMA_VERSION } from '../../src/schema';
 
 const PACK = {
   id: 'dnd5e-srd',
@@ -22,6 +23,7 @@ const PACK = {
   name: 'SRD 5.2.1',
   kind: 'base',
   extends: null,
+  author: 'Wizards of the Coast LLC',
   license: 'CC-BY-4.0',
   sourceUrl: 'https://www.dndbeyond.com/srd',
   attribution: 'This work includes material from the System Reference Document 5.2.1.',
@@ -403,7 +405,8 @@ describe('normalizeTemplate', () => {
   const TEMPLATE = {
     id: 'melee-attack',
     name: 'Melee attack',
-    schemaVersion: 1,
+    description: 'One creature swings at another, once.',
+    schemaVersion: TEMPLATE_SCHEMA_VERSION,
     suggestedProfiles: ['srd-5.2.1'],
     params: { useInspiration: { type: 'boolean', default: false } },
     skeleton: { action: { type: 'attack', mode: 'melee', weapon: '{{weapon}}' } },

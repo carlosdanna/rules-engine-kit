@@ -231,6 +231,7 @@ function pack(id: string, version: string, rules: RuleEntry[], source: string): 
     name: `${source} (test fixture)`,
     kind: 'base',
     extends: null,
+    author: 'Wizards of the Coast LLC',
     license: 'CC-BY-4.0',
     sourceUrl: 'https://www.dndbeyond.com/srd',
     attribution: source,

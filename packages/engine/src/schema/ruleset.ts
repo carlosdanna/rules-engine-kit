@@ -44,7 +44,9 @@ export type FactDefinition = z.infer<typeof FactDefinition>;
  * reports a bad `license` at `license`, which is no help when a tree holds six packs.
  *
  * `license` and `attribution` are required and non-empty: seeding fails without them
- * (NFR-6).
+ * (NFR-6). `author` is required for the same reason and has no default (ADR-0028): it is the
+ * attributable party `sources.author` and `/credits` name, and the only other place it is
+ * written down is inside the prose of `attribution`.
  */
 const RulesetIdentity = z.strictObject({
   /** Ruleset slug, stable across versions, e.g. `dnd5e-srd`. */
@@ -53,6 +55,8 @@ const RulesetIdentity = z.strictObject({
   name: z.string().min(1),
   kind: RulesetKind,
   extends: BaseRef.nullable(),
+  /** Who holds the rights to this edition, e.g. `Wizards of the Coast LLC`. */
+  author: z.string().min(1),
   license: z.string().min(1),
   sourceUrl: z.url(),
   attribution: z.string().min(1),

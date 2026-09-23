@@ -11,15 +11,24 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:migrate": "tsx src/bin/db.ts migrate",
+    "db:seed": "tsx src/bin/db.ts seed",
+    "db:reset": "tsx src/bin/db.ts reset",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@rules-engine-kit/engine": "workspace:*",
+    "better-sqlite3": "^12.11.1",
+    "drizzle-orm": "^0.44.7",
     "yaml": "^2.8.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "drizzle-kit": "^0.31.11",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "tsx": "^4.21.1"
   }
 }

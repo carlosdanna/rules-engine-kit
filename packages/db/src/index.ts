@@ -1,12 +1,19 @@
 /**
- * Drizzle schema, migrations, seeds and the content loader. Depends on the
- * engine, never the reverse. Tables and scripts land in M3; the content loader
- * (`./content`) is here now, because `pnpm content:lint` needs it and the seeds
- * will read the same trees.
+ * Drizzle schema, migrations, seeds and the content loader. Depends on the engine, never the
+ * reverse (M3).
+ *
+ * `./schema` is the tables, `./seed` is what fills them from `content/` and `scenarios/`, and
+ * `./content` is the loader both the seeds and `pnpm content:lint` read trees with. `./client`
+ * is the only place the database is opened, because the pragmas the seeded/user split depends
+ * on are not SQLite's defaults.
  */
 import { ENGINE_VERSION } from '@rules-engine-kit/engine';
 
+export { type Db, openDb } from './client';
 export * from './content';
+export { CONTENT_DIR, DEFAULT_DB_PATH, MIGRATIONS_DIR, REPO_ROOT, SCENARIOS_DIR } from './paths';
+export * from './schema';
+export * from './seed';
 
 /** Bumped when the stored schema changes in a way seeds have to migrate across. */
 export const DB_SCHEMA_VERSION = '0.0.0';

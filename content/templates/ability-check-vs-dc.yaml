@@ -6,8 +6,11 @@
 # cannot express null, so making this one would have forced a sentinel string.
 id: ability-check-vs-dc
 name: Ability check against a DC
+description: >-
+  One ability check against a fixed DC, with an optional skill proficiency: the smallest thing
+  the d20 phases resolve without an attack.
 tags: [check, d20]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.1, srd-5.2.1]
 params:
   actor: { type: fixture, kind: actor, default: fighter-3 }

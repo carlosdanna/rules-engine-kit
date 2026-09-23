@@ -52,6 +52,7 @@ describe('a tree with one of everything wrong with it', () => {
         'schema',
         'missing-license',
         'missing-attribution',
+        'missing-author',
         'missing-citation',
         'unknown-fact',
         'unsupported-operator',

@@ -13,6 +13,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { type ContentDocs, lintContent } from '../../src/content';
+import { TEMPLATE_SCHEMA_VERSION } from '../../src/schema';
 
 const MANIFEST = {
   id: 'dnd5e-srd',
@@ -20,6 +21,7 @@ const MANIFEST = {
   name: 'SRD 5.2.1',
   kind: 'base',
   extends: null,
+  author: 'Wizards of the Coast LLC',
   license: 'CC-BY-4.0',
   sourceUrl: 'https://www.dndbeyond.com/srd',
   attribution: 'This work includes material from the System Reference Document 5.2.1.',
@@ -76,7 +78,7 @@ describe('a clean pack', () => {
   });
 });
 
-describe('licence and attribution (NFR-6)', () => {
+describe('licence, attribution and author (NFR-6, ADR-0028)', () => {
   it('names a missing licence rather than dumping a schema error', () => {
     const { license: _license, ...unlicensed } = MANIFEST;
     const [issue] = lintContent(tree([], { manifest: unlicensed }));
@@ -92,6 +94,11 @@ describe('licence and attribution (NFR-6)', () => {
   it('names a missing attribution', () => {
     const { attribution: _attribution, ...unattributed } = MANIFEST;
     expect(codes(tree([], { manifest: unattributed }))).toContain('missing-attribution');
+  });
+
+  it('names a missing author, which `sources.author` is seeded from (ADR-0028)', () => {
+    const { author: _author, ...anonymous } = MANIFEST;
+    expect(codes(tree([], { manifest: anonymous }))).toContain('missing-author');
   });
 
   it('treats an empty licence as missing, not as a licence', () => {
@@ -331,7 +338,8 @@ describe('schema errors', () => {
           doc: {
             id: 'melee',
             name: 'Melee',
-            schemaVersion: 1,
+            description: 'A melee attack.',
+            schemaVersion: TEMPLATE_SCHEMA_VERSION,
             suggestedProfiles: ['srd-5.2.1'],
             params: { mode: { type: 'enum', values: ['melee'], default: 'ranged' } },
             skeleton: {},

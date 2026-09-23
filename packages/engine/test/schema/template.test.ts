@@ -14,6 +14,7 @@ import { TEMPLATE_SCHEMA_VERSION, Template } from '../../src/schema';
 const MELEE_ATTACK = {
   id: 'melee-attack',
   name: 'Melee attack',
+  description: 'One creature swings at another, once.',
   tags: ['combat', 'attack'],
   schemaVersion: TEMPLATE_SCHEMA_VERSION,
   suggestedProfiles: ['srd-5.1', 'srd-5.2.1'],
@@ -40,7 +41,9 @@ describe('the documented template', () => {
   });
 
   it('is versioned, so a saved scenario can be migrated (VR-8)', () => {
-    expect(() => Template.parse({ ...MELEE_ATTACK, schemaVersion: 2 })).toThrow();
+    expect(() =>
+      Template.parse({ ...MELEE_ATTACK, schemaVersion: TEMPLATE_SCHEMA_VERSION + 1 }),
+    ).toThrow();
   });
 
   it('needs at least one suggested profile: a template no profile runs is untestable (NFR-4)', () => {

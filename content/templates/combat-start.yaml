@@ -11,8 +11,11 @@
 # something the creature recovers from in round 2.
 id: combat-start
 name: Combat start, with a surprised creature
+description: >-
+  Initiative for both sides and a first round in which a surprised creature cannot act, over
+  the several steps that difference needs to be visible.
 tags: [combat, surprise, initiative]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.1, srd-5.2.1]
 params:
   attacker: { type: fixture, kind: actor, default: fighter-3 }

@@ -1,0 +1,7 @@
+# Acceptance scenario 1: what being surprised costs you, which is the one place the two SRDs
+# disagree outright. Seeded under 5.1; running it under srd-5.2.1 in /compare is the demo.
+slug: combat-start
+name: Combat start, with a surprised creature
+profile: srd-5.1
+template: combat-start
+params: {}

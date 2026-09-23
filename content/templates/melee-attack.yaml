@@ -9,8 +9,11 @@
 # a fixture rather than editing one.
 id: melee-attack
 name: Melee attack
+description: >-
+  One creature swings at another, once: the plainest attack roll the engine resolves, with the
+  target's conditions, the range and an optional use of inspiration as parameters.
 tags: [combat, attack]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.1, srd-5.2.1]
 params:
   attacker: { type: fixture, kind: actor, default: fighter-3 }

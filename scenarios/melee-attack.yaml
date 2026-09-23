@@ -1,0 +1,7 @@
+# The plainest thing the engine does, at the template's defaults: a third-level fighter swings
+# a longsword at a goblin, once.
+slug: melee-attack
+name: Melee attack
+profile: srd-5.1
+template: melee-attack
+params: {}

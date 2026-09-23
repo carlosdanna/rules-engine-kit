@@ -10,6 +10,7 @@ kind: layer
 # Spans both SRD bases, which is the point of the acceptance scenario: the same house rule
 # stacks on 5.1 and on 5.2.1 (ADR-0018).
 extends: { id: dnd5e-srd, range: ">=5.1.0" }
+author: rules-engine-kit contributors
 license: MIT
 sourceUrl: https://github.com/carlos-danna/rules-engine-kit
 attribution: >-

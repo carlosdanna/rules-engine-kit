@@ -101,4 +101,41 @@ describe('loadContentTree', () => {
   it('refuses a tree the lint would fail, naming the files (ADR-0004)', () => {
     expect(() => loadContentTree(join(FIXTURES, 'content-broken'))).toThrow(/content error/);
   });
+
+  it('refuses a pack with no licence or attribution, so seeding cannot (NFR-6)', () => {
+    // `content-broken/base-5.0.0` declares neither, and nothing downstream gets a chance to
+    // write an unattributed row: the loader lints before it normalises.
+    expect(() => loadContentTree(join(FIXTURES, 'content-broken'))).toThrow(
+      /every pack declares a licence|attribution/,
+    );
+  });
+
+  it('carries the profiles it reads, which the seeds need (ADR-0026)', () => {
+    const loaded = loadContentTree(join(FIXTURES, 'content-ok'));
+    expect(loaded.profiles.map((profile) => profile.slug)).toEqual([
+      'srd-5.2.1',
+      'srd-5.2.1+flanking',
+    ]);
+  });
+
+  it('reads no scenarios unless it is given a directory of them (ADR-0028)', () => {
+    expect(loadContentTree(join(FIXTURES, 'content-ok')).scenarios).toEqual([]);
+  });
+});
+
+describe('the two loaders agree about the fields ADR-0028 added', () => {
+  const OK = join(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures', 'content-ok');
+
+  it("carry the pack's author through to the same value", () => {
+    const [viaContent] = loadContentTree(GOLDEN_PACK).packs;
+    expect(viaContent?.author).toBe(loadPack(GOLDEN_PACK).author);
+    expect(viaContent?.author).toBe('Wizards of the Coast LLC');
+  });
+
+  it("carry a template's description and schema version through to the same value", () => {
+    const [viaCli] = loadTemplates(OK);
+    const [viaContent] = loadContentTree(OK).templates;
+    expect(viaContent?.description).toBe(viaCli?.description);
+    expect(viaContent?.schemaVersion).toBe(viaCli?.schemaVersion);
+  });
 });

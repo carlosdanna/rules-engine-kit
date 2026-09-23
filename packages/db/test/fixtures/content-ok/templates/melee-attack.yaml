@@ -3,8 +3,11 @@
 # explicit. The loader tests render this with its defaults, so it has to mean something.
 id: melee-attack
 name: Melee attack
+description: >-
+  A loader fixture: the smallest template that names a fixture, a condition list and a roll
+  choice.
 tags: [combat, attack]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.2.1]
 params:
   attacker: { type: fixture, kind: actor, default: goblin }

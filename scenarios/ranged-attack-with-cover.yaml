@@ -1,0 +1,6 @@
+# Half cover, where the same rule has to reach both the target's AC and its Dexterity saves.
+slug: ranged-attack-with-cover
+name: Ranged attack against a target in cover
+profile: srd-5.1
+template: ranged-attack-with-cover
+params: {}

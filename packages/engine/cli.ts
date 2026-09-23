@@ -36,6 +36,7 @@ import type {
   Template,
 } from './src/schema';
 import { Situation } from './src/schema';
+import { buildFixtureIndex, renderTemplate } from './src/templates';
 import { narrateTrace, narrativeContextFromSituation, type TraceLevel } from './src/trace';
 
 class CliError extends Error {
@@ -56,6 +57,13 @@ function readJson(path: string): unknown {
   } catch (error) {
     throw new CliError(`cannot read ${path}: ${(error as Error).message}`);
   }
+}
+
+/** YAML is a superset of JSON, so one parser reads both and a `.json` scenario still works. */
+const readYamlOrJson = readYaml;
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 /**
@@ -170,11 +178,50 @@ export function loadPacks(dirs: readonly string[]): LoadedProfile {
   return { packs, facts: [...facts.values()] };
 }
 
+/**
+ * A situation file, in either shape ADR-0028 allows.
+ *
+ * A document with a `situation` key is a scenario envelope and the situation is inside it; a
+ * document naming a `template` is rendered here, against the profile the envelope names and the
+ * content tree `--content` points at. Anything else is a bare `Situation`, which is what
+ * `test/golden/` writes and what an exported situation is.
+ *
+ * The rendering path is why this is worth the twenty lines: the six scenarios this repository
+ * ships are template calls, so without it `pnpm engine run --situation scenarios/melee-attack.yaml`
+ * — the command `docs/content-authoring.md` has always shown — would not run any of them.
+ */
+export function loadSituation(file: string, contentRoot: string): Situation {
+  const doc = readYamlOrJson(file);
+
+  if (isObject(doc) && 'situation' in doc) return Situation.parse(doc.situation);
+  if (!isObject(doc) || !('template' in doc)) return Situation.parse(doc);
+
+  const id = doc.template;
+  const profileSlug = doc.profile;
+  if (typeof id !== 'string' || typeof profileSlug !== 'string') {
+    throw new CliError(
+      `${file} names a template but no profile to render it against (ADR-0026, ADR-0028)`,
+    );
+  }
+
+  const template = loadTemplates(contentRoot).find((candidate) => candidate.id === id);
+  if (template === undefined) {
+    throw new CliError(`${file} renders template '${id}', which ${contentRoot} does not declare`);
+  }
+
+  const index = buildFixtureIndex(loadFixtures(contentRoot));
+  return renderTemplate(template, doc.params ?? {}, index, profileSlug);
+}
+
 const USAGE = `pnpm engine run --packs <dir>[,<dir>...] --situation <file> --seed <s>
-                [--forced <file>] [--narrative] [--trace-level full|fired-only]
+                [--content <dir>] [--forced <file>] [--narrative]
+                [--trace-level full|fired-only]
 
   --packs        ordered pack directories, base first (ADR-0018)
-  --situation    a situation JSON file
+  --situation    a situation, or a scenario envelope naming a template (ADR-0028);
+                 YAML or JSON
+  --content      the content tree a template-form scenario renders against
+                 (default: content)
   --seed         the RNG seed; the same seed gives the same run (NFR-1)
   --forced       JSON of forced dice, keyed by roll id (ADR-0011), e.g.
                  { "r1-fighter/attack:fighter": [4, 17] }
@@ -208,6 +255,7 @@ export function main(argv: readonly string[]): number {
     options: {
       packs: { type: 'string' },
       situation: { type: 'string' },
+      content: { type: 'string' },
       seed: { type: 'string' },
       forced: { type: 'string' },
       narrative: { type: 'boolean', default: false },
@@ -237,7 +285,7 @@ export function main(argv: readonly string[]): number {
     );
   }
 
-  const situation = Situation.parse(readJson(situationPath));
+  const situation = loadSituation(situationPath, values.content ?? 'content');
   const forcedRolls =
     values.forced === undefined ? undefined : (readJson(values.forced) as Record<RollId, number[]>);
 

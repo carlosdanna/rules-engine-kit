@@ -1,0 +1,7 @@
+# Bless cast in round one and attacked under for three, so the duration expires inside the
+# timeline rather than at the end of it.
+slug: buffed-round
+name: Buffed round — Bless over three rounds
+profile: srd-5.1
+template: buffed-round
+params: {}

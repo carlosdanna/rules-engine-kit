@@ -10,8 +10,11 @@
 # the numeric channel with its own stack key — two castings would not stack.
 id: buffed-round
 name: Buffed round — Bless over three rounds
+description: >-
+  Bless cast in round one and attacked under for three rounds, so the duration expires inside
+  the timeline rather than at the end of it.
 tags: [spell, bless, duration, attack]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.1, srd-5.2.1]
 params:
   caster: { type: fixture, kind: actor, default: acolyte }

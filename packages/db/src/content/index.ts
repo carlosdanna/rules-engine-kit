@@ -4,12 +4,15 @@
  * authored shorthand *means* is `packages/engine/src/content`'s, and stays pure (ADR-0020).
  */
 
+export { ContentLoadError } from './errors';
 export {
   type ContentLintReport,
   lintContentTree,
 } from './lint';
-export { ContentLoadError, type LoadedContent, loadContentPack, loadContentTree } from './load';
+export { type LoadedContent, loadContentPack, loadContentTree } from './load';
 export { displayPath, type ReadResult, readYamlDoc } from './read';
+export { isTemplateScenario, type LoadedScenario, ScenarioFile } from './scenario';
+export { loadScenarioDoc, loadScenarios, type ScenarioSources } from './scenarios';
 export {
   type DiscoveredContent,
   discoverContent,

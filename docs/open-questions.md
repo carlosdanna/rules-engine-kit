@@ -14,9 +14,10 @@ Q22, Q23 and Q25 were found while closing Q7–Q20 and while writing the SRD pac
 settled two more that only became visible once there was a template to write, and recorded
 them with Q24. All are listed below.
 
-`scenarios/` does not exist at the repo root, although `content-authoring.md` and
-`architecture.md` both refer to it. Rendering the six starter templates is the obvious way to
-populate it and no decision is blocking that — it is work not yet done, not a question.
+ADR-0027 and ADR-0028 were written during M3 for three gaps no question had been raised for:
+what a seeded row's primary key is, what `content_hash` is taken over, and what a file in
+`scenarios/` is. `scenarios/` now exists — rendering the six starter templates was the obvious
+way to populate it, and was work not yet done rather than a question.
 
 Settled: Q1–Q6 by ADR-0005 to ADR-0010, Q13–Q15 by ADR-0011 to ADR-0013 (2026-09-21),
 Q7–Q12 and Q16–Q20 by ADR-0015 to ADR-0019, Q21 by ADR-0021, Q22 by ADR-0023, Q23 by

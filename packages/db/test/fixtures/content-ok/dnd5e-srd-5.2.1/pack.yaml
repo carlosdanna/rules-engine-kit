@@ -3,6 +3,7 @@ version: 5.2.1
 name: SRD 5.2.1 (loader fixture)
 kind: base
 extends: null
+author: Wizards of the Coast LLC
 license: CC-BY-4.0
 sourceUrl: https://www.dndbeyond.com/srd
 attribution: >-

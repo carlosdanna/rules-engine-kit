@@ -1,0 +1,6 @@
+# The smallest d20 resolution the phases run without an attack.
+slug: ability-check-vs-dc
+name: Ability check against a DC
+profile: srd-5.1
+template: ability-check-vs-dc
+params: {}

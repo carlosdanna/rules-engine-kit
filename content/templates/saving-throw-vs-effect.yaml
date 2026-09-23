@@ -7,8 +7,11 @@
 # (`cover.half.dex-save`), which is the contrast the template is for.
 id: saving-throw-vs-effect
 name: Saving throw against an effect
+description: >-
+  One creature saves against an effect at a given DC, the shape every condition and spell in
+  the core subset is applied through.
 tags: [save, d20, condition]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.1, srd-5.2.1]
 params:
   saver: { type: fixture, kind: actor, default: fighter-3 }

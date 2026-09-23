@@ -9,7 +9,7 @@ and anything accepted there and not written down here is a shape only the loader
 can be run without a database at any point:
 
 ```sh
-pnpm engine run --packs content/dnd5e-srd-5.2.1 --situation scenarios/melee-attack.json \
+pnpm engine run --packs content/dnd5e-srd-5.1 --situation scenarios/melee-attack.yaml \
   --seed demo --narrative
 ```
 
@@ -83,6 +83,7 @@ version: 5.2.1          # semver; published versions are immutable
 name: SRD 5.2.1         # what a reader sees in the profile picker
 kind: base              # base | layer
 extends: null           # for layers: { id: dnd5e-srd, range: "^5.2.0" }
+author: Wizards of the Coast LLC   # who the content is attributed to; seeds `sources.author`
 license: CC-BY-4.0
 sourceUrl: https://www.dndbeyond.com/srd
 attribution: >-
@@ -379,8 +380,10 @@ FR-19). `renderTemplate` fills the holes, inlines every fixture it names and ret
 ```yaml
 id: melee-attack
 name: Melee attack
+description: >-          # one or two sentences; what /templates lists under the name
+  One creature swings at another, once.
 tags: [combat, attack]
-schemaVersion: 1
+schemaVersion: 2
 suggestedProfiles: [srd-5.1, srd-5.2.1]
 params:
   attacker: { type: fixture, kind: actor, default: fighter-3 }
@@ -468,3 +471,42 @@ It also **warns** when a rule in that profile can request a reroll on a roll the
 declares no `rollChoices` entry for. Defaulting to die 0 is a silent decision rather than a
 broken one, but on an advantage pair it decides which of two dice is replaced, and nobody
 chose it.
+
+## Scenario
+
+A ready-made situation, in `scenarios/` at the repository root rather than in `content/`: a
+scenario is a *use* of the content rather than part of it, which is why `content:lint` never
+sees one and why `db:seed` reads the two directories separately.
+
+A file there is an **envelope** (ADR-0028), in one of two forms. A **template call**, which is
+what all six starter scenarios are:
+
+```yaml
+slug: melee-attack        # stable id; also the seeded row's primary key (ADR-0027)
+name: Melee attack
+profile: srd-5.1          # the profile it is *rendered* against; it picks the fixture variant
+template: melee-attack    # a template id from content/templates/
+params: {}                # omitted or empty renders with the template's declared defaults
+```
+
+The situation is rendered at load time, by the same `renderTemplate` the golden cases use. It
+is not stored in the file, so it cannot go stale: a template change fails a test instead of
+leaving a copy of its old output behind. `profile` is a render input only — which profile a
+saved scenario is later *run* under is chosen every time, in the playground or on the command
+line.
+
+Or a **literal situation**, which is what a user scenario exported from the app comes back as
+(ADR-0004) and what a blank-slate scenario is (FR-18):
+
+```yaml
+slug: my-situation
+name: Something I built by hand
+situation: { schemaVersion: 3, actors: [...], timeline: [...] }
+```
+
+Exactly one of `template` and `situation`. YAML and JSON are both read, and
+`pnpm engine run --situation` takes either form as well as a bare `Situation`.
+
+Correcting a fixture is taken up by **re-rendering** a scenario from its `template` and
+`params`. There is no per-scenario override: once the data is inlined, an override is an edited
+situation (ADR-0017).

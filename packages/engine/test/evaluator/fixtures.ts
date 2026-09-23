@@ -118,6 +118,7 @@ export function base(rules: RuleEntry[], overrides: Partial<RulesetVersion> = {}
     name: 'SRD 5.2.1 (test fixture)',
     kind: 'base',
     extends: null,
+    author: 'Wizards of the Coast LLC',
     license: 'CC-BY-4.0',
     sourceUrl: 'https://www.dndbeyond.com/srd',
     attribution: 'SRD 5.2.1',

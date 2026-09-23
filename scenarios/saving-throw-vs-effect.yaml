@@ -1,0 +1,6 @@
+# The shape every condition and spell in the core subset is applied through.
+slug: saving-throw-vs-effect
+name: Saving throw against an effect
+profile: srd-5.1
+template: saving-throw-vs-effect
+params: {}
