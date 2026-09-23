@@ -12,6 +12,7 @@ const routes = [
   { path: '/', heading: 'Rules Engine Kit', evidence: 'versioned rules engine' },
   { path: '/rulesets', heading: 'Rulesets', evidence: 'dnd5e-srd@5.1.0' },
   { path: '/templates', heading: 'Templates', evidence: 'Melee attack' },
+  { path: '/scenarios', heading: 'Scenarios', evidence: 'ranged-attack-with-cover' },
   { path: '/credits', heading: 'Credits', evidence: 'Wizards of the Coast LLC' },
   {
     path: '/rulesets/dnd5e-srd/5.1.0',

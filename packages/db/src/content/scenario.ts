@@ -66,3 +66,48 @@ export type LoadedScenario = {
   templateId: string | null;
   params: Record<string, unknown> | null;
 };
+
+/**
+ * What the app is allowed to write (ADR-0029).
+ *
+ * These live beside `ScenarioFile` rather than in `apps/web` for two reasons. `zod` is not a
+ * dependency of the web app and does not resolve from it, so a server action has no way to
+ * build a schema of its own; and a saved scenario and an exported file are the same thing in
+ * two shapes, so the rules about what a slug or a name may be belong in one place.
+ *
+ * `ScenarioBody` is the discriminated pair FR-18 creates: a template call, which the action
+ * renders server-side, or a literal situation typed into the JSON tab. What gets stored is a
+ * situation either way (ADR-0017) — the template arm additionally keeps `template_id` and
+ * `params`, which is what a fixture correction is later taken up through.
+ */
+
+/** Lowercase, digits, single hyphens — what `slugify` produces, checked at the boundary. */
+export const ScenarioSlug = z
+  .string()
+  .min(1)
+  .max(80)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'a slug is lowercase words joined by single hyphens');
+
+export const ScenarioName = z.string().trim().min(1).max(120);
+
+export const ScenarioBody = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('template'),
+    templateId: z.string().min(1),
+    /** The profile the template renders against; a render input, never stored (ADR-0028). */
+    profile: z.string().min(1),
+    params: z.record(z.string().min(1), z.unknown()),
+  }),
+  z.strictObject({
+    kind: z.literal('literal'),
+    situation: Situation,
+  }),
+]);
+export type ScenarioBody = z.infer<typeof ScenarioBody>;
+
+export const ScenarioInput = z.strictObject({
+  slug: ScenarioSlug,
+  name: ScenarioName,
+  body: ScenarioBody,
+});
+export type ScenarioInput = z.infer<typeof ScenarioInput>;

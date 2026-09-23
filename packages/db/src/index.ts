@@ -14,6 +14,7 @@ export * from './content';
 export { CONTENT_DIR, DEFAULT_DB_PATH, MIGRATIONS_DIR, REPO_ROOT, SCENARIOS_DIR } from './paths';
 export * from './schema';
 export * from './seed';
+export { isValidSlug, slugify, uniqueSlug } from './slug';
 
 /** Bumped when the stored schema changes in a way seeds have to migrate across. */
 export const DB_SCHEMA_VERSION = '0.0.0';

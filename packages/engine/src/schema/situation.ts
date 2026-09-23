@@ -211,3 +211,39 @@ export const Situation = z
     }
   });
 export type Situation = z.infer<typeof Situation>;
+
+/**
+ * The smallest thing that parses: what a blank-slate scenario starts from (FR-18).
+ *
+ * It lives here rather than in the app because every constraint it satisfies is a property
+ * of the schema directly above it — five required keys with no defaults, `actors` and
+ * `timeline` non-empty, a step whose `actorId` resolves — and a `SITUATION_SCHEMA_VERSION`
+ * bump should break one file next to the literal it invalidates. Pure and constant, so
+ * `test/purity.test.ts` stays green and the browser can call it (NFR-3).
+ *
+ * All six abilities are written out although `z.record(Ability, …)` would accept fewer: a
+ * missing one passes the schema and throws as an unknown fact when a rule reads it.
+ */
+export function blankSituation(): Situation {
+  return {
+    schemaVersion: SITUATION_SCHEMA_VERSION,
+    actors: [
+      {
+        id: 'actor',
+        name: 'New actor',
+        abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+        proficiencyBonus: 2,
+        ac: 10,
+        hp: 10,
+        hpCurrent: 10,
+        conditions: [],
+        resistances: [],
+        vulnerabilities: [],
+      },
+    ],
+    items: {},
+    /** One turn taking no action: time still ticks, and nothing has to be chosen yet. */
+    timeline: [{ id: 'r1-actor', round: 1, actorId: 'actor', action: null }],
+    intents: {},
+  };
+}

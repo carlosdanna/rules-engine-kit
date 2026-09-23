@@ -184,7 +184,8 @@ while content is being written.
 | --- | --- |
 | `/` | Overview, quick-run a sample |
 | `/scenarios` | List; "New" → blank, from template, duplicate |
-| `/scenarios/new?template=…` | Form generated from template params, fixture pickers, JSON preview |
+| `/scenarios/new?template=…` | Form generated from template params, fixture pickers, JSON preview; `?from=<slug>` duplicates, no param is a blank slate |
+| `/scenarios/[slug]`, `/scenarios/[slug]/edit` | One saved scenario, exported as YAML; user rows can be edited and deleted (ADR-0029) |
 | `/playground` | Edit situation, choose profile + seed, run, trace viewer |
 | `/compare` | One situation, two profiles, side by side + diff |
 | `/rulesets`, `/rulesets/[slug]/[version]` | Browse rules with citations |

@@ -22,6 +22,10 @@ export function openDb(path: string = DEFAULT_DB_PATH) {
   const sqlite = new Database(path);
   sqlite.pragma('journal_mode = WAL');
   sqlite.pragma('foreign_keys = ON');
+  // WAL lets a reader and a writer coexist, but two *writers* still serialise, and
+  // `better-sqlite3` is synchronous: without a timeout, `db:seed` run against a live dev
+  // server throws `SQLITE_BUSY` on the first contended write instead of waiting a moment.
+  sqlite.pragma('busy_timeout = 5000');
 
   return { db: drizzle(sqlite, { schema }), sqlite, path };
 }

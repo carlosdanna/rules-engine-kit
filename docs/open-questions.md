@@ -14,6 +14,9 @@ Q22, Q23 and Q25 were found while closing Q7–Q20 and while writing the SRD pac
 settled two more that only became visible once there was a template to write, and recorded
 them with Q24. All are listed below.
 
+ADR-0029 was written during M4 for four more: how a user scenario's slug is minted, what a
+duplicate keeps, what an export emits, and how the app writes at all.
+
 ADR-0027 and ADR-0028 were written during M3 for three gaps no question had been raised for:
 what a seeded row's primary key is, what `content_hash` is taken over, and what a file in
 `scenarios/` is. `scenarios/` now exists — rendering the six starter templates was the obvious
@@ -43,6 +46,11 @@ look rather than fixed mid-task.
   and `/rulesets/[slug]/[version]` display `sources.name`, which is per-edition by
   construction (ADR-0027). A ruleset slug spans editions, so the honest fix is probably to
   drop the column rather than to pick a winner.
+
+- **Saved user scenarios cannot be migrated (VR-8).** `scenarios.schema_version` is stored and
+  compared, but nothing migrates a row across a `SITUATION_SCHEMA_VERSION` bump. Until something
+  does, such a row is shown and exported as stored and refused by `/scenarios/[slug]/edit`
+  (ADR-0029). Not a question — the requirement is clear — but work not yet done.
 
 ## Top risks
 

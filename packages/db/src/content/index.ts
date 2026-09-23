@@ -11,8 +11,22 @@ export {
 } from './lint';
 export { type LoadedContent, loadContentPack, loadContentTree } from './load';
 export { displayPath, type ReadResult, readYamlDoc } from './read';
-export { isTemplateScenario, type LoadedScenario, ScenarioFile } from './scenario';
+export {
+  isTemplateScenario,
+  type LoadedScenario,
+  ScenarioBody,
+  ScenarioFile,
+  ScenarioInput,
+  ScenarioName,
+  ScenarioSlug,
+} from './scenario';
 export { loadScenarioDoc, loadScenarios, type ScenarioSources } from './scenarios';
+export {
+  type ExportableScenario,
+  literalScenarioFile,
+  scenarioFileName,
+  scenarioToYaml,
+} from './serialize';
 export {
   type DiscoveredContent,
   discoverContent,

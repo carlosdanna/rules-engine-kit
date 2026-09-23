@@ -20,6 +20,7 @@
 import { eq } from 'drizzle-orm';
 import type { Db } from '../client';
 import type { LoadedContent } from '../content';
+import { ContentLoadError } from '../content/errors';
 import { fixtures, templates } from '../schema/content';
 import { profileLayers, profiles } from '../schema/profiles';
 import { rules, rulesets, rulesetVersions } from '../schema/rulesets';
@@ -75,6 +76,42 @@ export type SeedOptions = {
 
 export type SeedSummary = Record<keyof SeedRows, number>;
 
+/**
+ * Turn a deferred foreign-key failure into something the author can act on.
+ *
+ * The check runs at the commit, so SQLite reports `FOREIGN KEY constraint failed` and names
+ * neither the row nor the table. In practice there is one way for a rebuild to produce it: a
+ * user scenario created from a template (ADR-0029) whose template has since left `content/`,
+ * so the id it references is not among the rows being written back. Re-reading the scenarios
+ * after the rollback is cheap and turns the message into a list of names.
+ *
+ * Anything else is rethrown untouched — a guess dressed up as a diagnostic is worse than the
+ * original error.
+ */
+function explainOrphans(db: Db, rows: SeedRows, thrown: unknown): unknown {
+  if (!/FOREIGN KEY constraint failed/i.test(String(thrown))) return thrown;
+
+  const incoming = new Set(rows.templates.map((template) => template.id));
+  const orphans = db
+    .select({ id: scenarios.id, name: scenarios.name, templateId: scenarios.templateId })
+    .from(scenarios)
+    .where(eq(scenarios.origin, 'user'))
+    .all()
+    .filter((row) => row.templateId !== null && !incoming.has(row.templateId));
+
+  if (orphans.length === 0) return thrown;
+
+  const listed = orphans
+    .map((row) => `  '${row.id}' (${row.name}) → template '${row.templateId}'`)
+    .join('\n');
+
+  return new ContentLoadError(
+    `these user scenarios were built from templates that content/ no longer declares:\n${listed}\n` +
+      'Nothing was changed. Re-save each one from the app (it stores the situation either way, ' +
+      'ADR-0017), or discard them with `pnpm db:reset --hard`.',
+  );
+}
+
 export function seedDatabase(
   db: Db,
   content: LoadedContent,
@@ -84,11 +121,15 @@ export function seedDatabase(
 
   if (options.guardPublished) assertContentUnchanged(db, rows.rulesetVersions);
 
-  db.transaction((tx) => {
-    tx.run('PRAGMA defer_foreign_keys = ON');
-    deleteSeeded(tx as unknown as Db);
-    insertSeeded(tx as unknown as Db, rows);
-  });
+  try {
+    db.transaction((tx) => {
+      tx.run('PRAGMA defer_foreign_keys = ON');
+      deleteSeeded(tx as unknown as Db);
+      insertSeeded(tx as unknown as Db, rows);
+    });
+  } catch (thrown) {
+    throw explainOrphans(db, rows, thrown);
+  }
 
   return {
     sources: rows.sources.length,
