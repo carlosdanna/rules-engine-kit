@@ -32,6 +32,18 @@ Q7 and Q11 were closed as **won't-do**: VR-5 and VR-6 are out of scope for this 
 ADR-0024 closed Q23 the same way, by deleting the obligation rather than meeting it: the
 `effect` fixture kind is gone from `architecture.md` instead of being specified.
 
+## Known defects
+
+Not questions — things that are wrong and cheap to fix, recorded where the next person will
+look rather than fixed mid-task.
+
+- `rulesets.name` is last-pack-wins. `rowsFromContent` keys the `rulesets` rows by `pack.id`
+  in a `Map`, so the row for `dnd5e-srd` carries the name of whichever edition was seeded
+  last — currently `SRD 5.2.1`, for both 5.1.0 and 5.2.1. Nothing reads it yet: `/rulesets`
+  and `/rulesets/[slug]/[version]` display `sources.name`, which is per-edition by
+  construction (ADR-0027). A ruleset slug spans editions, so the honest fix is probably to
+  drop the column rather than to pick a winner.
+
 ## Top risks
 
 | Risk | Mitigation |

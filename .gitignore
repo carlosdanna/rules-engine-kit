@@ -13,3 +13,7 @@ coverage/
 next-env.d.ts
 .vercel
 build/
+.codegraph/
+test-results/
+playwright-report/
+.playwright/

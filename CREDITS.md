@@ -41,9 +41,11 @@ Runtime:
 | [Tailwind CSS](https://tailwindcss.com) | MIT |
 | [shadcn/ui](https://ui.shadcn.com) | MIT |
 | [Base UI](https://base-ui.com) | MIT |
+| [TanStack Table](https://tanstack.com/table) | MIT |
 | [Lucide](https://lucide.dev) | ISC |
 | [class-variance-authority](https://cva.style) | Apache-2.0 |
 | [cn](https://github.com/shadcn-ui/cn) | MIT |
+| [server-only](https://www.npmjs.com/package/server-only) | MIT |
 | [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) | MIT |
 | [Zod](https://zod.dev) | MIT |
 | [yaml](https://eemeli.org/yaml) | ISC |
@@ -57,6 +59,7 @@ Tooling:
 | [TypeScript](https://www.typescriptlang.org) | Apache-2.0 |
 | [Biome](https://biomejs.dev) | MIT OR Apache-2.0 |
 | [Vitest](https://vitest.dev) | MIT |
+| [Playwright](https://playwright.dev) | Apache-2.0 |
 | [fast-check](https://fast-check.dev) | MIT |
 | [lefthook](https://lefthook.dev) | MIT |
 | [pnpm](https://pnpm.io) | MIT |

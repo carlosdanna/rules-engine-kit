@@ -27,9 +27,19 @@ export default function HomePage() {
 
       <section className="space-y-2 border-t pt-6 text-sm text-muted-foreground">
         <p>
-          This is the M0 shell: the workspace, the app layout and the tooling. The engine, the
-          database and the seeded content arrive in later milestones, so every route above is still
-          a placeholder.
+          <Link href="/rulesets" className="underline underline-offset-4 hover:text-foreground">
+            Rulesets
+          </Link>
+          ,{' '}
+          <Link href="/templates" className="underline underline-offset-4 hover:text-foreground">
+            Templates
+          </Link>{' '}
+          and{' '}
+          <Link href="/credits" className="underline underline-offset-4 hover:text-foreground">
+            Credits
+          </Link>{' '}
+          read the seeded database. The playground, compare, scenarios and profiles routes are still
+          placeholders.
         </p>
       </section>
     </div>
