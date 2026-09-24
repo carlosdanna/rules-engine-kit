@@ -3,9 +3,9 @@ import { expect, test } from '@playwright/test';
 /**
  * `/compare`, `/profiles` and the ruleset Diff tab (FR-16, VR-9, ADR-0031).
  *
- * Read-only, like the rest of the suite: saving a profile writes a user row to the shared
- * `data/app.db`, which `db:reset` would never remove. Saving and deleting are covered by
- * `lib/profiles/write.test.ts` against an in-memory database.
+ * Read-only: saving and deleting a profile are covered by `lib/profiles/write.test.ts`
+ * against an in-memory database, and `flows.spec.ts` reaches `/compare` from a scenario it
+ * created.
  */
 
 test('/compare defaults to SRD 5.1 against SRD 5.2.1, with both sides and a summary', async ({

@@ -3,9 +3,9 @@ import { expect, test } from '@playwright/test';
 /**
  * `/playground` and `/evaluations/[id]`, without running anything (ADR-0030).
  *
- * Read-only for the same reason as `scenarios.spec.ts`: a run is stored, the suite shares
- * `data/app.db`, and `db:reset` never deletes a user row. Running, storing and replaying are
- * asserted in `lib/evaluations/run.test.ts` against an in-memory database instead.
+ * Read-only, like `scenarios.spec.ts`: a run through the UI is `flows.spec.ts`'s, and the
+ * storing and replaying rules are asserted in `lib/evaluations/run.test.ts` against an
+ * in-memory database.
  */
 
 test('the playground offers the seeded scenarios, profiles and a seed', async ({ page }) => {
