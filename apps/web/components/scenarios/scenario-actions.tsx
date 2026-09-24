@@ -11,7 +11,7 @@
 import Link from 'next/link';
 import { useActionState, useState, useTransition } from 'react';
 import { deleteScenarioAction, exportScenarioAction } from '@/app/scenarios/actions';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -73,11 +73,12 @@ export function ScenarioActions({ slug, name, editable }: ScenarioActionsProps) 
 
       {editable && (
         <>
-          <Button
-            variant="outline"
-            size="sm"
-            render={<Link href={`/scenarios/${slug}/edit`}>Edit</Link>}
-          />
+          <Link
+            href={`/scenarios/${slug}/edit`}
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+          >
+            Edit
+          </Link>
           <Button variant="destructive" size="sm" onClick={() => setConfirming(true)}>
             Delete
           </Button>

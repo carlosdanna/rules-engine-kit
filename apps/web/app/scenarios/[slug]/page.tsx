@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ScenarioActions } from '@/components/scenarios/scenario-actions';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getScenario } from '@/lib/queries';
 import { isEditable } from '@/lib/scenarios/write';
@@ -43,14 +43,12 @@ export default async function ScenarioPage({ params }: PageProps<'/scenarios/[sl
         </div>
 
         <div className="flex flex-wrap items-start gap-2">
-          <Button
-            size="sm"
-            render={
-              <Link href={`/playground?scenario=${encodeURIComponent(scenario.id)}`}>
-                Open in playground
-              </Link>
-            }
-          />
+          <Link
+            href={`/playground?scenario=${encodeURIComponent(scenario.id)}`}
+            className={buttonVariants({ size: 'sm' })}
+          >
+            Open in playground
+          </Link>
           <ScenarioActions
             slug={scenario.id}
             name={scenario.name}

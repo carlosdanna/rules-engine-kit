@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 
 export default function EvaluationNotFound() {
   return (
@@ -9,7 +9,9 @@ export default function EvaluationNotFound() {
         A stored run is addressed by the uuid it was given when it ran (ADR-0027). None matches this
         one — <code>pnpm db:reset --hard</code> deletes every stored run.
       </p>
-      <Button variant="outline" render={<Link href="/playground">Go to the playground</Link>} />
+      <Link href="/playground" className={buttonVariants({ variant: 'outline' })}>
+        Go to the playground
+      </Link>
     </section>
   );
 }

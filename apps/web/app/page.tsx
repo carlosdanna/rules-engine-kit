@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -68,11 +68,13 @@ export default function HomePage() {
                   {row.expected.b}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    size="sm"
+                  <Link
+                    href={compareHref(row)}
                     aria-label={`Compare: ${row.title}`}
-                    render={<Link href={compareHref(row)}>Compare</Link>}
-                  />
+                    className={buttonVariants({ size: 'sm' })}
+                  >
+                    Compare
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}
@@ -82,10 +84,18 @@ export default function HomePage() {
 
       <section className="space-y-3 border-t pt-6">
         <div className="flex flex-wrap gap-3">
-          <Button render={<Link href="/playground">Open the playground</Link>} />
-          <Button variant="outline" render={<Link href="/scenarios">Scenarios</Link>} />
-          <Button variant="outline" render={<Link href="/profiles">Profiles</Link>} />
-          <Button variant="outline" render={<Link href="/rulesets">Rulesets</Link>} />
+          <Link href="/playground" className={buttonVariants()}>
+            Open the playground
+          </Link>
+          <Link href="/scenarios" className={buttonVariants({ variant: 'outline' })}>
+            Scenarios
+          </Link>
+          <Link href="/profiles" className={buttonVariants({ variant: 'outline' })}>
+            Profiles
+          </Link>
+          <Link href="/rulesets" className={buttonVariants({ variant: 'outline' })}>
+            Rulesets
+          </Link>
         </div>
         <p className="max-w-2xl text-sm text-muted-foreground">
           Make a scenario from a template or a blank slate, run it in the playground under any
