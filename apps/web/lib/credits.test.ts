@@ -28,37 +28,17 @@ describe('the real CREDITS.md', () => {
 
   it('credits every runtime dependency this app declares', async () => {
     const groups = await readSoftwareCredits();
-    const credited = groups.flatMap((group) => group.entries.map((entry) => entry.name));
+    const runtime = groups.find((group) => group.label === 'Runtime');
+    const credited = runtime?.entries.map((entry) => entry.name) ?? [];
     const pkg = JSON.parse(
       await readFile(join(repoRoot(), 'apps', 'web', 'package.json'), 'utf8'),
     ) as { dependencies: Record<string, string> };
 
-    // Workspace packages are this repository; everything else is someone else's work and
-    // needs a line. The map is from package name to the name CREDITS.md prints.
-    const names: Record<string, string> = {
-      '@base-ui/react': 'Base UI',
-      '@dnd-kit/core': 'dnd kit',
-      '@dnd-kit/sortable': 'dnd kit',
-      '@dnd-kit/utilities': 'dnd kit',
-      '@tanstack/react-table': 'TanStack Table',
-      'class-variance-authority': 'class-variance-authority',
-      cn: 'cn',
-      'drizzle-orm': 'Drizzle ORM',
-      'lucide-react': 'Lucide',
-      next: 'Next.js',
-      react: 'React',
-      'react-dom': 'React',
-      'react-resizable-panels': 'react-resizable-panels',
-      shadcn: 'shadcn/ui',
-      'server-only': 'server-only',
-      'tw-animate-css': 'tw-animate-css',
-    };
-
+    // Workspace packages are this repository; everything else is someone else's work and needs
+    // a line. `pnpm credits:deps` prints the package name, so the two compare directly.
     for (const dep of Object.keys(pkg.dependencies)) {
       if (dep.startsWith('@rules-engine-kit/')) continue;
-      const printed = names[dep];
-      expect(printed, `no CREDITS.md name mapped for ${dep}`).toBeDefined();
-      expect(credited, `${dep} is not credited`).toContain(printed);
+      expect(credited, `${dep} is not credited`).toContain(dep);
     }
   });
 });

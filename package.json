@@ -13,6 +13,7 @@
     "engine": "tsx packages/engine/cli.ts",
     "lint": "biome check .",
     "content:lint": "tsx packages/db/src/content/bin/content-lint.ts",
+    "credits:deps": "tsx packages/db/src/bin/credits-deps.ts",
     "db:migrate": "pnpm --filter @rules-engine-kit/db db:migrate",
     "db:seed": "pnpm --filter @rules-engine-kit/db db:seed",
     "db:reset": "pnpm --filter @rules-engine-kit/db db:reset",
@@ -20,7 +21,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "test:e2e": "pnpm --filter @rules-engine-kit/web exec playwright test",
-    "check": "pnpm lint && pnpm typecheck && pnpm content:lint && pnpm test",
+    "check": "pnpm lint && pnpm typecheck && pnpm content:lint && pnpm credits:deps --check && pnpm test",
     "prepare": "lefthook install"
   },
   "devDependencies": {
