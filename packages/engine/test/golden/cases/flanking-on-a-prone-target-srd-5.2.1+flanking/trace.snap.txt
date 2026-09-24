@@ -1,0 +1,1594 @@
+{
+  "traceSchemaVersion": 3,
+  "events": [
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "declare",
+      "kind": "rule",
+      "ruleKey": "action.use-object",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Utilize [Action]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 0
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.half",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone",
+            "flanked"
+          ]
+        }
+      ],
+      "seq": 1
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.three-quarters",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone",
+            "flanked"
+          ]
+        }
+      ],
+      "seq": 2
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.half.dex-save",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 3
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "cover.three-quarters.dex-save",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Combat > Cover"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 4
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.strength",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Attack Rolls > Ability Modifier"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 5
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.dexterity",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Attack Rolls > Ability Modifier"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 6
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.ability-modifier.finesse",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Equipment > Weapon Properties > Finesse"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "action.weapon.properties",
+          "value": [
+            "versatile"
+          ]
+        }
+      ],
+      "seq": 7
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.str",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 8
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.dex",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 9
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.con",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 10
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.int",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 11
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.wis",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 12
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "d20.ability-modifier.cha",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > D20 Tests > Ability Checks"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/any"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 13
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "attack.proficiency",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Proficiency > Proficiency Bonus"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 14
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacked",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Prone [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone",
+            "flanked"
+          ]
+        },
+        {
+          "path": "action.rangeFt",
+          "value": 5
+        }
+      ],
+      "seq": 15
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacked-at-range",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Prone [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/2/>"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone",
+            "flanked"
+          ]
+        },
+        {
+          "path": "action.rangeFt",
+          "value": 5
+        }
+      ],
+      "seq": 16
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.prone.attacking",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Prone [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 17
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.attacked",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Restrained [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone",
+            "flanked"
+          ]
+        }
+      ],
+      "seq": 18
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.attacking",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Restrained [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 19
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.restrained.dex-save",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Restrained [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 20
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.invisible.attacked",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Invisible [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone",
+            "flanked"
+          ]
+        }
+      ],
+      "seq": 21
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.invisible.attacking",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Invisible [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 22
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.poisoned.attack",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Poisoned [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 23
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "condition.poisoned.check",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Poisoned [Condition]"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 24
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "house.flanking",
+      "citation": {
+        "source": "house-flanking",
+        "section": "House rules > Flanking"
+      },
+      "provenance": {
+        "layer": "house-flanking",
+        "version": "1.0.0",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        },
+        {
+          "path": "target.conditions",
+          "value": [
+            "prone",
+            "flanked"
+          ]
+        }
+      ],
+      "seq": 25
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "combat.surprise",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Surprise"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 26
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "weapon.mastery.sap.disadvantage",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Equipment > Mastery Properties > Sap"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 27
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "spell.bless.attack",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Spells > Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 28
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "spell.bless.save",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Spells > Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 29
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "rule",
+      "ruleKey": "inspiration.spend",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Rules Glossary > Heroic Inspiration"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "intents.useInspiration",
+          "value": false
+        }
+      ],
+      "seq": 30
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "modifiers",
+      "kind": "stacking",
+      "target": "actor.ac.effective",
+      "actorId": "target",
+      "applied": [],
+      "dropped": [],
+      "seq": 31
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "roll",
+      "kind": "roll",
+      "rollId": "r1-attacker/attack:attacker",
+      "target": {
+        "kind": "attack",
+        "actorId": "attacker"
+      },
+      "mode": "advantage",
+      "modeInputs": [
+        {
+          "ruleKey": "condition.prone.attacked",
+          "mode": "advantage"
+        },
+        {
+          "ruleKey": "house.flanking",
+          "mode": "advantage"
+        }
+      ],
+      "dice": [
+        4,
+        17
+      ],
+      "transforms": [],
+      "diceAfterTransforms": [
+        4,
+        17
+      ],
+      "kept": 17,
+      "keptIndex": 1,
+      "forced": true,
+      "modifiers": [
+        {
+          "ruleKey": "attack.ability-modifier.strength",
+          "modifierType": "ability",
+          "policy": "highest",
+          "value": 3,
+          "fromFact": "actor.abilityMod.str"
+        },
+        {
+          "ruleKey": "attack.proficiency",
+          "modifierType": "proficiency",
+          "stackKey": "proficiency",
+          "policy": "unique",
+          "value": 2,
+          "fromFact": "actor.proficiencyBonus"
+        }
+      ],
+      "dropped": [],
+      "total": 22,
+      "seq": 32
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "compare",
+      "kind": "compare",
+      "rollId": "r1-attacker/attack:attacker",
+      "target": {
+        "kind": "attack",
+        "actorId": "attacker"
+      },
+      "total": 22,
+      "dc": 15,
+      "result": "hit",
+      "seq": 33
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.weapon-dice",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        }
+      ],
+      "seq": 34
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.strength",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 35
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.dexterity",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Damage Rolls"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        }
+      ],
+      "seq": 36
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.ability-modifier.finesse",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Equipment > Weapon Properties > Finesse"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/4/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "action.mode",
+          "value": "melee"
+        },
+        {
+          "path": "action.weapon.properties",
+          "value": [
+            "versatile"
+          ]
+        }
+      ],
+      "seq": 37
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.critical",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Critical Hits"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "step.attack.natural",
+          "value": 17
+        }
+      ],
+      "seq": 38
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.resistance",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "action.weapon.damage.type",
+          "value": "slashing"
+        },
+        {
+          "path": "target.resistances",
+          "value": []
+        }
+      ],
+      "seq": 39
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "rule",
+      "ruleKey": "damage.vulnerability",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Playing the Game > Damage and Healing > Resistance and Vulnerability"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/3/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "action.weapon.damage.type",
+          "value": "slashing"
+        },
+        {
+          "path": "target.vulnerabilities",
+          "value": []
+        }
+      ],
+      "seq": 40
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "damage",
+      "kind": "stacking",
+      "target": "damage.total",
+      "actorId": "attacker",
+      "applied": [
+        {
+          "ruleKey": "damage.weapon-dice",
+          "modifierType": "weapon",
+          "policy": "sum",
+          "value": 5,
+          "rolled": {
+            "expr": "1d8",
+            "dice": [
+              5
+            ]
+          },
+          "fromFact": "action.weapon.damage.dice"
+        },
+        {
+          "ruleKey": "damage.ability-modifier.strength",
+          "modifierType": "ability",
+          "policy": "highest",
+          "value": 3,
+          "fromFact": "actor.abilityMod.str"
+        }
+      ],
+      "dropped": [],
+      "seq": 41
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "apply",
+      "kind": "rule",
+      "ruleKey": "spell.bless.cast",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Spells > Spell Descriptions > Bless"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/0/=="
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        }
+      ],
+      "seq": 42
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "apply",
+      "kind": "rule",
+      "ruleKey": "weapon.mastery.sap",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Equipment > Mastery Properties > Sap"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "fired",
+      "conditionResult": true,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "step.attack.result",
+          "value": "hit"
+        },
+        {
+          "path": "action.weapon",
+          "value": "longsword"
+        },
+        {
+          "path": "action.weapon.mastery",
+          "value": "sap"
+        }
+      ],
+      "seq": 43
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "apply",
+      "kind": "effectApplied",
+      "effectId": "eff-1",
+      "sourceRuleKey": "weapon.mastery.sap",
+      "onActorId": "target",
+      "expiresAt": {
+        "kind": "beyondTimeline",
+        "wouldExpireInRound": 2
+      },
+      "seq": 44
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "apply",
+      "kind": "rule",
+      "ruleKey": "weapon.mastery.sap.expend",
+      "citation": {
+        "source": "srd-5.2.1",
+        "section": "Equipment > Mastery Properties > Sap"
+      },
+      "provenance": {
+        "layer": "dnd5e-srd",
+        "version": "5.2.1",
+        "op": "add"
+      },
+      "deltas": [],
+      "status": "skipped",
+      "reason": {
+        "kind": "conditionFalse",
+        "failedAt": "/all/1/in"
+      },
+      "conditionResult": false,
+      "factsRead": [
+        {
+          "path": "action.type",
+          "value": "attack"
+        },
+        {
+          "path": "actor.conditions",
+          "value": []
+        }
+      ],
+      "seq": 45
+    },
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "phase": "apply",
+      "kind": "damageApplied",
+      "actorId": "target",
+      "damageType": "slashing",
+      "amount": 8,
+      "hpBefore": 10,
+      "hpAfter": 2,
+      "overflow": 0,
+      "deltas": [
+        {
+          "path": "actor.target.hpCurrent",
+          "from": 10,
+          "to": 2
+        }
+      ],
+      "seq": 46
+    }
+  ]
+}

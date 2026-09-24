@@ -1,0 +1,8 @@
+{
+  "description": "SRD 5.1 + house flanking: a melee attack on a creature that is both prone and flanked has advantage once — two grants, one advantage, two d20s.",
+  "profile": [
+    "../../../../../../content/dnd5e-srd-5.1",
+    "../../../../../../content/house-flanking"
+  ],
+  "seed": "golden"
+}

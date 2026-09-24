@@ -1,0 +1,16 @@
+round 1, r1-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > D20 Tests > Attack Rolls > Ability Modifier)
+  [modifiers] attack.proficiency fired (srd-5.2.1 · Playing the Game > Proficiency > Proficiency Bonus)
+  [modifiers] condition.prone.attacked fired (srd-5.2.1 · Rules Glossary > Prone [Condition])
+  [modifiers] house.flanking fired (house-flanking · House rules > Flanking)
+  [stacking] actor.ac.effective for Goblin Warrior: no contributions
+  [roll] attack:Fighter (3rd level): advantage from condition.prone.attacked + advantage from house.flanking ⇒ advantage
+         dice [4,17]
+         kept 17 +3 ability +2 proficiency = 22
+  [compare] 22 vs DC 15 → hit
+  [damage] damage.weapon-dice fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.2.1 · Playing the Game > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +5 weapon +3 ability
+  [apply] weapon.mastery.sap fired (srd-5.2.1 · Equipment > Mastery Properties > Sap)
+  [apply] weapon.mastery.sap on Goblin Warrior, until round 2, beyond this timeline
+  [apply] Goblin Warrior takes 8 slashing damage, 10 → 2 hp

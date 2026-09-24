@@ -1,0 +1,3 @@
+round 1, r1-attacker — Fighter (3rd level)
+  [declare] action.use-object fired (srd-5.1 · Combat > Actions in Combat > Use an Object)
+  [event] action.use-object

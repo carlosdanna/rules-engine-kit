@@ -1,0 +1,5 @@
+{
+  "description": "SRD 5.2.1: the same action under the same rule key is called Utilize.",
+  "profile": ["../../../../../../content/dnd5e-srd-5.2.1"],
+  "seed": "golden"
+}

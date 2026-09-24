@@ -1,0 +1,14 @@
+round 1, r1-attacker — Fighter (3rd level)
+  [modifiers] attack.ability-modifier.strength fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] attack.proficiency fired (srd-5.1 · Combat > Making an Attack > Attack Rolls > Modifiers to the Roll)
+  [modifiers] condition.prone.attacked fired (srd-5.1 · Appendix PH-A: Conditions > Prone)
+  [modifiers] house.flanking fired (house-flanking · House rules > Flanking)
+  [stacking] actor.ac.effective for Goblin: no contributions
+  [roll] attack:Fighter (3rd level): advantage from condition.prone.attacked + advantage from house.flanking ⇒ advantage
+         dice [4,17]
+         kept 17 +3 ability +2 proficiency = 22
+  [compare] 22 vs DC 15 → hit
+  [damage] damage.weapon-dice fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [damage] damage.ability-modifier.strength fired (srd-5.1 · Combat > Damage and Healing > Damage Rolls)
+  [stacking] damage.total for Fighter (3rd level): +5 weapon +3 ability
+  [apply] Goblin takes 8 slashing damage, 7 → 0 hp, 1 past 0 discarded

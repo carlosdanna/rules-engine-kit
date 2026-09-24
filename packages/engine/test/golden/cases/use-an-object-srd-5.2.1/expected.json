@@ -1,0 +1,32 @@
+{
+  "steps": [
+    {
+      "stepId": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "rolls": [],
+      "comparisons": [],
+      "damage": [],
+      "halted": null
+    }
+  ],
+  "finalState": {
+    "actors": {
+      "attacker": {
+        "id": "attacker",
+        "hpCurrent": 28,
+        "conditions": []
+      }
+    },
+    "activeEffects": []
+  },
+  "events": [
+    {
+      "stepId": "r1-attacker",
+      "event": "action.use-object",
+      "data": {
+        "action": "Utilize"
+      }
+    }
+  ]
+}

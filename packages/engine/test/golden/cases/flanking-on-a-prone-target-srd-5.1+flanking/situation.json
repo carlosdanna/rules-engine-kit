@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 3,
+  "actors": [
+    {
+      "id": "attacker",
+      "name": "Fighter (3rd level)",
+      "abilities": {
+        "str": 16,
+        "dex": 12,
+        "con": 14,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "proficiencyBonus": 2,
+      "ac": 16,
+      "hp": 28,
+      "hpCurrent": 28,
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
+    },
+    {
+      "id": "target",
+      "name": "Goblin",
+      "abilities": {
+        "str": 8,
+        "dex": 14,
+        "con": 10,
+        "int": 10,
+        "wis": 8,
+        "cha": 8
+      },
+      "proficiencyBonus": 2,
+      "ac": 15,
+      "hp": 7,
+      "hpCurrent": 7,
+      "conditions": ["prone", "flanked"],
+      "resistances": [],
+      "vulnerabilities": []
+    }
+  ],
+  "items": {
+    "longsword": {
+      "slug": "longsword",
+      "name": "Longsword",
+      "damage": {
+        "dice": {
+          "count": 1,
+          "sides": 8
+        },
+        "type": "slashing"
+      },
+      "properties": ["versatile"],
+      "mastery": "sap"
+    }
+  },
+  "timeline": [
+    {
+      "id": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "action": {
+        "type": "attack",
+        "mode": "melee",
+        "targetId": "target",
+        "weapon": "longsword",
+        "rangeFt": 5
+      }
+    }
+  ],
+  "intents": {
+    "rollChoices": {
+      "r1-attacker/attack:attacker": {
+        "rerollDieIndex": 0
+      }
+    },
+    "useInspiration": false
+  }
+}

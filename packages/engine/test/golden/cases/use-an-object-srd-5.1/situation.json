@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 3,
+  "actors": [
+    {
+      "id": "attacker",
+      "name": "Fighter (3rd level)",
+      "abilities": {
+        "str": 16,
+        "dex": 12,
+        "con": 14,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "proficiencyBonus": 2,
+      "ac": 16,
+      "hp": 28,
+      "hpCurrent": 28,
+      "conditions": [],
+      "resistances": [],
+      "vulnerabilities": []
+    }
+  ],
+  "items": {},
+  "timeline": [
+    {
+      "id": "r1-attacker",
+      "round": 1,
+      "actorId": "attacker",
+      "action": {
+        "type": "useObject"
+      }
+    }
+  ],
+  "intents": {}
+}
