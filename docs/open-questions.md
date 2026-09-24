@@ -14,6 +14,9 @@ Q22, Q23 and Q25 were found while closing Q7–Q20 and while writing the SRD pac
 settled two more that only became visible once there was a template to write, and recorded
 them with Q24. All are listed below.
 
+ADR-0030 was written during M4 for three more: where the app gets a runnable profile, what a
+replay runs, and what deleting a scenario with runs does.
+
 ADR-0029 was written during M4 for four more: how a user scenario's slug is minted, what a
 duplicate keeps, what an export emits, and how the app writes at all.
 
@@ -51,6 +54,16 @@ look rather than fixed mid-task.
   compared, but nothing migrates a row across a `SITUATION_SCHEMA_VERSION` bump. Until something
   does, such a row is shown and exported as stored and refused by `/scenarios/[slug]/edit`
   (ADR-0029). Not a question — the requirement is clear — but work not yet done.
+
+- **`diffOutcomes` and `diffTraces` do not exist (FR-16).** M2 lists them as implemented;
+  nothing in `packages/engine/src` defines either. `/evaluations/[id]`'s Replay therefore
+  compares a replay with the stored run by canonical JSON and names the first trace event that
+  diverges, rather than showing a diff (ADR-0030). `/compare` needs them, so they belong with it.
+
+- **A pack rebuilt from rows does not reproduce `content_hash`.** `rules` has no position
+  column, so `rulesetVersionFromRows` reads entries back in `rule_key` order rather than authored
+  order. The resolved profile hash is unaffected — `resolveProfile` sorts — and that is the hash
+  a run records, so nothing depends on it yet (ADR-0030).
 
 ## Top risks
 

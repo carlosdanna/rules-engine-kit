@@ -10,6 +10,8 @@ import 'server-only';
  */
 
 import {
+  type EvaluationRow,
+  evaluations,
   type FixtureRow,
   fixtures,
   type ProfileRow,
@@ -255,4 +257,17 @@ export async function conditionNames(): Promise<string[]> {
     if (match?.[1] !== undefined) names.add(match[1]);
   }
   return [...names].sort();
+}
+
+/* ---------------------------------------------------------------- evaluations (VR-7) */
+
+/** `null` when the id names no run, which the page turns into a 404. */
+export async function getEvaluation(id: string): Promise<EvaluationRow | null> {
+  const row = (await getDb().select().from(evaluations).where(eq(evaluations.id, id)).limit(1))[0];
+  return row ?? null;
+}
+
+export async function getProfile(id: string): Promise<ProfileRow | null> {
+  const row = (await getDb().select().from(profiles).where(eq(profiles.id, id)).limit(1))[0];
+  return row ?? null;
 }

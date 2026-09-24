@@ -85,6 +85,7 @@ function rulesetVersionRows(packs: readonly RulesetVersion[]): SeedRows['ruleset
     baseRulesetId: pack.extends?.id ?? null,
     baseRange: pack.extends?.range ?? null,
     contentHash: contentHashOf(pack),
+    facts: pack.facts,
     sourceId: packVersionId(pack),
   }));
 }

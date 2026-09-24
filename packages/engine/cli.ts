@@ -20,6 +20,8 @@ import { parseArgs } from 'node:util';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 import {
+  FactMergeError,
+  mergeFacts,
   normalizeFixture,
   normalizePack,
   normalizeProfilesFile,
@@ -140,42 +142,17 @@ export type LoadedProfile = {
 };
 
 /**
- * Load an ordered stack of packs.
- *
- * The fact merge is the part worth explaining. `RulesetVersion.facts` is per pack, but
- * `evaluate` takes a single flat `facts` array and builds one registry from it, and
- * `createFactRegistry` throws on a duplicate path — so a layer that redeclares a path its
- * base already declared would fail at evaluation rather than at load. A redeclaration is
- * normal and harmless when the two agree (a layer repeating a path it reads), so the first
- * declaration wins; a genuine disagreement about a path's `type` is a content bug and is
- * reported as one.
+ * Load an ordered stack of packs. The fact merge — first declaration wins, a disagreement
+ * throws — is `mergeFacts` in `src/`, shared with the web app (ADR-0030).
  */
 export function loadPacks(dirs: readonly string[]): LoadedProfile {
   const packs = dirs.map(loadPack);
-  const facts = new Map<string, FactDefinition>();
-
-  for (const pack of packs) {
-    for (const fact of pack.facts) {
-      const existing = facts.get(fact.path);
-      if (existing === undefined) {
-        facts.set(fact.path, fact);
-      } else if (
-        existing.type !== fact.type ||
-        existing.derived !== fact.derived ||
-        existing.nullable !== fact.nullable
-      ) {
-        const describe = (declaration: FactDefinition) =>
-          `${declaration.type}${declaration.derived ? ' (derived)' : ''}` +
-          `${declaration.nullable ? ' (nullable)' : ''}`;
-        throw new CliError(
-          `fact '${fact.path}' is declared twice with different meanings: ` +
-            `${describe(existing)} then ${describe(fact)}`,
-        );
-      }
-    }
+  try {
+    return { packs, facts: mergeFacts(packs) };
+  } catch (error) {
+    if (error instanceof FactMergeError) throw new CliError(error.message);
+    throw error;
   }
-
-  return { packs, facts: [...facts.values()] };
 }
 
 /**

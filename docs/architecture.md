@@ -141,16 +141,16 @@ and groups events by `(stepId, phase)`.
 | --- | --- | --- |
 | `sources` | seed | name, author, url, license, attribution_text |
 | `rulesets` | seed | slug, name, kind (`base`/`layer`) |
-| `ruleset_versions` | seed | ruleset_id, semver, base_ruleset_id, base_range, content_hash, source_id |
+| `ruleset_versions` | seed | ruleset_id, semver, base_ruleset_id, base_range, content_hash, facts, source_id |
 | `rules` | seed | ruleset_version_id, rule_key, op, phase, priority, tags, condition, effects, citation, interpretation |
 | `fixtures` | seed | slug, kind (`actor`/`item`), ruleset_scope, data, interpretation, source_id |
 | `templates` | seed | slug, name, description, tags, params_schema, skeleton, suggested_profiles, schema_version |
 | `profiles` | both | slug, name, resolved_hash, origin (`seed`/`user`). Seeded rows come from `content/profiles.yaml` (ADR-0026) |
 | `profile_layers` | both | profile_id, ruleset_version_id, position |
 | `scenarios` | both | slug, name, situation, template_id?, params?, origin, schema_version |
-| `evaluations` | user | scenario_id, profile_id, profile_hash, seed, engine_version, trace_schema_version, outcome, trace |
+| `evaluations` | user | scenario_id, profile_id, profile_hash, seed, engine_version, trace_schema_version, situation, outcome, trace |
 
-`scenarios.situation` holds the whole timeline; `evaluations.trace` holds the flat event array and its `trace_schema_version`. JSON columns use `text({ mode: 'json' })` typed with Zod-inferred types. `db:seed` and `db:reset` only touch seeded rows; `db:reset --hard` wipes everything.
+`scenarios.situation` holds the whole timeline; `evaluations.trace` holds the flat event array and its `trace_schema_version`. `ruleset_versions.facts` is the pack's fact registry and `evaluations.situation` is the situation as it was run, so the app evaluates and replays from rows alone (ADR-0030). JSON columns use `text({ mode: 'json' })` typed with Zod-inferred types. `db:seed` and `db:reset` only touch seeded rows; `db:reset --hard` wipes everything.
 
 Two things hold across every table, both from ADR-0027. **A seeded row's primary key is a
 deterministic text id** derived from the natural key the content already carries —
@@ -186,10 +186,10 @@ while content is being written.
 | `/scenarios` | List; "New" → blank, from template, duplicate |
 | `/scenarios/new?template=…` | Form generated from template params, fixture pickers, JSON preview; `?from=<slug>` duplicates, no param is a blank slate |
 | `/scenarios/[slug]`, `/scenarios/[slug]/edit` | One saved scenario, exported as YAML; user rows can be edited and deleted (ADR-0029) |
-| `/playground` | Edit situation, choose profile + seed, run, trace viewer |
+| `/playground` | Choose a saved scenario (`?scenario=<slug>`), profile + seed, run and store, trace viewer (ADR-0030) |
 | `/compare` | One situation, two profiles, side by side + diff |
 | `/rulesets`, `/rulesets/[slug]/[version]` | Browse rules with citations |
 | `/templates` | Browse templates and fixtures |
 | `/profiles` | Order layers, see hash and conflicts |
-| `/evaluations/[id]` | Stored run, replay |
+| `/evaluations/[id]` | Stored run, replay on the current engine (not stored), labelled when `engine_version` differs |
 | `/credits` | Rendered from `sources`, linked in the footer |

@@ -51,6 +51,12 @@ export const evaluations = sqliteTable(
     seed: text('seed').notNull(),
     engineVersion: text('engine_version').notNull(),
     traceSchemaVersion: integer('trace_schema_version').notNull(),
+    /**
+     * The situation as it was run. A user scenario can be edited after a run, so without
+     * this a replay would evaluate different input from the run it claims to reproduce
+     * (ADR-0030).
+     */
+    situation: text('situation', { mode: 'json' }).$type<Situation>().notNull(),
     outcome: text('outcome', { mode: 'json' }).$type<Outcome>().notNull(),
     /** The flat, ordered event array (ADR-0014). */
     trace: text('trace', { mode: 'json' }).$type<Trace>().notNull(),

@@ -43,7 +43,11 @@ function runIt() {
 
   const profile = resolveProfile(stack);
   const facts = stack.flatMap((pack) => pack.facts);
-  return { profile, ...evaluate(scenario.situation, profile, { seed: SEED, facts }) };
+  return {
+    profile,
+    situation: scenario.situation,
+    ...evaluate(scenario.situation, profile, { seed: SEED, facts }),
+  };
 }
 
 describe('a stored evaluation (VR-7)', () => {
@@ -51,7 +55,7 @@ describe('a stored evaluation (VR-7)', () => {
     const database = openTestDb();
     try {
       seedDatabase(database.db, seedContent());
-      const { profile, outcome, trace } = runIt();
+      const { profile, situation: SITUATION, outcome, trace } = runIt();
 
       database.db
         .insert(evaluations)
@@ -63,6 +67,7 @@ describe('a stored evaluation (VR-7)', () => {
           seed: SEED,
           engineVersion: ENGINE_VERSION,
           traceSchemaVersion: TRACE_SCHEMA_VERSION,
+          situation: SITUATION,
           outcome,
           trace,
         })
@@ -81,6 +86,7 @@ describe('a stored evaluation (VR-7)', () => {
         traceSchemaVersion: TRACE_SCHEMA_VERSION,
       });
       // Objects, not strings: the `mode: 'json'` columns are what make a viewer possible.
+      expect(stored?.situation).toEqual(SITUATION);
       expect(stored?.outcome).toEqual(outcome);
       expect(stored?.trace).toEqual(trace);
       expect(stored?.trace.events.length).toBeGreaterThan(0);

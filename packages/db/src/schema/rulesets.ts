@@ -17,6 +17,7 @@ import type {
   Citation,
   Condition,
   Effect,
+  FactDefinition,
   Phase,
   RuleEntry,
   RuleOp,
@@ -54,6 +55,12 @@ export const rulesetVersions = sqliteTable(
     baseRange: text('base_range'),
     /** `sha256Hex(canonicalJson(pack))`; `db:seed` refuses to change it (ADR-0027, VR-1). */
     contentHash: text('content_hash').notNull(),
+    /**
+     * The pack's fact registry (`facts.yaml`), in declared order. `evaluate` cannot run
+     * without it, and the app builds its profiles from these rows rather than from
+     * `content/` on disk (ADR-0030).
+     */
+    facts: text('facts', { mode: 'json' }).$type<FactDefinition[]>().notNull(),
     sourceId: text('source_id')
       .notNull()
       .references(() => sources.id),

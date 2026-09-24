@@ -79,6 +79,7 @@ function writeUserRows(database: TestDb): void {
       seed: 'demo',
       engineVersion: ENGINE_VERSION,
       traceSchemaVersion: TRACE_SCHEMA_VERSION,
+      situation: userSituation(),
       outcome: evaluatedOutcome(),
       trace: { traceSchemaVersion: TRACE_SCHEMA_VERSION, events: [] },
     })

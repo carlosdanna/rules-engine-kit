@@ -12,6 +12,12 @@ import { ENGINE_VERSION } from '@rules-engine-kit/engine';
 export { type Db, openDb } from './client';
 export * from './content';
 export { CONTENT_DIR, DEFAULT_DB_PATH, MIGRATIONS_DIR, REPO_ROOT, SCENARIOS_DIR } from './paths';
+export {
+  type LoadedResolvedProfile,
+  loadResolvedProfile,
+  rulesetVersionFromRows,
+  StaleProfileError,
+} from './profile';
 export * from './schema';
 export * from './seed';
 export { isValidSlug, slugify, uniqueSlug } from './slug';

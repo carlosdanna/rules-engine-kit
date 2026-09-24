@@ -22,6 +22,7 @@ import 'server-only';
 
 import {
   type Db,
+  evaluations,
   type ScenarioInput,
   type ScenarioRow,
   scenarios,
@@ -37,7 +38,7 @@ import {
   type Template,
   TemplateRenderError,
 } from '@rules-engine-kit/engine';
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import type { ActionResult, FieldErrors, SavedScenario } from './types';
 
 const fail = (formErrors: string[], fieldErrors: FieldErrors = {}): ActionResult<never> => ({
@@ -200,6 +201,17 @@ export function deleteUserScenario(db: Db, slug: string): ActionResult<null> {
   const existing = db.select().from(scenarios).where(eq(scenarios.id, slug)).all()[0];
   if (existing === undefined) return fail([`no scenario '${slug}'`]);
   if (existing.origin === 'seed') return fail([SEEDED_IS_READ_ONLY]);
+
+  // A stored run is evidence (VR-7), and its `scenario_id` would dangle; refuse rather than
+  // delete it silently (ADR-0030).
+  const runs =
+    db.select({ n: count() }).from(evaluations).where(eq(evaluations.scenarioId, slug)).all()[0]
+      ?.n ?? 0;
+  if (runs > 0) {
+    return fail([
+      `${runs} stored run${runs === 1 ? ' references' : 's reference'} this scenario, so it cannot be deleted`,
+    ]);
+  }
 
   db.delete(scenarios).where(eq(scenarios.id, slug)).run();
   return { ok: true, data: null };

@@ -17,6 +17,7 @@ export {
   type ContentIssueCode,
   lintContent,
 } from './lint';
+export { FactMergeError, mergeFacts } from './mergeFacts';
 export {
   type AuthoredPack,
   normalizeFactsFile,
