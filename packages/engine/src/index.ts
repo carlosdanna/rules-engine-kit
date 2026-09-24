@@ -8,6 +8,7 @@
 export * from './conditions';
 export * from './content';
 export * from './dice';
+export * from './diff';
 export * from './effects';
 export * from './evaluator';
 export * from './resolver';

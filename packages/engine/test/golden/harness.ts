@@ -25,7 +25,7 @@ import { buildFixtureIndex, renderTemplate } from '../../src/templates';
 export const CASES_DIR = join(dirname(fileURLToPath(import.meta.url)), 'cases');
 
 /** The seeded content tree, five directories up from `test/golden/`. */
-const CONTENT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../content');
+export const CONTENT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../content');
 
 /** `case.json`: everything about the run that is not the situation itself. */
 type CaseManifest = {
