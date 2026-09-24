@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { listScenarios, listTemplates } from '@/lib/queries';
+import { listFixtures, listScenarios, listTemplates } from '@/lib/queries';
 import { isEditable } from '@/lib/scenarios/write';
 
 export const metadata = { title: 'Scenarios' };
@@ -18,7 +18,15 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export default async function ScenariosPage() {
-  const [scenarios, templates] = await Promise.all([listScenarios(), listTemplates()]);
+  const [scenarios, templates, fixtures] = await Promise.all([
+    listScenarios(),
+    listTemplates(),
+    listFixtures(),
+  ]);
+  // The guided blank slate offers stat blocks, so only profiles some actor fixture is scoped to:
+  // a user profile has none of its own (ADR-0031), and nothing would resolve under it.
+  const actors = fixtures.filter((fixture) => fixture.kind === 'actor');
+  const starterProfiles = [...new Set(actors.flatMap((fixture) => fixture.rulesetScope))].sort();
 
   return (
     <div className="space-y-8">
@@ -35,6 +43,12 @@ export default async function ScenariosPage() {
         <NewScenarioDialog
           templates={templates.map(({ id, name, description }) => ({ id, name, description }))}
           scenarios={scenarios.map(({ id, name, origin }) => ({ id, name, origin }))}
+          profiles={starterProfiles}
+          actors={actors.map(({ slug, data, rulesetScope }) => ({
+            slug,
+            name: data.name,
+            rulesetScope,
+          }))}
         />
       </section>
 

@@ -8,5 +8,12 @@
 
 export { TemplateRenderError, type TemplateRenderErrorReason } from './errors';
 export { buildFixtureIndex, type FixtureIndex } from './fixtureIndex';
+export {
+  type ActorFixture,
+  type ActorPlacement,
+  actorFromFixture,
+  type ItemFixture,
+  itemFromFixture,
+} from './inline';
 export { type ResolvedParams, resolveParams } from './params';
 export { renderTemplate } from './render';

@@ -71,3 +71,19 @@ test('start from a blank slate, then run it', async ({ page }) => {
 
   await runInPlayground(page, slug);
 });
+
+test('start from picked stat blocks, arm the attacker, then run it', async ({ page }) => {
+  const name = `E2E starter ${stamp()}`;
+
+  await page.goto('/scenarios/new?profile=srd-5.2.1&actors=fighter-3,goblin&action=attack');
+  await page.getByRole('combobox', { name: 'Add weapon from fixture' }).click();
+  await page.getByRole('option', { name: /^Longsword/ }).click();
+
+  await page.getByRole('combobox', { name: 'Step 1 weapon' }).click();
+  await page.getByRole('option', { name: 'Longsword' }).click();
+  await page.getByRole('tab', { name: 'JSON' }).click();
+  await expect(page.getByLabel('Situation JSON')).toHaveValue(/"weapon": "longsword"/);
+
+  const slug = await saveScenario(page, name);
+  await runInPlayground(page, slug);
+});

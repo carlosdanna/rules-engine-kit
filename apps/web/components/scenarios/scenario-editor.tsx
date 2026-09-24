@@ -22,8 +22,10 @@
 
 import type { TemplateRow } from '@rules-engine-kit/db';
 import {
+  type ActorFixture,
   buildFixtureIndex,
   type Fixture,
+  type ItemFixture,
   renderTemplate,
   type Situation,
   Situation as SituationSchema,
@@ -66,6 +68,8 @@ export type ScenarioEditorProps = {
   conditions: string[];
   /** Set when a stored row's params no longer fit its template, so the link was dropped. */
   drifted?: boolean;
+  /** Which profile's fixtures the literal form offers first; the guided starter's pick. */
+  initialProfile?: string | undefined;
 };
 
 /** A `TemplateRow` is a `Template` plus the columns the database needs to address it. */
@@ -92,11 +96,20 @@ export function ScenarioEditor({
   profiles,
   conditions,
   drifted = false,
+  initialProfile,
 }: ScenarioEditorProps) {
   const [name, setName] = useState(initialName);
   const [slug, setSlug] = useState(initialSlug);
   /** Once the slug is touched it stops following the name: it is a key, not a caption. */
   const [slugPinned, setSlugPinned] = useState(editing !== null);
+
+  /**
+   * Starts as the seed's mode and only ever moves template → literal, when "Customize further"
+   * detaches the rendered situation from its template (ADR-0032).
+   */
+  const [mode, setMode] = useState<EditorSeed['mode']>(seed.mode);
+  const [confirmingDetach, setConfirmingDetach] = useState(false);
+  const detached = seed.mode === 'template' && mode === 'literal';
 
   const [params, setParams] = useState<Record<string, unknown>>(
     seed.mode === 'template' ? seed.params : {},
@@ -104,8 +117,13 @@ export function ScenarioEditor({
   const [text, setText] = useState(() =>
     seed.mode === 'literal' ? JSON.stringify(seed.situation, null, 2) : '',
   );
+  /**
+   * In template mode, what the template renders against; in literal mode, which fixtures the
+   * form offers. A render input either way, never stored (ADR-0028) — and after a detach the
+   * form keeps offering the variants the template was rendered with.
+   */
   const [profile, setProfile] = useState(
-    template?.suggestedProfiles[0] ?? profiles[0] ?? 'srd-5.1',
+    template?.suggestedProfiles[0] ?? initialProfile ?? profiles[0] ?? 'srd-5.1',
   );
 
   const [pending, startTransition] = useTransition();
@@ -123,7 +141,7 @@ export function ScenarioEditor({
 
   /** The preview: a pure function of the form, so there is no sync to get wrong. */
   const rendered = useMemo(() => {
-    if (seed.mode !== 'template' || template === null) return null;
+    if (mode !== 'template' || template === null) return null;
     try {
       return {
         ok: true as const,
@@ -135,12 +153,12 @@ export function ScenarioEditor({
       }
       throw thrown;
     }
-  }, [seed.mode, template, params, index, profile]);
+  }, [mode, template, params, index, profile]);
 
   /** Deferred, so a long situation does not re-parse on the keystroke that typed it. */
   const deferredText = useDeferredValue(text);
   const parsed = useMemo(() => {
-    if (seed.mode !== 'literal') return null;
+    if (mode !== 'literal') return null;
     let json: unknown;
     try {
       json = JSON.parse(deferredText);
@@ -156,23 +174,35 @@ export function ScenarioEditor({
             (issue) => `${issue.path.join('.') || '<root>'} — ${issue.message}`,
           ),
         };
-  }, [seed.mode, deferredText]);
+  }, [mode, deferredText]);
 
   const fixturesOfKind = (kind: 'actor' | 'item'): FixtureChoice[] =>
     fixtures
       .filter((fixture) => fixture.kind === kind && fixture.rulesetScope.includes(profile))
       .map((fixture) => ({ slug: fixture.slug, name: fixture.data.name, kind }));
 
+  const inProfile = fixtures.filter((fixture) => fixture.rulesetScope.includes(profile));
+  const actorFixtures = inProfile.filter((f): f is ActorFixture => f.kind === 'actor');
+  const itemFixtures = inProfile.filter((f): f is ItemFixture => f.kind === 'item');
+
+  /** The last good render becomes the literal text; from here on it is edited like any other. */
+  function detach(): void {
+    if (rendered?.ok !== true) return;
+    setText(JSON.stringify(rendered.situation, null, 2));
+    setMode('literal');
+    setConfirmingDetach(false);
+  }
+
   function onSubmit(): void {
     const body =
-      seed.mode === 'template' && template !== null
+      mode === 'template' && template !== null
         ? { kind: 'template' as const, templateId: template.id, profile, params }
         : { kind: 'literal' as const, situation: parsed?.stage === 'ok' ? parsed.situation : null };
 
     startTransition(() => submit({ slug, name, body }));
   }
 
-  const blocked = seed.mode === 'literal' ? parsed?.stage !== 'ok' : rendered?.ok !== true;
+  const blocked = mode === 'literal' ? parsed?.stage !== 'ok' : rendered?.ok !== true;
 
   return (
     <form
@@ -225,7 +255,14 @@ export function ScenarioEditor({
         </Field>
       </div>
 
-      {seed.mode === 'template' && template !== null ? (
+      {detached && template !== null && (
+        <p className="rounded-lg border border-dashed px-3 py-2 text-sm text-muted-foreground">
+          Detached from “{template.name}”. You can change anything now; saving stores this as a
+          literal situation, without the template and params behind it (ADR-0032).
+        </p>
+      )}
+
+      {mode === 'template' && template !== null ? (
         <div className="grid gap-6 lg:grid-cols-2">
           <section className="space-y-4">
             <header className="space-y-1">
@@ -271,16 +308,68 @@ export function ScenarioEditor({
           </section>
 
           <section className="space-y-2">
-            <h2 className="font-medium">Situation</h2>
+            <header className="flex items-center justify-between gap-2">
+              <h2 className="font-medium">Situation</h2>
+              {!confirmingDetach && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={rendered?.ok !== true}
+                  onClick={() => setConfirmingDetach(true)}
+                >
+                  Customize further
+                </Button>
+              )}
+            </header>
+            {confirmingDetach && (
+              <div className="space-y-2 rounded-lg border border-dashed px-3 py-2 text-sm">
+                <p className="text-muted-foreground">
+                  Customizing lets you add actors, steps and actions the template has no param for.
+                  The scenario stops being linked to this template: a later fixture correction can
+                  no longer be taken up by re-rendering it (ADR-0017).
+                </p>
+                <div className="flex gap-2">
+                  <Button type="button" size="sm" onClick={detach}>
+                    Detach and customize
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setConfirmingDetach(false)}
+                  >
+                    Keep the template
+                  </Button>
+                </div>
+              </div>
+            )}
             <SituationPreview rendered={rendered} />
           </section>
         </div>
       ) : (
         <Tabs defaultValue="form">
-          <TabsList>
-            <TabsTrigger value="form">Form</TabsTrigger>
-            <TabsTrigger value="json">JSON</TabsTrigger>
-          </TabsList>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <TabsList>
+              <TabsTrigger value="form">Form</TabsTrigger>
+              <TabsTrigger value="json">JSON</TabsTrigger>
+            </TabsList>
+            <Field name="fixtureProfile" className="w-auto">
+              <FieldLabel>Fixtures from</FieldLabel>
+              <Select value={profile} onValueChange={(next) => setProfile(next ?? profile)}>
+                <SelectTrigger aria-label="Fixtures from">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {profiles.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
 
           {/* Both panels stay mounted, so switching tabs keeps the textarea's caret and scroll. */}
           <TabsContent value="form" keepMounted className="space-y-4 pt-2">
@@ -288,6 +377,9 @@ export function ScenarioEditor({
               <SituationForm
                 situation={parsed.situation}
                 onChange={(next) => setText(JSON.stringify(next, null, 2))}
+                actorFixtures={actorFixtures}
+                itemFixtures={itemFixtures}
+                conditions={conditions}
               />
             ) : (
               <div className="space-y-2">

@@ -447,9 +447,11 @@ through.
 
 ### Params
 
-Param types: `fixture`, `number`, `boolean`, `enum`, `conditionList`, `rollChoice`. Anything
-more complex is edited in the JSON tab. Every param carries a `default`, which is what makes
-"renders with its defaults" a check rather than a wish.
+Param types: `fixture`, `number`, `boolean`, `enum`, `conditionList`, `rollChoice`. Anything a
+template does not expose as a param is changed by detaching the scenario from it ("Customize
+further", ADR-0032) and editing the literal situation, whose form covers everything but
+`intents.rollChoices`. Every param carries a `default`, which is what makes "renders with its
+defaults" a check rather than a wish.
 
 A `rollChoice` param declares a per-roll player choice (ADR-0011) — which die a reroll
 touches, declared up front because evaluation never pauses (ADR-0003). One param can serve

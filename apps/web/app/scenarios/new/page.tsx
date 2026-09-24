@@ -1,5 +1,5 @@
 import { slugify, uniqueSlug } from '@rules-engine-kit/db';
-import { blankSituation } from '@rules-engine-kit/engine';
+import { TemplateRenderError } from '@rules-engine-kit/engine';
 import { notFound } from 'next/navigation';
 import { type EditorSeed, ScenarioEditor } from '@/components/scenarios/scenario-editor';
 import {
@@ -10,6 +10,7 @@ import {
   listProfiles,
   takenScenarioIds,
 } from '@/lib/queries';
+import { starterSituation } from '@/lib/scenarios/starter';
 import { editorSeedFor } from '@/lib/scenarios/write';
 
 export const metadata = { title: 'New scenario' };
@@ -20,7 +21,9 @@ const first = (value: string | string[] | undefined): string | undefined =>
   Array.isArray(value) ? value[0] : value;
 
 /**
- * All three ways FR-18 makes a scenario, resolved here rather than in the browser.
+ * All three ways FR-18 makes a scenario, resolved here rather than in the browser. A blank
+ * slate may name a profile and the actor fixtures to start from (`?profile=&actors=a,b` and
+ * `&action=attack`); `starterSituation` inlines them, and the result is edited as a literal.
  *
  * Duplicate is not a third editor: `?from=` is read into the same seed an edit produces, which
  * is what keeps "a copy stays re-renderable" (ADR-0029) a property of one code path. Which of
@@ -31,6 +34,9 @@ export default async function NewScenarioPage({ searchParams }: PageProps<'/scen
   const params = await searchParams;
   const wantedTemplate = first(params.template);
   const duplicateOf = first(params.from);
+  const starterProfile = first(params.profile);
+  const starterActors = (first(params.actors) ?? '').split(',').filter((slug) => slug !== '');
+  const starterAction = first(params.action) === 'attack' ? 'attack' : 'none';
 
   const [fixtures, profiles, conditions, taken] = await Promise.all([
     listFixtures(),
@@ -92,14 +98,31 @@ export default async function NewScenarioPage({ searchParams }: PageProps<'/scen
     );
   }
 
+  // The guided blank slate. A profile nobody seeded, or a slug with no variant under it, is a
+  // link to nothing — the same 404 an unknown `?template=` gets.
+  if (starterProfile !== undefined && !shared.profiles.includes(starterProfile)) notFound();
+  let situation: ReturnType<typeof starterSituation>;
+  try {
+    situation = starterSituation({
+      fixtures,
+      profile: starterProfile ?? shared.profiles[0] ?? '',
+      actorSlugs: starterActors,
+      action: starterAction,
+    });
+  } catch (thrown) {
+    if (thrown instanceof TemplateRenderError) notFound();
+    throw thrown;
+  }
+
   return (
     <NewScenarioLayout title="New scenario">
       <ScenarioEditor
         {...shared}
         initialName="New scenario"
         initialSlug={uniqueSlug('new-scenario', taken)}
-        seed={{ mode: 'literal', situation: blankSituation() }}
+        seed={{ mode: 'literal', situation }}
         template={null}
+        initialProfile={starterProfile}
       />
     </NewScenarioLayout>
   );

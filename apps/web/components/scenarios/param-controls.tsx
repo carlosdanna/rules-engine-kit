@@ -215,18 +215,20 @@ function FixturePicker({
 /**
  * Multi-select over the conditions the seeded rules mention, but open: nothing in the repo
  * enumerates conditions, so the list is harvested from rule keys and a house rule may name one
- * no seeded rule does.
+ * no seeded rule does. The scenario form reuses it for damage types, hence `noun`.
  */
-function ConditionPicker({
+export function ConditionPicker({
   name,
   value,
   suggestions,
   onChange,
+  noun = 'condition',
 }: {
   name: string;
   value: string[];
   suggestions: string[];
-  onChange: (value: unknown) => void;
+  onChange: (value: string[]) => void;
+  noun?: string;
 }) {
   const anchor = useComboboxAnchor();
   const offered = [...new Set([...suggestions, ...value])].sort();
@@ -255,7 +257,7 @@ function ConditionPicker({
       </ComboboxChips>
 
       <ComboboxContent anchor={anchor}>
-        <ComboboxEmpty>no matching condition</ComboboxEmpty>
+        <ComboboxEmpty>no matching {noun}</ComboboxEmpty>
         <ComboboxList>
           {(condition: string) => (
             <ComboboxItem key={condition} value={condition}>

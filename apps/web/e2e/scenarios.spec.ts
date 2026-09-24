@@ -110,7 +110,7 @@ test('an edit in the form view shows up in the JSON tab', async ({ page }) => {
   await page.goto('/scenarios/new');
 
   await page.getByLabel('Name', { exact: true }).first().fill('Keep the name field distinct');
-  await page.locator('#actor-name').fill('Brave goblin');
+  await page.getByLabel('Actor 1 name').fill('Brave goblin');
   await page.getByRole('tab', { name: 'JSON' }).click();
 
   await expect(page.getByLabel('Situation JSON')).toHaveValue(/"name": "Brave goblin"/);
@@ -121,4 +121,59 @@ test('the slug follows the name until it is edited', async ({ page }) => {
 
   await page.getByLabel('Name', { exact: true }).fill('My melee test');
   await expect(page.getByLabel('Slug', { exact: true })).toHaveValue('my-melee-test');
+});
+
+/** The guided blank slate: stat blocks copied in under the chosen profile, first one attacking. */
+test('the guided blank slate starts from the picked actor fixtures', async ({ page }) => {
+  await page.goto('/scenarios/new?profile=srd-5.1&actors=fighter-3,goblin&action=attack');
+
+  await expect(page.getByLabel('Actor 1 name')).toHaveValue('Fighter (3rd level)');
+  await expect(page.getByLabel('Actor 2 name')).toHaveValue('Goblin');
+  await expect(page.getByLabel('Step 1 action')).toContainText('Attack');
+  await expect(page.getByLabel('Step 1 target')).toContainText('Goblin');
+  await expect(page.getByLabel('Step 2 action')).toContainText('No action');
+
+  // The SRD 5.1 goblin, not the 5.2.1 one: the profile picked which variant was inlined.
+  await page.getByRole('tab', { name: 'JSON' }).click();
+  await expect(page.getByLabel('Situation JSON')).toHaveValue(/"hp": 7,/);
+});
+
+test('the dialog’s blank slate carries its picks into the editor', async ({ page }) => {
+  await page.goto('/scenarios');
+  await page.getByRole('button', { name: 'New scenario' }).click();
+  const dialog = page.getByRole('dialog', { name: 'New scenario' });
+  await dialog.getByRole('tab', { name: 'Blank slate' }).click();
+
+  const actors = dialog.getByRole('combobox', { name: 'Actors' });
+  for (const name of ['Fighter (3rd level)', 'Goblin']) {
+    await actors.fill(name);
+    await page
+      .getByRole('option', { name: new RegExp(`^${name.replace(/[()]/g, '\\$&')}`) })
+      .click();
+  }
+  await dialog.getByRole('button', { name: 'Start from blank' }).click();
+
+  await expect(page).toHaveURL(/actors=fighter-3%2Cgoblin&action=attack$/);
+  await expect(page.getByLabel('Step 1 target')).toContainText('Goblin');
+});
+
+test('a starter naming a stat block the profile does not have is a 404', async ({ page }) => {
+  const response = await page.goto('/scenarios/new?profile=srd-5.1&actors=no-such-creature');
+  expect(response?.status()).toBe(404);
+});
+
+test('customizing a template scenario detaches it into the full form', async ({ page }) => {
+  await page.goto('/scenarios/new?template=melee-attack');
+
+  await page.getByRole('button', { name: 'Customize further' }).click();
+  await page.getByRole('button', { name: 'Detach and customize' }).click();
+
+  await expect(page.getByText('Detached from “Melee attack”')).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Form', selected: true })).toBeVisible();
+  // The rendered situation is what is now being edited: both actors and the inlined weapon.
+  await expect(page.getByLabel('Actor 2 name')).toHaveValue('Goblin');
+  await expect(page.getByLabel('Step 1 weapon')).toContainText('Longsword');
+
+  await page.getByRole('button', { name: 'Add blank actor' }).click();
+  await expect(page.getByLabel('Actor 3 name')).toHaveValue('Actor 3');
 });

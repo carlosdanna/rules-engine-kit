@@ -2,6 +2,7 @@ import type { Actor, Item, Json, Situation, Template } from '../schema';
 import { SITUATION_SCHEMA_VERSION, Situation as SituationSchema } from '../schema';
 import { TemplateRenderError } from './errors';
 import type { FixtureIndex } from './fixtureIndex';
+import { type ActorFixture, actorFromFixture, type ItemFixture, itemFromFixture } from './inline';
 import { resolveParams } from './params';
 import { type StepActors, substitute } from './placeholders';
 
@@ -157,25 +158,16 @@ export function renderTemplate(
         'actor',
         profileSlug,
         `skeleton.actors[${index}].fixture`,
-      );
-      const data = fixture.data as Extract<typeof fixture.data, { hp: number }>;
+      ) as ActorFixture;
 
-      return {
-        ...data,
-        id: skeletonActor.id,
-        // A situation starts at full health unless it says otherwise; a scenario that opens
-        // mid-fight says otherwise.
-        hpCurrent: skeletonActor.hpCurrent ?? data.hp,
-        conditions: skeletonActor.conditions ?? [],
-      };
+      return actorFromFixture(fixture, skeletonActor);
     },
   );
 
   const items: Record<string, Item> = {};
   for (const { slug, path } of weaponSlugs(renderedTimeline, 'skeleton.timeline')) {
     if (items[slug] !== undefined) continue;
-    const fixture = fixtures.resolve(slug, 'item', profileSlug, path);
-    items[slug] = { slug: fixture.slug, ...(fixture.data as Omit<Item, 'slug'>) };
+    items[slug] = itemFromFixture(fixtures.resolve(slug, 'item', profileSlug, path) as ItemFixture);
   }
 
   const candidate = {

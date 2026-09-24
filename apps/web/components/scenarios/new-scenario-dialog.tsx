@@ -15,15 +15,20 @@
 
 import type { ScenarioRow, TemplateRow } from '@rules-engine-kit/db';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor,
 } from '@/components/ui/combobox';
 import {
   Dialog,
@@ -34,18 +39,58 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+/** An actor fixture the guided blank slate can start from; one entry per edition variant. */
+export type StarterActor = { slug: string; name: string; rulesetScope: string[] };
 
 export type NewScenarioDialogProps = {
   templates: Pick<TemplateRow, 'id' | 'name' | 'description'>[];
   scenarios: Pick<ScenarioRow, 'id' | 'name' | 'origin'>[];
+  /** Profiles some actor fixture is scoped to. */
+  profiles: string[];
+  actors: StarterActor[];
 };
 
-export function NewScenarioDialog({ templates, scenarios }: NewScenarioDialogProps) {
+export function NewScenarioDialog({
+  templates,
+  scenarios,
+  profiles,
+  actors,
+}: NewScenarioDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [template, setTemplate] = useState<string | null>(null);
   const [source, setSource] = useState<string | null>(null);
+
+  const [profile, setProfile] = useState(profiles[0] ?? null);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [attack, setAttack] = useState(true);
+  const anchor = useComboboxAnchor();
+  const attackId = useId();
+  const offered = actors.filter(
+    (actor) => profile !== null && actor.rulesetScope.includes(profile),
+  );
+  const nameOf = (slug: string): string =>
+    offered.find((actor) => actor.slug === slug)?.name ?? slug;
+
+  function startBlank(): void {
+    const query = new URLSearchParams();
+    if (profile !== null) query.set('profile', profile);
+    if (picked.length > 0) query.set('actors', picked.join(','));
+    if (picked.length > 1 && attack) query.set('action', 'attack');
+    const search = query.toString();
+    go(search === '' ? '/scenarios/new' : `/scenarios/new?${search}`);
+  }
 
   function go(href: string): void {
     setOpen(false);
@@ -108,13 +153,98 @@ export function NewScenarioDialog({ templates, scenarios }: NewScenarioDialogPro
             </DialogFooter>
           </TabsContent>
 
-          <TabsContent value="blank" className="space-y-3 pt-3">
+          <TabsContent value="blank" className="space-y-4 pt-3">
             <p className="text-sm text-muted-foreground">
-              One actor, one turn, no action — the smallest thing that parses. Edit it as a form or
-              as JSON.
+              Pick who is in it and you land in the form with their stat blocks filled in; add
+              weapons, actions and more steps there. Pick nobody for a single blank actor.
             </p>
+
+            <Field name="starterProfile">
+              <FieldLabel>Stat blocks from</FieldLabel>
+              <Select
+                value={profile}
+                onValueChange={(next) => {
+                  setProfile(next);
+                  // A slug scoped only to the other edition would not resolve under this one.
+                  setPicked((current) =>
+                    current.filter((slug) =>
+                      actors.some(
+                        (actor) =>
+                          actor.slug === slug && next !== null && actor.rulesetScope.includes(next),
+                      ),
+                    ),
+                  );
+                }}
+              >
+                <SelectTrigger aria-label="Stat blocks from">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {profiles.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldDescription>
+                Which edition's variant each creature is copied from. Not stored; you still pick a
+                profile every time you run it.
+              </FieldDescription>
+            </Field>
+
+            <Field name="starterActors">
+              <FieldLabel>Actors, in turn order</FieldLabel>
+              <Combobox
+                multiple
+                items={offered.map((actor) => actor.slug)}
+                itemToStringLabel={nameOf}
+                value={picked}
+                onValueChange={(next) => setPicked(next as string[])}
+              >
+                <ComboboxChips ref={anchor}>
+                  <ComboboxValue>
+                    {(selected: string[]) => (
+                      <>
+                        {selected.map((slug) => (
+                          <ComboboxChip key={slug}>{nameOf(slug)}</ComboboxChip>
+                        ))}
+                        <ComboboxChipsInput
+                          aria-label="Actors"
+                          placeholder={selected.length === 0 ? 'Search stat blocks…' : ''}
+                        />
+                      </>
+                    )}
+                  </ComboboxValue>
+                </ComboboxChips>
+                <ComboboxContent anchor={anchor}>
+                  <ComboboxEmpty>no matching stat block</ComboboxEmpty>
+                  <ComboboxList>
+                    {(slug: string) => (
+                      <ComboboxItem key={slug} value={slug}>
+                        <span className="flex flex-col gap-0.5">
+                          <span>{nameOf(slug)}</span>
+                          <span className="font-mono text-xs text-muted-foreground">{slug}</span>
+                        </span>
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </Field>
+
+            <div className="flex items-center gap-2 text-sm">
+              <Switch
+                id={attackId}
+                checked={picked.length > 1 && attack}
+                disabled={picked.length < 2}
+                onCheckedChange={setAttack}
+              />
+              <label htmlFor={attackId}>The first actor attacks the second</label>
+            </div>
+
             <DialogFooter>
-              <Button onClick={() => go('/scenarios/new')}>Start from blank</Button>
+              <Button onClick={startBlank}>Start from blank</Button>
             </DialogFooter>
           </TabsContent>
 

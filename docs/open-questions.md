@@ -14,6 +14,9 @@ Q22, Q23 and Q25 were found while closing Q7–Q20 and while writing the SRD pac
 settled two more that only became visible once there was a template to write, and recorded
 them with Q24. All are listed below.
 
+ADR-0032 was written after v0.1.0 for a gap no question had been raised for: whether a
+scenario may give up its template link on purpose to change its structure.
+
 ADR-0031 was written during M4 for five more: a user profile's identity, saving one with
 conflicts, deleting one, what a reseed does to one, and whether a comparison is stored.
 

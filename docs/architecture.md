@@ -185,7 +185,7 @@ while content is being written.
 | --- | --- |
 | `/` | Overview, quick-run a sample |
 | `/scenarios` | List; "New" → blank, from template, duplicate |
-| `/scenarios/new?template=…` | Form generated from template params, fixture pickers, JSON preview; `?from=<slug>` duplicates, no param is a blank slate |
+| `/scenarios/new?template=…` | Form generated from template params, fixture pickers, JSON preview; `?from=<slug>` duplicates, no param is a blank slate (`?profile&actors=a,b&action=attack` starts it from actor fixtures); a template scenario can be detached into a literal one (ADR-0032) |
 | `/scenarios/[slug]`, `/scenarios/[slug]/edit` | One saved scenario, exported as YAML; user rows can be edited and deleted (ADR-0029) |
 | `/playground` | Choose a saved scenario (`?scenario=<slug>`), profile + seed, run and store, trace viewer (ADR-0030) |
 | `/compare` | One saved scenario, two profiles, one seed (`?scenario&a&b&seed`), side by side + diff; stores nothing (ADR-0031) |
