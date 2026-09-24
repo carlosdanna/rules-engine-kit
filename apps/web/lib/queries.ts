@@ -207,7 +207,7 @@ export async function getScenario(slug: string): Promise<ScenarioRow | null> {
 /**
  * Every id in the table, for minting one that is not taken (ADR-0029).
  *
- * Seeded and user both: `db:reset` re-inserts the six seeded slugs, so a user row that took
+ * Seeded and user both: `db:reset` re-inserts the seeded slugs, so a user row that took
  * one would collide with content on its way back.
  */
 export async function takenScenarioIds(): Promise<Set<string>> {

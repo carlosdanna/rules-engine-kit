@@ -479,7 +479,7 @@ scenario is a *use* of the content rather than part of it, which is why `content
 sees one and why `db:seed` reads the two directories separately.
 
 A file there is an **envelope** (ADR-0028), in one of two forms. A **template call**, which is
-what all six starter scenarios are:
+what every scenario in `scenarios/` is except `use-an-object`:
 
 ```yaml
 slug: melee-attack        # stable id; also the seeded row's primary key (ADR-0027)

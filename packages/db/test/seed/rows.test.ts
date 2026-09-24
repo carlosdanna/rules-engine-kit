@@ -149,13 +149,16 @@ describe('profiles (ADR-0009, ADR-0026)', () => {
 });
 
 describe('scenarios (ADR-0028)', () => {
-  it('seeds one per starter template, each recording what it was rendered from', () => {
-    expect(rows.scenarios).toHaveLength(6);
+  it('seeds every file in scenarios/, each template call recording what it was rendered from', () => {
+    expect(rows.scenarios).toHaveLength(9);
     for (const scenario of rows.scenarios) {
-      expect(scenario.templateId).not.toBeNull();
-      expect(scenario.params).not.toBeNull();
       expect(scenario.origin).toBe('seed');
+      // A literal situation has neither; a template call has both (ADR-0028).
+      expect(scenario.params === null).toBe(scenario.templateId === null);
     }
+    expect(rows.scenarios.filter((row) => row.templateId === null).map((row) => row.id)).toEqual([
+      'use-an-object',
+    ]);
   });
 
   it('stores the whole timeline, closed over its content (ADR-0017)', () => {

@@ -8,7 +8,7 @@
  * promoted into `scenarios/` (ADR-0004). So it gets a slug, derived from its name.
  *
  * The namespace is shared with seeded rows on purpose. `db:seed` deletes and re-inserts the
- * six seeded slugs on every run, so a user row holding one of them would collide with content
+ * seeded slugs on every run, so a user row holding one of them would collide with content
  * coming back; deduping against every existing id is what makes that impossible rather than
  * unlikely.
  *

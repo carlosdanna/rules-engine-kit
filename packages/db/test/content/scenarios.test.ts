@@ -20,15 +20,30 @@ const content = loadContentTree(CONTENT_DIR, SCENARIOS_DIR);
 const sources = { templates: content.templates, fixtures: content.fixtures };
 
 describe('scenarios/', () => {
-  it('renders one scenario per starter template', () => {
-    expect(content.scenarios.map((scenario) => scenario.templateId).sort()).toEqual([
+  it('renders one scenario per starter template, plus the acceptance scenarios', () => {
+    expect(content.scenarios.map((scenario) => scenario.slug).sort()).toEqual([
       'ability-check-vs-dc',
       'buffed-round',
       'combat-start',
+      'inspiration-on-an-attack',
       'melee-attack',
+      'prone-and-flanked',
       'ranged-attack-with-cover',
       'saving-throw-vs-effect',
+      'use-an-object',
     ]);
+    const fromTemplates = content.scenarios.flatMap((scenario) =>
+      scenario.templateId === null ? [] : [scenario.templateId],
+    );
+    expect(new Set(fromTemplates)).toEqual(
+      new Set(content.templates.map((template) => template.id)),
+    );
+  });
+
+  it('reads the literal form too: no template emits a useObject step (ADR-0028)', () => {
+    const useObject = content.scenarios.find((scenario) => scenario.slug === 'use-an-object');
+    expect(useObject?.templateId).toBeNull();
+    expect(useObject?.situation.timeline[0]?.action).toEqual({ type: 'useObject' });
   });
 
   it('closes each situation over its content, so it replays without the fixtures (ADR-0017)', () => {

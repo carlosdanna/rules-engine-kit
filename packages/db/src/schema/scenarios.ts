@@ -1,7 +1,7 @@
 /**
  * Saved situations, and the runs made from them.
  *
- * `scenarios` is shared (ADR-0004): the six in `scenarios/` are seeded, and every scenario the
+ * `scenarios` is shared (ADR-0004): every file in `scenarios/` is seeded, and every scenario the
  * app creates — blank, from a template, or by duplicating (FR-18) — is a user row. The whole
  * timeline lives in `situation`, closed over its content (ADR-0017), so a run replays
  * identically after a fixture is corrected; `template_id` and `params` are what a *deliberate*

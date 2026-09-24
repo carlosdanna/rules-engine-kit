@@ -1,0 +1,8 @@
+# Acceptance scenario 2: spending inspiration on an attack. SRD 5.1 spends it for advantage;
+# SRD 5.2.1 spends it to reroll the d20 and keep the new roll, even when it is worse.
+slug: inspiration-on-an-attack
+name: Spend inspiration on an attack
+profile: srd-5.1
+template: melee-attack
+params:
+  useInspiration: true

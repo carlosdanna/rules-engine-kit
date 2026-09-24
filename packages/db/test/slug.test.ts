@@ -1,7 +1,7 @@
 /**
  * A user scenario's primary key (ADR-0029).
  *
- * ADR-0027 makes the slug the row's identity, and `db:reset` re-inserts the six seeded slugs
+ * ADR-0027 makes the slug the row's identity, and `db:reset` re-inserts the seeded slugs
  * on every run — so the namespace is shared and a user row that took `melee-attack` would
  * collide with content the next reset brings back. `uniqueSlug` is what keeps that from
  * happening, which is why it is tested against the real seeded slugs.
@@ -10,14 +10,17 @@
 import { describe, expect, it } from 'vitest';
 import { isValidSlug, slugify, uniqueSlug } from '../src/slug';
 
-/** The six in `scenarios/`, as `db:seed` writes them. */
+/** The slugs in `scenarios/`, as `db:seed` writes them. */
 const SEEDED = [
   'ability-check-vs-dc',
   'buffed-round',
   'combat-start',
+  'inspiration-on-an-attack',
   'melee-attack',
+  'prone-and-flanked',
   'ranged-attack-with-cover',
   'saving-throw-vs-effect',
+  'use-an-object',
 ];
 
 describe('slugify', () => {

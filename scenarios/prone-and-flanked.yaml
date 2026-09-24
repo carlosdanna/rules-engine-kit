@@ -1,0 +1,9 @@
+# Acceptance scenario 5: a melee attack on a creature that is both prone and flanked. Rendered
+# under srd-5.1 because no fixture is scoped to a `+flanking` profile; it is meant to be *run*
+# under srd-5.1+flanking and srd-5.2.1+flanking, where two grants still make one advantage.
+slug: prone-and-flanked
+name: Melee attack on a prone, flanked target
+profile: srd-5.1
+template: melee-attack
+params:
+  targetConditions: [prone, flanked]

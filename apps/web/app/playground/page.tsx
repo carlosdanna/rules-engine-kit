@@ -35,8 +35,8 @@ export default async function PlaygroundPage({ searchParams }: PageProps<'/playg
 
       {scenarios.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          No scenarios yet. Run <code className="font-mono">pnpm db:reset</code> to seed the six
-          starter scenarios.
+          No scenarios yet. Run <code className="font-mono">pnpm db:reset</code> to seed the starter
+          scenarios.
         </p>
       ) : (
         <PlaygroundForm

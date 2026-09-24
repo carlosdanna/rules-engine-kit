@@ -1,0 +1,25 @@
+# Acceptance scenario 3: the "Use an Object" action, which SRD 5.2.1 renames Utilize under the
+# same rule key. A literal situation because no starter template declares a `useObject` step.
+# The actor is the fighter-3 fixture's printed data, inlined as a blank-slate scenario would be.
+slug: use-an-object
+name: Use an Object (Utilize)
+situation:
+  schemaVersion: 3
+  actors:
+    - id: fighter
+      name: Fighter (3rd level)
+      abilities: { str: 16, dex: 12, con: 14, int: 10, wis: 12, cha: 8 }
+      proficiencyBonus: 2
+      ac: 16
+      hp: 28
+      hpCurrent: 28
+      conditions: []
+      resistances: []
+      vulnerabilities: []
+  items: {}
+  timeline:
+    - id: r1-fighter
+      round: 1
+      actorId: fighter
+      action: { type: useObject }
+  intents: {}

@@ -26,9 +26,9 @@ export default async function ScenariosPage() {
         <div className="max-w-2xl space-y-3">
           <h1 className="text-2xl font-semibold tracking-tight">Scenarios</h1>
           <p className="text-muted-foreground">
-            Saved situations. The six from <code className="font-mono text-sm">scenarios/</code> are
-            rebuilt by every <code className="font-mono text-sm">db:reset</code> and are read only;
-            anything you make here is yours and survives one (ADR-0004).
+            Saved situations. The ones from <code className="font-mono text-sm">scenarios/</code>{' '}
+            are rebuilt by every <code className="font-mono text-sm">db:reset</code> and are read
+            only; anything you make here is yours and survives one (ADR-0004).
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export default async function ScenariosPage() {
         {scenarios.length === 0 && (
           <p className="pt-4 text-muted-foreground">
             Nothing saved yet. Run <code className="font-mono text-sm">pnpm db:seed</code> for the
-            starter six, or make one with “New scenario”.
+            starter scenarios, or make one with “New scenario”.
           </p>
         )}
       </section>

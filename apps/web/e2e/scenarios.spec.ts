@@ -3,11 +3,10 @@ import { expect, test } from '@playwright/test';
 /**
  * `/scenarios` and `/scenarios/new`, without writing anything (FR-18, FR-19).
  *
- * This suite is deliberately read-only. Playwright runs against the repository's own
- * `data/app.db` with no isolation — see `playwright.config.ts` — and `pnpm db:reset` deletes
- * only `origin = 'seed'` rows (ADR-0004), so a test that created a scenario would leave a row
- * behind that nothing cleans up. The create, edit and delete rules are asserted instead in
- * `apps/web/lib/scenarios/write.test.ts`, against an in-memory database.
+ * This suite is read-only. Creating a scenario end to end is `flows.spec.ts`'s job, against
+ * the suite's own `data/e2e.db` (see `playwright.config.ts`); the create, edit and delete
+ * rules themselves are asserted in `apps/web/lib/scenarios/write.test.ts`, against an
+ * in-memory database.
  *
  * What is left is still worth asserting, and one case in particular: the generated form's live
  * preview is rendered by `renderTemplate` running *in the browser* (NFR-3). Nothing else in the
@@ -30,10 +29,12 @@ test('lists the seeded scenarios and marks them as seeded', async ({ page }) => 
   for (const name of SEEDED) {
     await expect(page.getByRole('link', { name, exact: true })).toBeVisible();
   }
-  // Six seeded rows, and none of them offers an edit or a delete.
-  await expect(page.getByText('seed', { exact: true })).toHaveCount(6);
-  await expect(page.getByRole('button', { name: 'Delete', exact: true })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0);
+  // Nine seeded rows, and none of them offers an edit or a delete. Scoped to those rows:
+  // `flows.spec.ts` runs alongside and may already have added user rows, which offer both.
+  const seeded = page.getByRole('row').filter({ has: page.getByText('seed', { exact: true }) });
+  await expect(seeded).toHaveCount(9);
+  await expect(seeded.getByRole('button', { name: 'Delete', exact: true })).toHaveCount(0);
+  await expect(seeded.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0);
 });
 
 test('a seeded scenario can be exported but not edited', async ({ page }) => {
