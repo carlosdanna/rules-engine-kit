@@ -8,7 +8,7 @@
 import { evaluate, resolveProfile } from '@rules-engine-kit/engine';
 import { eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
-import { loadResolvedProfile, StaleProfileError } from '../src/profile';
+import { loadResolvedProfile, loadStack, StaleProfileError } from '../src/profile';
 import { profiles, rulesetVersions } from '../src/schema';
 import { seedDatabase } from '../src/seed';
 import { openTestDb, seedContent } from './seed/helpers';
@@ -98,6 +98,47 @@ describe('loadResolvedProfile', () => {
       const loaded = loadResolvedProfile(database.db, 'srd-5.1');
       expect(loaded.storedHash).toBe('sha256:stale');
       expect(loaded.profile.hash).not.toBe('sha256:stale');
+    } finally {
+      database.close();
+    }
+  });
+});
+
+describe('loadStack', () => {
+  it('rebuilds an unsaved stack to the hash the same seeded stack resolves to', () => {
+    const database = openTestDb();
+    try {
+      seedDatabase(database.db, seedContent());
+      const stack = loadStack(database.db, ['dnd5e-srd@5.2.1', 'house-flanking@1.0.0']);
+
+      expect(stack.map((pack) => `${pack.id}@${pack.version}`)).toEqual([
+        'dnd5e-srd@5.2.1',
+        'house-flanking@1.0.0',
+      ]);
+      expect(resolveProfile(stack).hash).toBe(
+        loadResolvedProfile(database.db, 'srd-5.2.1+flanking').storedHash,
+      );
+    } finally {
+      database.close();
+    }
+  });
+
+  it('keeps the order it was given, so a caller can build an incompatible stack and see why', () => {
+    const database = openTestDb();
+    try {
+      seedDatabase(database.db, seedContent());
+      const stack = loadStack(database.db, ['house-flanking@1.0.0', 'dnd5e-srd@5.1.0']);
+      expect(stack[0]?.id).toBe('house-flanking');
+    } finally {
+      database.close();
+    }
+  });
+
+  it('refuses a version id with no row', () => {
+    const database = openTestDb();
+    try {
+      seedDatabase(database.db, seedContent());
+      expect(() => loadStack(database.db, ['dnd5e-srd@9.9.9'])).toThrow(/no ruleset version/);
     } finally {
       database.close();
     }

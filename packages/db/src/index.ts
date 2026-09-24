@@ -15,6 +15,7 @@ export { CONTENT_DIR, DEFAULT_DB_PATH, MIGRATIONS_DIR, REPO_ROOT, SCENARIOS_DIR 
 export {
   type LoadedResolvedProfile,
   loadResolvedProfile,
+  loadStack,
   rulesetVersionFromRows,
   StaleProfileError,
 } from './profile';

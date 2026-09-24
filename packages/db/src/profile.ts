@@ -92,35 +92,60 @@ export type LoadedResolvedProfile = {
   storedHash: string;
 };
 
+/** One version's pack, rebuilt from its rows; `null` when the id names no row. */
+function loadVersion(db: Db, id: string): RulesetVersion | null {
+  const row = db
+    .select({ version: rulesetVersions, source: sources })
+    .from(rulesetVersions)
+    .innerJoin(sources, eq(rulesetVersions.sourceId, sources.id))
+    .where(eq(rulesetVersions.id, id))
+    .all()[0];
+  if (row === undefined) return null;
+
+  // Every seeded pack declares facts; an empty registry is the migration default (ADR-0030).
+  if (row.version.facts.length === 0) {
+    throw new StaleProfileError(
+      `'${row.version.id}' has no fact registry: the database was migrated but not reseeded`,
+    );
+  }
+  const ruleRows = db
+    .select()
+    .from(rules)
+    .where(eq(rules.rulesetVersionId, id))
+    .orderBy(asc(rules.ruleKey))
+    .all();
+  return rulesetVersionFromRows(row.version, row.source, ruleRows);
+}
+
+/**
+ * Ruleset versions by id, in the order given — which need not be a valid stack. `/profiles`
+ * previews a stack before it is saved, and an incompatible one is exactly what it has to be
+ * able to show, so the order is `resolveProfile`'s to judge, not this function's.
+ */
+export function loadStack(db: Db, versionIds: readonly string[]): RulesetVersion[] {
+  return versionIds.map((id) => {
+    const pack = loadVersion(db, id);
+    if (pack === null) throw new Error(`no ruleset version '${id}'`);
+    return pack;
+  });
+}
+
 export function loadResolvedProfile(db: Db, profileId: string): LoadedResolvedProfile {
   const row = db.select().from(profiles).where(eq(profiles.id, profileId)).all()[0];
   if (row === undefined) throw new Error(`no profile '${profileId}'`);
 
   const layers = db
-    .select({ version: rulesetVersions, source: sources })
+    .select({ versionId: profileLayers.rulesetVersionId })
     .from(profileLayers)
-    .innerJoin(rulesetVersions, eq(profileLayers.rulesetVersionId, rulesetVersions.id))
-    .innerJoin(sources, eq(rulesetVersions.sourceId, sources.id))
     .where(eq(profileLayers.profileId, profileId))
     .orderBy(asc(profileLayers.position))
     .all();
   if (layers.length === 0) throw new StaleProfileError(`profile '${profileId}' has no layers`);
 
-  const stack = layers.map(({ version, source }) => {
-    // Every seeded pack declares facts; an empty registry is the migration default (ADR-0030).
-    if (version.facts.length === 0) {
-      throw new StaleProfileError(
-        `'${version.id}' has no fact registry: the database was migrated but not reseeded`,
-      );
-    }
-    const ruleRows = db
-      .select()
-      .from(rules)
-      .where(eq(rules.rulesetVersionId, version.id))
-      .orderBy(asc(rules.ruleKey))
-      .all();
-    return rulesetVersionFromRows(version, source, ruleRows);
-  });
+  const stack = loadStack(
+    db,
+    layers.map((layer) => layer.versionId),
+  );
 
   return {
     profile: resolveProfile(stack),

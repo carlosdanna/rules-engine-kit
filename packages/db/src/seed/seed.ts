@@ -13,14 +13,21 @@
  * transaction. Without the deferral the delete would fail; without the deterministic id the
  * re-insert would not satisfy the reference.
  *
- * `profiles` and `scenarios` are shared, so only their `origin = 'seed'` rows are touched. The
- * other seeded tables hold nothing a user can write and are cleared wholesale.
+ * `profiles` and `scenarios` are shared, so only their `origin = 'seed'` rows are touched, and
+ * only a seeded profile's `profile_layers`. The other seeded tables hold nothing a user can
+ * write and are cleared wholesale.
+ *
+ * A user profile's layers point at seeded `ruleset_versions`, which come back under the same
+ * ids; its `resolved_hash` is then taken again from what those layers now resolve to, as a
+ * seeded profile's is (ADR-0031).
  */
 
-import { eq } from 'drizzle-orm';
+import { IncompatibleStackError, resolveProfile } from '@rules-engine-kit/engine';
+import { asc, eq, inArray } from 'drizzle-orm';
 import type { Db } from '../client';
 import type { LoadedContent } from '../content';
 import { ContentLoadError } from '../content/errors';
+import { loadStack } from '../profile';
 import { fixtures, templates } from '../schema/content';
 import { profileLayers, profiles } from '../schema/profiles';
 import { rules, rulesets, rulesetVersions } from '../schema/rulesets';
@@ -43,7 +50,11 @@ function insertAll<T>(rows: readonly T[], write: (batch: T[]) => void): void {
 /** Children before parents. The deferral makes the order a courtesy rather than a constraint,
  * but a readable order is what someone debugging a failed commit needs. */
 function deleteSeeded(db: Db): void {
-  db.delete(profileLayers).run();
+  const seededProfiles = db
+    .select({ id: profiles.id })
+    .from(profiles)
+    .where(eq(profiles.origin, 'seed'));
+  db.delete(profileLayers).where(inArray(profileLayers.profileId, seededProfiles)).run();
   db.delete(scenarios).where(eq(scenarios.origin, 'seed')).run();
   db.delete(rules).run();
   db.delete(templates).run();
@@ -64,6 +75,60 @@ function insertSeeded(db: Db, rows: SeedRows): void {
   insertAll(rows.profiles, (batch) => db.insert(profiles).values(batch).run());
   insertAll(rows.profileLayers, (batch) => db.insert(profileLayers).values(batch).run());
   insertAll(rows.scenarios, (batch) => db.insert(scenarios).values(batch).run());
+}
+
+/**
+ * Every user profile's layers must name a version the rebuild wrote back. Checked here, inside
+ * the transaction, rather than left to the deferred foreign key, whose message names nothing.
+ */
+function assertUserLayersResolve(db: Db, rows: SeedRows): void {
+  const incoming = new Set(rows.rulesetVersions.map((version) => version.id));
+  const orphans = db
+    .select({ profileId: profileLayers.profileId, versionId: profileLayers.rulesetVersionId })
+    .from(profileLayers)
+    .innerJoin(profiles, eq(profileLayers.profileId, profiles.id))
+    .where(eq(profiles.origin, 'user'))
+    .all()
+    .filter((layer) => !incoming.has(layer.versionId));
+  if (orphans.length === 0) return;
+
+  const listed = orphans.map((row) => `  '${row.profileId}' → ${row.versionId}`).join('\n');
+  throw new ContentLoadError(
+    `these user profiles stack ruleset versions that content/ no longer declares:\n${listed}\n` +
+      'Nothing was changed. Delete them on /profiles, or discard them with `pnpm db:reset --hard`.',
+  );
+}
+
+/**
+ * A user profile's hash, taken again over the rebuilt rules. A stack the new content makes
+ * incompatible keeps its old hash: the app refuses to run it and `/profiles` says why, which is
+ * more use to the author than a reseed that fails over a profile they can delete.
+ */
+function rehashUserProfiles(db: Db): void {
+  const users = db.select().from(profiles).where(eq(profiles.origin, 'user')).all();
+  for (const profile of users) {
+    const layers = db
+      .select({ versionId: profileLayers.rulesetVersionId })
+      .from(profileLayers)
+      .where(eq(profileLayers.profileId, profile.id))
+      .orderBy(asc(profileLayers.position))
+      .all();
+    if (layers.length === 0) continue;
+
+    let hash: string;
+    try {
+      hash = resolveProfile(
+        loadStack(
+          db,
+          layers.map((layer) => layer.versionId),
+        ),
+      ).hash;
+    } catch (thrown) {
+      if (thrown instanceof IncompatibleStackError) continue;
+      throw thrown;
+    }
+    db.update(profiles).set({ resolvedHash: hash }).where(eq(profiles.id, profile.id)).run();
+  }
 }
 
 export type SeedOptions = {
@@ -126,6 +191,8 @@ export function seedDatabase(
       tx.run('PRAGMA defer_foreign_keys = ON');
       deleteSeeded(tx as unknown as Db);
       insertSeeded(tx as unknown as Db, rows);
+      assertUserLayersResolve(tx as unknown as Db, rows);
+      rehashUserProfiles(tx as unknown as Db);
     });
   } catch (thrown) {
     throw explainOrphans(db, rows, thrown);
