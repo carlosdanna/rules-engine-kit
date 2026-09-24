@@ -63,6 +63,25 @@ look rather than fixed mid-task.
   order. The resolved profile hash is unaffected — `resolveProfile` sorts — and that is the hash
   a run records, so nothing depends on it yet (ADR-0030).
 
+- **Content & licensing review for v0.1.0 (2026-09-24).** Found while checking the repository
+  against CLAUDE.md's content rules; fixed in the same pass were the placeholder 5e-bits entry in
+  `CREDITS.md` (no `content:import` exists) and the house-flanking attribution naming a trademark.
+  Still open:
+  - The base pack id `dnd5e-srd` — and the `content/dnd5e-srd-*` folders — are shown in the UI
+    (`dnd5e-srd@5.1.0` on `/rulesets`, `/profiles`, the Diff tab). Renaming it changes every
+    profile hash, the golden snapshots and seeded identities (ADR-0027), so it wants an ADR.
+  - Eight fixtures are scoped to both editions but cite one: `awakened-shrub`, `battleaxe`,
+    `guard`, `longsword`, `mace`, `rapier` and `shortbow` cite only SRD 5.2.1, `fighter-3` only
+    SRD 5.1. Each should cite the other edition's section too, or carry an `interpretation`
+    saying the printed values agree — checked against the SRD text, not from memory.
+  - `longsword` carries `mastery: sap`, an SRD 5.2.1-only property, in a fixture scoped to
+    SRD 5.1. Unread there (ADR-0022), but its `interpretation` is `null`; it should say so.
+  - SRD 5.1's `attack.ability-modifier.finesse` and `damage.ability-modifier.finesse` cite
+    "Combat > Making an Attack > Melee Attacks > Weapon Properties > Finesse". Weapon properties
+    are in SRD 5.1's Equipment chapter; the section path needs checking against the source.
+  - `packages/engine/test/golden/cases/buffed-round-srd-5.2.1/README.md` quotes Bless as "rolls a
+    d4 and adds the number rolled", which reads like SRD 5.1's wording; check it against SRD 5.2.1.
+
 ## Top risks
 
 | Risk | Mitigation |
