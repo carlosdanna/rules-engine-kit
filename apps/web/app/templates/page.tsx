@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { TemplateSheet } from '@/components/templates/template-sheet';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -67,15 +67,13 @@ export default async function TemplatesPage({ searchParams }: PageProps<'/templa
             </CardContent>
 
             <CardFooter>
-              <Button
-                variant="outline"
-                size="sm"
-                render={
-                  <Link href={`?template=${encodeURIComponent(template.id)}`} scroll={false}>
-                    Params and fixtures
-                  </Link>
-                }
-              />
+              <Link
+                href={`?template=${encodeURIComponent(template.id)}`}
+                scroll={false}
+                className={buttonVariants({ variant: 'outline', size: 'sm' })}
+              >
+                Params and fixtures
+              </Link>
             </CardFooter>
           </Card>
         ))}

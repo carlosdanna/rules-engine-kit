@@ -7,7 +7,7 @@ import { RulesExplorer } from '@/components/rulesets/rules-explorer';
 import { RulesetDiff } from '@/components/rulesets/ruleset-diff';
 import { VersionTabs } from '@/components/rulesets/version-tabs';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { getDb } from '@/lib/db';
 import { getVersion, listVersionOptions, type VersionOption } from '@/lib/queries';
 
@@ -74,12 +74,12 @@ export default async function RulesetVersionPage({
   return (
     <div className="space-y-8">
       <section className="space-y-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="-ml-2.5"
-          render={<Link href="/rulesets">← All rulesets</Link>}
-        />
+        <Link
+          href="/rulesets"
+          className={buttonVariants({ variant: 'ghost', size: 'sm', className: '-ml-2.5' })}
+        >
+          ← All rulesets
+        </Link>
 
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">{found.source.name}</h1>

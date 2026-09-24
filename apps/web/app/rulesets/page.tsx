@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -80,15 +80,12 @@ export default async function RulesetsPage() {
             </CardContent>
 
             <CardFooter>
-              <Button
-                variant="outline"
-                size="sm"
-                render={
-                  <Link href={`/rulesets/${ruleset.id}/${version.semver}`}>
-                    Browse {ruleCount} {ruleCount === 1 ? 'rule' : 'rules'}
-                  </Link>
-                }
-              />
+              <Link
+                href={`/rulesets/${ruleset.id}/${version.semver}`}
+                className={buttonVariants({ variant: 'outline', size: 'sm' })}
+              >
+                Browse {ruleCount} {ruleCount === 1 ? 'rule' : 'rules'}
+              </Link>
             </CardFooter>
           </Card>
         ))}

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { OutcomeSummary } from '@/components/evaluations/outcome-summary';
 import { ReplayPanel } from '@/components/evaluations/replay-panel';
 import { TraceViewer } from '@/components/evaluations/trace-viewer';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { getEvaluation, getProfile, getScenario } from '@/lib/queries';
 
 export const runtime = 'nodejs';
@@ -41,14 +41,12 @@ export default async function EvaluationPage({ params }: PageProps<'/evaluations
           <p className="font-mono text-sm text-muted-foreground">{evaluation.id}</p>
         </div>
         <div className="flex flex-wrap items-start gap-2">
-          <Button
-            variant="outline"
-            render={
-              <Link href={`/playground?scenario=${encodeURIComponent(evaluation.scenarioId)}`}>
-                Run again in playground
-              </Link>
-            }
-          />
+          <Link
+            href={`/playground?scenario=${encodeURIComponent(evaluation.scenarioId)}`}
+            className={buttonVariants({ variant: 'outline' })}
+          >
+            Run again in playground
+          </Link>
           <ReplayPanel id={evaluation.id} recordedEngine={evaluation.engineVersion} />
         </div>
       </section>

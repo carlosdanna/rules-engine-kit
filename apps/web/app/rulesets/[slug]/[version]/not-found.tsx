@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 
 export default function RulesetVersionNotFound() {
   return (
@@ -9,7 +9,9 @@ export default function RulesetVersionNotFound() {
         A version is identified by its ruleset slug and its semver (ADR-0016) — for example{' '}
         <code>/rulesets/dnd5e-srd/5.2.1</code>. Nothing seeded matches this one.
       </p>
-      <Button variant="outline" render={<Link href="/rulesets">Back to rulesets</Link>} />
+      <Link href="/rulesets" className={buttonVariants({ variant: 'outline' })}>
+        Back to rulesets
+      </Link>
     </section>
   );
 }
