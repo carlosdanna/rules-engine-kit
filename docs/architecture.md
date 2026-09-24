@@ -83,6 +83,7 @@ renderTemplate(
 explain(trace: Trace, ruleKey: string): Explanation         // lookup only; never re-evaluates
 diffOutcomes(a: Outcome, b: Outcome): OutcomeDiff
 diffTraces(a: Trace, b: Trace): TraceDiff                   // aligned on (stepId, phase, ruleKey)
+diffRulesets(a: RulesetVersion, b: RulesetVersion): RulesetDiff  // authored entries by rule_key (VR-9)
 ```
 
 Fact definitions reach the engine through `opts.facts`, not through `ResolvedProfile`. The
@@ -187,9 +188,9 @@ while content is being written.
 | `/scenarios/new?template=…` | Form generated from template params, fixture pickers, JSON preview; `?from=<slug>` duplicates, no param is a blank slate |
 | `/scenarios/[slug]`, `/scenarios/[slug]/edit` | One saved scenario, exported as YAML; user rows can be edited and deleted (ADR-0029) |
 | `/playground` | Choose a saved scenario (`?scenario=<slug>`), profile + seed, run and store, trace viewer (ADR-0030) |
-| `/compare` | One situation, two profiles, side by side + diff |
-| `/rulesets`, `/rulesets/[slug]/[version]` | Browse rules with citations |
+| `/compare` | One saved scenario, two profiles, one seed (`?scenario&a&b&seed`), side by side + diff; stores nothing (ADR-0031) |
+| `/rulesets`, `/rulesets/[slug]/[version]` | Browse rules with citations; a Diff tab against another version (`?tab=diff&against=`, VR-9) |
 | `/templates` | Browse templates and fixtures |
-| `/profiles` | Order layers, see hash and conflicts |
+| `/profiles` | Order layers, see hash and conflicts; save and delete user profiles (ADR-0031) |
 | `/evaluations/[id]` | Stored run, replay on the current engine (not stored), labelled when `engine_version` differs |
 | `/credits` | Rendered from `sources`, linked in the footer |

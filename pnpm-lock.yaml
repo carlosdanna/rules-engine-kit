@@ -32,6 +32,15 @@ importers:
       '@base-ui/react':
         specifier: ^1.8.0
         version: 1.8.0(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@dnd-kit/core':
+        specifier: ^6.3.1
+        version: 6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@dnd-kit/sortable':
+        specifier: ^10.0.0
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@19.2.8)
       '@rules-engine-kit/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -62,6 +71,9 @@ importers:
       react-dom:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
+      react-resizable-panels:
+        specifier: ^4.13.2
+        version: 4.13.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
@@ -372,6 +384,28 @@ packages:
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
+
+  '@dnd-kit/accessibility@3.1.1':
+    resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  '@dnd-kit/core@6.3.1':
+    resolution: {integrity: sha512-xkGBRQQab4RLwgXxoqETICr6S5JlogafbhNsidmrkVv2YRs5MLwpjoF2qpiGjQt8S9AoxtIV603s0GIUpY5eYQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@dnd-kit/sortable@10.0.0':
+    resolution: {integrity: sha512-+xqhmIIzvAYMGfBYYnbKuNicfSsk4RksY2XdmJhT+HAC01nix6fHCztU68jooFiMUB01Ky3F0FyOvhG/BZrWkg==}
+    peerDependencies:
+      '@dnd-kit/core': ^6.3.0
+      react: '>=16.8.0'
+
+  '@dnd-kit/utilities@3.2.2':
+    resolution: {integrity: sha512-+MKAJEOfaBe5SmV6t34p80MMKhjvUz0vRrvVJbPT0WElzaOJ/1xs+D+KDv+tD/NE5ujfrChEcshd4fLn0wpiqg==}
+    peerDependencies:
+      react: '>=16.8.0'
 
   '@dotenvx/dotenvx@1.75.1':
     resolution: {integrity: sha512-/BITOC9dmS/edY2zQwZNicQ059O6RKabtQfyEafV0nGtfYRNHYy1DIPiYVcov40+tob9hfmBnbR963dS+EQ1DQ==}
@@ -2834,6 +2868,12 @@ packages:
     peerDependencies:
       react: ^19.2.8
 
+  react-resizable-panels@4.13.2:
+    resolution: {integrity: sha512-iBcbYj/ki6Jdz5ZUH/6npl2nBd2s45c/Dd1VNghNDGDtIXjrFIDpZbCU8AlAKawtnyajiy02/xvUWWZZdVqauQ==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+
   react@19.2.8:
     resolution: {integrity: sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==}
     engines: {node: '>=0.10.0'}
@@ -3550,6 +3590,31 @@ snapshots:
 
   '@biomejs/cli-win32-x64@2.5.14':
     optional: true
+
+  '@dnd-kit/accessibility@3.1.1(react@19.2.8)':
+    dependencies:
+      react: 19.2.8
+      tslib: 2.8.1
+
+  '@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@dnd-kit/accessibility': 3.1.1(react@19.2.8)
+      '@dnd-kit/utilities': 3.2.2(react@19.2.8)
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      tslib: 2.8.1
+
+  '@dnd-kit/sortable@10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@dnd-kit/core': 6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@dnd-kit/utilities': 3.2.2(react@19.2.8)
+      react: 19.2.8
+      tslib: 2.8.1
+
+  '@dnd-kit/utilities@3.2.2(react@19.2.8)':
+    dependencies:
+      react: 19.2.8
+      tslib: 2.8.1
 
   '@dotenvx/dotenvx@1.75.1':
     dependencies:
@@ -5419,6 +5484,11 @@ snapshots:
     dependencies:
       react: 19.2.8
       scheduler: 0.27.0
+
+  react-resizable-panels@4.13.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   react@19.2.8: {}
 

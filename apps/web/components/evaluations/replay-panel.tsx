@@ -11,6 +11,7 @@
 import { ENGINE_VERSION } from '@rules-engine-kit/engine';
 import { useActionState, useTransition } from 'react';
 import { replayEvaluationAction } from '@/app/evaluations/[id]/actions';
+import { DiffSummary } from '@/components/compare/diff-summary';
 import { Button } from '@/components/ui/button';
 import type { ReplayResult } from '@/lib/evaluations/run';
 import type { ActionResult } from '@/lib/scenarios/types';
@@ -62,6 +63,14 @@ export function ReplayPanel({ id, recordedEngine }: { id: string; recordedEngine
             Replayed on the current engine, v{ENGINE_VERSION}. Not saved.
           </p>
         </div>
+      )}
+
+      {data?.comparison.diff != null && (
+        <DiffSummary
+          outcomeDiff={data.comparison.diff.outcome}
+          traceDiff={data.comparison.diff.trace}
+          labels={{ a: 'stored', b: 'replay' }}
+        />
       )}
     </div>
   );

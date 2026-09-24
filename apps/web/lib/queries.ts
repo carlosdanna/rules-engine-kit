@@ -271,3 +271,50 @@ export async function getProfile(id: string): Promise<ProfileRow | null> {
   const row = (await getDb().select().from(profiles).where(eq(profiles.id, id)).limit(1))[0];
   return row ?? null;
 }
+
+/* ------------------------------------------------------------------ profiles (FR-2) */
+
+/** One ruleset version as a profile builder or a diff picker offers it. */
+export type VersionOption = {
+  id: string;
+  rulesetId: string;
+  semver: string;
+  kind: RulesetRow['kind'];
+  name: string;
+};
+
+export async function listVersionOptions(): Promise<VersionOption[]> {
+  const rows = await getDb()
+    .select({ version: rulesetVersions, ruleset: rulesets, source: sources })
+    .from(rulesetVersions)
+    .innerJoin(rulesets, eq(rulesetVersions.rulesetId, rulesets.id))
+    .innerJoin(sources, eq(rulesetVersions.sourceId, sources.id))
+    .orderBy(asc(rulesetVersions.rulesetId), asc(rulesetVersions.semver));
+  return rows.map(({ version, ruleset, source }) => ({
+    id: version.id,
+    rulesetId: version.rulesetId,
+    semver: version.semver,
+    kind: ruleset.kind,
+    name: displayName(source),
+  }));
+}
+
+/** Every profile with its layer version ids, base first. */
+export type ProfileStack = ProfileRow & { versionIds: string[] };
+
+export async function listProfileStacks(): Promise<ProfileStack[]> {
+  const db = getDb();
+  const [rows, layers] = await Promise.all([
+    db.select().from(profiles).orderBy(asc(profiles.origin), asc(profiles.id)),
+    db
+      .select()
+      .from(profileLayers)
+      .orderBy(asc(profileLayers.profileId), asc(profileLayers.position)),
+  ]);
+  return rows.map((row) => ({
+    ...row,
+    versionIds: layers
+      .filter((layer) => layer.profileId === row.id)
+      .map((layer) => layer.rulesetVersionId),
+  }));
+}

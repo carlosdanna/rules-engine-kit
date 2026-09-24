@@ -46,21 +46,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import type { ActionResult, SavedScenario } from '@/lib/scenarios/types';
+import { slugifyInBrowser } from '@/lib/slugify-browser';
 import { type FixtureChoice, ParamControl } from './param-controls';
 import { SituationForm } from './situation-form';
-
-/** `slugify`'s rules, duplicated for the browser: `packages/db` cannot be imported here. */
-function slugifyInBrowser(name: string): string {
-  const slug = name
-    .normalize('NFKD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-  return slug === '' ? 'scenario' : slug;
-}
 
 export type EditorSeed =
   | { mode: 'template'; templateId: string; params: Record<string, unknown> }

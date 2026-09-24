@@ -10,11 +10,15 @@
  * is one line, and that line is `narrateEvent`'s, so the tree and the narrative cannot
  * describe the same event two ways.
  *
+ * `/compare` passes `highlight`: the alignment keys (`alignmentKey`, FR-16) of the events that
+ * differ from the other side. Those events are outlined, and the phases holding them open.
+ *
  * "Why didn't this fire?" calls `explain()` here in the browser. It is a lookup over the trace
  * already on the page and never re-evaluates (FR-15), so it needs no server round trip.
  */
 
 import {
+  alignmentKey,
   explain,
   type FactRead,
   groupByStepAndPhase,
@@ -50,7 +54,11 @@ export type TraceViewerProps = {
   situation: Situation;
   /** Names the downloaded file; a playground run that has not been stored yet has none. */
   evaluationId?: string;
+  /** Alignment keys of events that differ on the other side of a comparison. */
+  highlight?: ReadonlySet<string>;
 };
+
+const DIFFERS = 'border-amber-500/70 bg-amber-500/10';
 
 const json = (value: unknown): string => JSON.stringify(value);
 
@@ -113,13 +121,25 @@ function WhyNot({ trace, ruleKey }: { trace: Trace; ruleKey: string }) {
   );
 }
 
-function RuleEvent({ event, trace }: { event: TraceEventOfKind<'rule'>; trace: Trace }) {
+function RuleEvent({
+  event,
+  trace,
+  differs,
+}: {
+  event: TraceEventOfKind<'rule'>;
+  trace: Trace;
+  differs: boolean;
+}) {
   const [asking, setAsking] = useState(false);
   const reason = describeSkip(event.reason);
   const { layer, version } = event.provenance;
 
   return (
-    <li className="space-y-1.5 rounded-md border p-2" data-testid="rule-event">
+    <li
+      className={`space-y-1.5 rounded-md border p-2 ${differs ? DIFFERS : ''}`}
+      data-testid="rule-event"
+      data-differs={differs || undefined}
+    >
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant={STATUS_VARIANT[event.status]}>{event.status}</Badge>
         <span className="font-mono text-xs">{event.ruleKey}</span>
@@ -167,10 +187,14 @@ function RuleEvent({ event, trace }: { event: TraceEventOfKind<'rule'>; trace: T
   );
 }
 
-function RollEvent({ event }: { event: TraceEventOfKind<'roll'> }) {
+function RollEvent({ event, differs }: { event: TraceEventOfKind<'roll'>; differs: boolean }) {
   const signed = (value: number) => (value >= 0 ? `+${value}` : `${value}`);
   return (
-    <li className="space-y-1 rounded-md border p-2 text-xs" data-testid="roll-event">
+    <li
+      className={`space-y-1 rounded-md border p-2 text-xs ${differs ? DIFFERS : ''}`}
+      data-testid="roll-event"
+      data-differs={differs || undefined}
+    >
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="secondary">roll</Badge>
         <span className="font-mono">{event.rollId}</span>
@@ -208,9 +232,20 @@ function RollEvent({ event }: { event: TraceEventOfKind<'roll'> }) {
   );
 }
 
-function OtherEvent({ event, context }: { event: TraceEvent; context: NarrativeContext }) {
+function OtherEvent({
+  event,
+  context,
+  differs,
+}: {
+  event: TraceEvent;
+  context: NarrativeContext;
+  differs: boolean;
+}) {
   return (
-    <li className="flex gap-2 px-2 text-xs">
+    <li
+      className={`flex gap-2 rounded-md px-2 text-xs ${differs ? `border ${DIFFERS}` : ''}`}
+      data-differs={differs || undefined}
+    >
       <Badge variant="outline">{event.kind}</Badge>
       <span className="font-mono">{narrateEvent(event, context)?.trim() ?? event.kind}</span>
     </li>
@@ -232,27 +267,30 @@ function PhaseEvents({
   events,
   trace,
   context,
+  highlight,
 }: {
   events: readonly TraceEvent[];
   trace: Trace;
   context: NarrativeContext;
+  highlight: ReadonlySet<string> | undefined;
 }) {
+  const differs = (event: TraceEvent) => highlight?.has(alignmentKey(event)) ?? false;
   return (
     <ul className="space-y-1.5">
       {events.map((event) =>
         event.kind === 'rule' ? (
-          <RuleEvent key={event.seq} event={event} trace={trace} />
+          <RuleEvent key={event.seq} event={event} trace={trace} differs={differs(event)} />
         ) : event.kind === 'roll' ? (
-          <RollEvent key={event.seq} event={event} />
+          <RollEvent key={event.seq} event={event} differs={differs(event)} />
         ) : (
-          <OtherEvent key={event.seq} event={event} context={context} />
+          <OtherEvent key={event.seq} event={event} context={context} differs={differs(event)} />
         ),
       )}
     </ul>
   );
 }
 
-export function TraceViewer({ trace, situation, evaluationId }: TraceViewerProps) {
+export function TraceViewer({ trace, situation, evaluationId, highlight }: TraceViewerProps) {
   const [narrative, setNarrative] = useState(false);
   const context = useMemo(() => narrativeContextFromSituation(situation), [situation]);
   const groups = useMemo(() => groupByStepAndPhase(trace.events), [trace]);
@@ -303,9 +341,20 @@ export function TraceViewer({ trace, situation, evaluationId }: TraceViewerProps
               Round {step.round} · <span className="font-mono">{step.id}</span> —{' '}
               {context.actorNames[step.actorId] ?? step.actorId}
             </h3>
-            <Accordion multiple className="rounded-lg border px-3">
+            <Accordion
+              multiple
+              className="rounded-lg border px-3"
+              defaultValue={PHASES.filter((phase) =>
+                (groups.get(stepPhaseKey(step.id, phase)) ?? []).some(
+                  (event) => highlight?.has(alignmentKey(event)) ?? false,
+                ),
+              )}
+            >
               {PHASES.map((phase: Phase) => {
                 const events = groups.get(stepPhaseKey(step.id, phase)) ?? [];
+                const changed = events.filter(
+                  (event) => highlight?.has(alignmentKey(event)) ?? false,
+                ).length;
                 return (
                   <AccordionItem key={phase} value={phase} disabled={events.length === 0}>
                     <AccordionTrigger>
@@ -314,10 +363,20 @@ export function TraceViewer({ trace, situation, evaluationId }: TraceViewerProps
                         <span className="text-xs font-normal text-muted-foreground">
                           {phaseSummary(events)}
                         </span>
+                        {changed > 0 && (
+                          <Badge variant="outline" className="border-amber-500/70">
+                            {changed} differ{changed === 1 ? 's' : ''}
+                          </Badge>
+                        )}
                       </span>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <PhaseEvents events={events} trace={trace} context={context} />
+                      <PhaseEvents
+                        events={events}
+                        trace={trace}
+                        context={context}
+                        highlight={highlight}
+                      />
                     </AccordionContent>
                   </AccordionItem>
                 );

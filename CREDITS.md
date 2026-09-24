@@ -42,6 +42,8 @@ Runtime:
 | [shadcn/ui](https://ui.shadcn.com) | MIT |
 | [Base UI](https://base-ui.com) | MIT |
 | [TanStack Table](https://tanstack.com/table) | MIT |
+| [dnd kit](https://dndkit.com) | MIT |
+| [react-resizable-panels](https://github.com/bvaughn/react-resizable-panels) | MIT |
 | [Lucide](https://lucide.dev) | ISC |
 | [class-variance-authority](https://cva.style) | Apache-2.0 |
 | [cn](https://github.com/shadcn-ui/cn) | MIT |

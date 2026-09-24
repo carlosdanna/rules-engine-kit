@@ -25,11 +25,15 @@ import {
 } from '@rules-engine-kit/db';
 import {
   canonicalJson,
+  diffOutcomes,
+  diffTraces,
   ENGINE_VERSION,
   evaluate,
   type Outcome,
+  type OutcomeDiff,
   type Situation,
   type Trace,
+  type TraceDiff,
 } from '@rules-engine-kit/engine';
 import { eq } from 'drizzle-orm';
 import type { ActionResult } from '../scenarios/types';
@@ -49,8 +53,11 @@ export type RunResult = RunInput & {
   situation: Situation;
 };
 
-/** Evaluate with a profile rebuilt from rows; any engine or staleness error comes back as data. */
-function evaluateFromRows(
+/**
+ * Evaluate with a profile rebuilt from rows; any engine or staleness error comes back as data.
+ * Exported for `/compare`, which runs two of these and stores neither.
+ */
+export function evaluateFromRows(
   db: Db,
   situation: Situation,
   profileId: string,
@@ -65,18 +72,16 @@ function evaluateFromRows(
   }
 }
 
+export const staleProfileMessage = (profileId: string): string =>
+  new StaleProfileError(`profile '${profileId}' no longer resolves to its stored hash`).message;
+
 export function runEvaluation(db: Db, input: RunInput): ActionResult<RunResult> {
   const scenario = db.select().from(scenarios).where(eq(scenarios.id, input.scenarioId)).all()[0];
   if (scenario === undefined) return fail(`no scenario '${input.scenarioId}'`);
 
   const result = evaluateFromRows(db, scenario.situation, input.profileId, input.seed);
   if (!result.ok) return result;
-  if (!result.data.hashMatches) {
-    return fail(
-      new StaleProfileError(`profile '${input.profileId}' no longer resolves to its stored hash`)
-        .message,
-    );
-  }
+  if (!result.data.hashMatches) return fail(staleProfileMessage(input.profileId));
 
   const { outcome, trace } = result.data;
   const id = crypto.randomUUID();
@@ -103,6 +108,8 @@ export type ReplayComparison = {
   traceIdentical: boolean;
   /** `seq` of the first event that differs, or where one trace ends early; `null` if none. */
   firstDivergentSeq: number | null;
+  /** What differs, aligned on step, phase and rule key (FR-16); `null` when nothing does. */
+  diff: { outcome: OutcomeDiff; trace: TraceDiff } | null;
 };
 
 export type ReplayResult = {
@@ -117,8 +124,8 @@ export type ReplayResult = {
 
 /**
  * Canonical JSON, not a field-by-field walk: the columns round-trip through SQLite's text, so
- * key order is the one thing that may legitimately differ between two equal documents.
- * `diffOutcomes`/`diffTraces` (FR-16) would say *what* differs; they are not built yet.
+ * key order is the one thing that may legitimately differ between two equal documents. When
+ * they differ, `diffOutcomes`/`diffTraces` (FR-16) say what does.
  */
 function compare(
   stored: { outcome: Outcome; trace: Trace },
@@ -140,7 +147,15 @@ function compare(
     }
   }
 
-  return { outcomeIdentical, traceIdentical, firstDivergentSeq };
+  const diff =
+    outcomeIdentical && traceIdentical
+      ? null
+      : {
+          outcome: diffOutcomes(stored.outcome, fresh.outcome),
+          trace: diffTraces(stored.trace, fresh.trace),
+        };
+
+  return { outcomeIdentical, traceIdentical, firstDivergentSeq, diff };
 }
 
 export function replayEvaluation(db: Db, id: string): ActionResult<ReplayResult> {

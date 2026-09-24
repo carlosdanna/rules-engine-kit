@@ -116,6 +116,7 @@ describe('replayEvaluation', () => {
       outcomeIdentical: true,
       traceIdentical: true,
       firstDivergentSeq: null,
+      diff: null,
     });
     expect(replay.data.engineVersionChanged).toBe(false);
     expect(replay.data.profileHashChanged).toBe(false);
@@ -161,11 +162,28 @@ describe('replayEvaluation', () => {
     database.db.update(evaluations).set({ trace: tampered }).where(eq(evaluations.id, id)).run();
 
     const replay = replayEvaluation(database.db, id);
-    expect(replay.ok && replay.data.comparison).toEqual({
+    if (!replay.ok) throw new Error(replay.formErrors.join());
+    expect(replay.data.comparison).toMatchObject({
       outcomeIdentical: true,
       traceIdentical: false,
       firstDivergentSeq: trace.events[3]?.seq,
     });
+  });
+
+  it('says which event differs and in which field (FR-16)', () => {
+    const { id, trace } = run();
+    const tampered = {
+      ...trace,
+      events: trace.events.map((event, index) => (index === 3 ? { ...event, round: 99 } : event)),
+    };
+    database.db.update(evaluations).set({ trace: tampered }).where(eq(evaluations.id, id)).run();
+
+    const replay = replayEvaluation(database.db, id);
+    if (!replay.ok) throw new Error(replay.formErrors.join());
+    const changed = replay.data.comparison.diff?.trace.events.filter((e) => e.status !== 'same');
+    expect(changed).toHaveLength(1);
+    expect(changed?.[0]?.fields).toEqual(['round']);
+    expect(replay.data.comparison.diff?.outcome.identical).toBe(true);
   });
 
   it('names an evaluation that does not exist', () => {

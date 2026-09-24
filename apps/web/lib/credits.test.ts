@@ -37,6 +37,9 @@ describe('the real CREDITS.md', () => {
     // needs a line. The map is from package name to the name CREDITS.md prints.
     const names: Record<string, string> = {
       '@base-ui/react': 'Base UI',
+      '@dnd-kit/core': 'dnd kit',
+      '@dnd-kit/sortable': 'dnd kit',
+      '@dnd-kit/utilities': 'dnd kit',
       '@tanstack/react-table': 'TanStack Table',
       'class-variance-authority': 'class-variance-authority',
       cn: 'cn',
@@ -45,6 +48,7 @@ describe('the real CREDITS.md', () => {
       next: 'Next.js',
       react: 'React',
       'react-dom': 'React',
+      'react-resizable-panels': 'react-resizable-panels',
       shadcn: 'shadcn/ui',
       'server-only': 'server-only',
       'tw-animate-css': 'tw-animate-css',
