@@ -22,7 +22,7 @@
     "better-sqlite3": "^12.11.1",
     "drizzle-orm": "^0.44.7",
     "yaml": "^2.8.1",
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
